@@ -69,7 +69,7 @@ ou adjacent.** La confluence **FVG + Breaker** = setup à exécuter sans hésita
 | 0% | SSL · Stop invalide |
 | 25% | Best buys (zone discount) |
 | 50% | EQL · Pivot · premier objectif |
-| 75% | Best sells (zone premium) · **target préféré de Benjamin** |
+| 75% | Best sells (zone premium) · **target préféré** |
 | 100% | BSL · Target complet |
 
 ### Gestion des targets (apprise le 13 juin 2026)
@@ -77,7 +77,7 @@ ou adjacent.** La confluence **FVG + Breaker** = setup à exécuter sans hésita
 - Le **50% du Range n'est en général PAS le TP final** — c'est un premier objectif.
 - **Exception** : si le range est **très grand**, les 50% suffisent largement (le move
   en absolu est déjà conséquent).
-- **Niveau préféré de Benjamin : 75% du Range Fib.**
+- **Niveau préféré : 75% du Range Fib.**
 - **Les meilleurs setups se situent entre 25% et 75% du range** — c'est la zone de
   travail privilégiée (entrées en discount 25%, sorties en premium 75%).
 
