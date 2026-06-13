@@ -6,6 +6,8 @@
 
 # Screenshots temporaires
 *.png
+!favicon.png
+!apple-touch-icon.png
 *.jpg
 *.jpeg
 *.gif
