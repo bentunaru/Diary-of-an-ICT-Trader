@@ -6,7 +6,65 @@
 <title>Diary of an ICT Trader</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
+/* --- Backtest tab --- */
+const btEl = document.getElementById("backtest-content");
+if (btEl) {
+  if (!DATA.backtests || DATA.backtests.length === 0) {
+    btEl.innerHTML = `
+    <div class="bt-empty">
+      <div class="bt-empty-icon">📊</div>
+      <p><strong>Aucun backtest enregistré pour l'instant.</strong><br>
+      Envoie un screenshot + tes commentaires et je l'ajoute ici.</p>
+    </div>`;
+  } else {
+    const resultLabel = { valid: "✅ Setup valide", invalid: "❌ Setup invalide", neutral: "⚪ Neutre / Mixte" };
+    btEl.innerHTML = DATA.backtests.map(bt => {
+      const imgs = (bt.images || []).map(img => `
+        <div class="bt-img-wrap">
+          <img src="${img.src}" alt="${img.caption||''}" data-caption="${img.caption||''}"
+               onclick="document.getElementById('bt-lightbox-img').src=this.src;
+                        document.getElementById('bt-lightbox').classList.add('open')">
+          ${img.caption ? `<div class="bt-img-caption">${img.caption}</div>` : ''}
+        </div>`).join('');
+
+      const lessons = (bt.lessons || []).map(l =>
+        `<div class="bt-lesson ${l.type||''}"><strong>${l.type === 'pos' ? '✅ Point fort' : l.type === 'neg' ? '❌ Erreur' : '📌 Note'}</strong>${l.text}</div>`
+      ).join('');
+
+      const tags = [
+        bt.instrument ? `<span class="bt-tag">${bt.instrument}</span>` : '',
+        bt.timeframe  ? `<span class="bt-tag">${bt.timeframe}</span>`  : '',
+        bt.setup      ? `<span class="bt-tag">${bt.setup}</span>`      : '',
+        bt.result     ? `<span class="bt-tag ${bt.result}">${resultLabel[bt.result]||bt.result}</span>` : '',
+      ].filter(Boolean).join('');
+
+      return `
+      <div class="bt-entry">
+        <div class="bt-entry-head">
+          <div class="bt-entry-date">📅 ${bt.date}</div>
+          <div class="bt-entry-meta">${tags}</div>
+        </div>
+        <div class="bt-body">
+          ${bt.title ? `<div class="bt-title">${bt.title}</div>` : ''}
+          ${bt.comment ? `<div class="bt-comment ${bt.result||''}">${bt.comment}</div>` : ''}
+          ${lessons ? `<div class="bt-lessons">${lessons}</div>` : ''}
+          ${imgs ? `<div class="bt-gallery">${imgs}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* Lightbox close */
+const lbClose = document.getElementById("bt-lightbox-close");
+const lb      = document.getElementById("bt-lightbox");
+if (lbClose && lb) {
+  lbClose.addEventListener("click", () => lb.classList.remove("open"));
+  lb.addEventListener("click", e => { if (e.target === lb) lb.classList.remove("open"); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("open"); });
+}
+</script>
 <style>
   :root {
     --bg: #f5f6f8;
@@ -293,6 +351,62 @@
   .vol-bar.high { background: var(--red); }
   .vol-lbl { font-size: 10px; color: var(--muted); text-align: center; }
   .vol-count { font-size: 11px; font-weight: 600; font-family: var(--mono); }
+
+  /* ---- Backtest tab ---- */
+  .bt-empty { text-align:center; padding: 60px 20px; color: var(--muted); }
+  .bt-empty .bt-empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .bt-empty p { font-size: 14px; line-height: 1.7; }
+
+  .bt-entry { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: var(--shadow); margin-bottom: 24px; overflow: hidden; }
+  .bt-entry-head { padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .bt-entry-date { font-size: 13px; font-weight: 600; color: var(--text); }
+  .bt-entry-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+  .bt-tag { font-size: 11px; padding: 2px 8px; border-radius: 5px; font-weight: 500;
+    background: var(--bg3); border: 1px solid var(--border); color: var(--muted); }
+  .bt-tag.valid   { background: var(--green-bg);  border-color: rgba(14,159,110,0.3);  color: var(--green); }
+  .bt-tag.invalid { background: var(--red-bg);    border-color: rgba(210,59,75,0.3);   color: var(--red); }
+  .bt-tag.neutral { background: var(--accent-bg); border-color: rgba(163,120,28,0.3);  color: var(--accent); }
+
+  .bt-body { padding: 20px; }
+  .bt-title { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .bt-comment { font-size: 13px; line-height: 1.75; color: var(--text);
+    background: var(--bg3); border-radius: 8px; padding: 14px 16px;
+    border-left: 3px solid var(--border); white-space: pre-wrap; }
+  .bt-comment.valid   { border-left-color: var(--green); }
+  .bt-comment.invalid { border-left-color: var(--red); }
+  .bt-comment.neutral { border-left-color: var(--accent); }
+
+  .bt-lessons { margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 10px; }
+  .bt-lesson { background: var(--bg3); border-radius: 8px; padding: 12px 14px;
+    font-size: 12.5px; border-left: 3px solid var(--border); }
+  .bt-lesson strong { display: block; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 4px; color: var(--muted); }
+  .bt-lesson.pos { border-left-color: var(--green); }
+  .bt-lesson.pos strong { color: var(--green); }
+  .bt-lesson.neg { border-left-color: var(--red); }
+  .bt-lesson.neg strong { color: var(--red); }
+
+  .bt-gallery { margin-top: 16px; display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .bt-img-wrap { border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+    background: var(--bg3); }
+  .bt-img-wrap img { width: 100%; display: block; cursor: zoom-in;
+    transition: transform .2s; }
+  .bt-img-wrap img:hover { transform: scale(1.01); }
+  .bt-img-caption { font-size: 11px; color: var(--muted); padding: 6px 10px;
+    border-top: 1px solid var(--border); text-align: center; }
+
+  /* Lightbox */
+  .bt-lightbox { display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.88); align-items: center; justify-content: center; }
+  .bt-lightbox.open { display: flex; }
+  .bt-lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 6px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+  .bt-lightbox-close { position: absolute; top: 20px; right: 28px; font-size: 28px;
+    color: #fff; cursor: pointer; line-height: 1; opacity: 0.8; }
+  .bt-lightbox-close:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -318,6 +432,7 @@
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="rules">Règles ICT</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="errors">Erreurs</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="performance">Performance</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="backtest">Backtest</button>
   </nav>
 </div>
 
@@ -370,6 +485,11 @@
     <div id="perf-content"></div>
   </section>
 
+  <!-- ============ BACKTEST ============ -->
+  <section id="view-backtest" class="view">
+    <div id="backtest-content"></div>
+  </section>
+
   <!-- ============ RÈGLES ============ -->
   <section id="view-rules" class="view">
     <div class="rules" id="rules"></div>
@@ -379,6 +499,10 @@
     </div>
   </section>
 </main>
+<div class="bt-lightbox" id="bt-lightbox">
+  <span class="bt-lightbox-close" id="bt-lightbox-close">✕</span>
+  <img id="bt-lightbox-img" src="" alt="">
+</div>
 
 <footer id="footer"></footer>
 
@@ -1161,6 +1285,9 @@ const DATA = {
   ],
 
   /* ---- Stats hebdo pour Performance tab ---- */
+  /* ---- Backtests (screenshots + commentaires) ---- */
+  backtests: [],
+
   weeklyStats: {
     week: "9–13 juin 2026",
     sessionCount: 5,
