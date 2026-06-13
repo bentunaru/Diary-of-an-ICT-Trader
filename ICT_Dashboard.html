@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICT Trading Journal · NQM26 / ESM26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --bg2: #ffffff;
+    --bg3: #f1f3f6;
+    --border: rgba(20,28,45,0.10);
+    --text: #1c2333;
+    --muted: #66708a;
+    --green: #0e9f6e;
+    --red: #d23b4b;
+    --accent: #a3781c;        /* unique accent structurel (nombre d'or → bronze doré) */
+    --green-bg: rgba(14,159,110,0.09);
+    --red-bg: rgba(210,59,75,0.08);
+    --accent-bg: rgba(163,120,28,0.08);
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+    --shadow: 0 1px 2px rgba(20,28,45,0.04), 0 2px 8px rgba(20,28,45,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Header + nav ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px 0;
+  }
+  .topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .brand h1 { font-size: 16px; font-weight: 600; letter-spacing: 0.2px; }
+  .brand .meta { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+  .badge {
+    font-size: 11px; color: var(--muted);
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 5px; padding: 2px 8px;
+  }
+  .badge--sim { color: var(--accent); background: var(--accent-bg); border-color: rgba(163,120,28,0.35); font-weight: 600; }
+  .period { text-align: right; }
+  .period .lbl { font-size: 11px; color: var(--muted); }
+  .period .val { font-size: 14px; font-weight: 500; }
+
+  nav.tabs { display: flex; gap: 4px; margin-top: 12px; }
+  .tab {
+    appearance: none; background: none; border: none; cursor: pointer;
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    color: var(--muted); padding: 10px 16px 12px;
+    border-bottom: 2px solid transparent;
+    transition: color .15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px; }
+  .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 24px 28px 48px; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ---------- Sections / panels ---------- */
+  .section {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px; margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .section > h2 {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 16px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .mt { margin-top: 12px; }
+
+  .panel { background: var(--bg3); border-radius: 8px; padding: 14px; border-left: 3px solid var(--border); }
+  .panel h4 {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.6px; color: var(--muted); margin-bottom: 8px;
+  }
+  .panel p, .panel li { font-size: 12.5px; line-height: 1.65; }
+  .panel--green  { border-left-color: var(--green); }  .panel--green h4  { color: var(--green); }
+  .panel--red    { border-left-color: var(--red); }    .panel--red h4    { color: var(--red); }
+  .panel--accent { border-left-color: var(--accent); } .panel--accent h4 { color: var(--accent); }
+
+  .callout { border-radius: 8px; padding: 12px 14px; font-size: 12.5px; line-height: 1.65; border: 1px solid var(--border); background: var(--bg3); }
+  .callout h4 { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; color: var(--muted); }
+  .callout--green  { background: var(--green-bg);  border-color: rgba(14,159,110,0.30); } .callout--green h4  { color: var(--green); }
+  .callout--red    { background: var(--red-bg);    border-color: rgba(210,59,75,0.30); }  .callout--red h4    { color: var(--red); }
+  .callout--accent { background: var(--accent-bg); border-color: rgba(163,120,28,0.30); } .callout--accent h4 { color: var(--accent); }
+
+  .stat-row { display: grid; gap: 8px; text-align: center; }
+  .stat-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .stat-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .stat-row.cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .mini-stat { background: var(--bg3); border-radius: 6px; padding: 10px 8px; }
+  .mini-stat .l { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .mini-stat .v { font-size: 13px; font-weight: 600; }
+  .mini-stat .s { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+  .pos { color: var(--green); }
+  .neg { color: var(--red); }
+  .acc { color: var(--accent); }
+
+  /* ---------- KPI cards ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .kpi { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+  .kpi .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+  .kpi .value { font-size: 22px; font-weight: 600; }
+  .kpi .sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .chart-wrap { position: relative; width: 100%; height: 240px; }
+
+  /* ---------- Trade log ---------- */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left; padding: 8px 10px; color: var(--muted); font-weight: 500;
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  thead th.r, td.r { text-align: right; }
+  tbody tr.trade-row { border-bottom: 1px solid var(--border); cursor: pointer; }
+  tbody tr.trade-row:hover { background: var(--bg3); }
+  tbody td { padding: 10px; vertical-align: middle; }
+  tr.trade-detail td {
+    padding: 0 10px 14px 10px; font-size: 12.5px; color: var(--muted);
+    line-height: 1.6; border-bottom: 1px solid var(--border);
+  }
+  tr.trade-detail .detail-inner { background: var(--bg3); border-radius: 6px; padding: 10px 12px; }
+  tr.trade-detail strong { color: var(--text); font-weight: 500; }
+  .caret { display: inline-block; color: var(--muted); font-size: 10px; transition: transform .15s; }
+  tr.open .caret { transform: rotate(90deg); }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag-long  { background: var(--green-bg); color: var(--green); }
+  .tag-short { background: var(--red-bg);   color: var(--red); }
+  .tag-win   { background: var(--green-bg); color: var(--green); }
+  .tag-loss  { background: var(--red-bg);   color: var(--red); }
+
+  /* ---------- Sessions accordion ---------- */
+  details.session { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  details.session[open] { border-color: rgba(163,120,28,0.40); }
+  summary.session-head {
+    list-style: none; cursor: pointer; display: flex; align-items: center;
+    justify-content: space-between; gap: 12px; padding: 14px 18px;
+  }
+  summary.session-head::-webkit-details-marker { display: none; }
+  summary.session-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .session-id { display: flex; align-items: center; gap: 12px; }
+  .session-date { font-size: 14px; font-weight: 600; }
+  .session-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .session-status--live   { color: var(--accent); background: var(--accent-bg); }
+  .session-status--closed { color: var(--muted); background: var(--bg3); }
+  .session-pl { font-size: 14px; font-weight: 600; }
+  .session-pl .s { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+  .session-body { padding: 4px 18px 18px; border-top: 1px solid var(--border); }
+  .session-body h3 {
+    font-size: 11px; font-weight: 600; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.7px;
+    margin: 18px 0 10px;
+  }
+  .session-body h3:first-child { margin-top: 14px; }
+
+  /* ---------- Rules ---------- */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .rule { box-shadow: var(--shadow); background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 14px 16px; }
+  .rule h4 { font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 5px; font-weight: 600; }
+  .rule p { font-size: 12.5px; line-height: 1.6; }
+  .rule--critical { border-left-color: var(--red); }
+  .rule--critical h4 { color: var(--red); }
+
+  .quote {
+    margin-top: 16px; text-align: center; padding: 18px;
+    background: var(--accent-bg); border: 1px solid rgba(163,120,28,0.30); border-radius: 10px;
+  }
+  .quote .q { font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.2px; }
+  .quote .s { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  footer { text-align: center; color: var(--muted); font-size: 11px; padding: 8px 0 32px; }
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .filter-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .filter-btn { appearance: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-family: var(--sans); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active { background: var(--accent-bg); border-color: rgba(163,120,28,0.4); color: var(--accent); font-weight: 600; }
+
+  /* ---------- Stats période ---------- */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .stat-card .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+  .stat-card .val { font-size: 20px; font-weight: 600; }
+  .stat-card .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* ---------- Bar chart daily ---------- */
+  .chart-wrap-sm { position: relative; width: 100%; height: 150px; margin-top: 6px; }
+
+  /* ---------- Erreurs tab ---------- */
+  .error-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0; }
+  @media (max-width: 700px) { .error-grid { grid-template-columns: 1fr; } }
+  .error-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+  .error-card.critical { border-left: 3px solid var(--red); }
+  .error-card.warning  { border-left: 3px solid var(--accent); }
+  .error-card .ec-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .error-card .ec-title { font-size: 13px; font-weight: 600; }
+  .error-card.critical .ec-title { color: var(--red); }
+  .error-card.warning  .ec-title { color: var(--accent); }
+  .error-card .ec-badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .error-card.critical .ec-badge { background: var(--red-bg); color: var(--red); }
+  .error-card.warning  .ec-badge { background: var(--accent-bg); color: var(--accent); }
+  .error-card .ec-body { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+  .error-card .ec-rule { margin-top: 10px; padding: 8px 10px; background: var(--bg3); border-radius: 6px; font-size: 12px; color: var(--text); border-left: 2px solid var(--green); }
+  .error-card .ec-rule strong { color: var(--green); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 3px; }
+  .error-card .ec-cost { margin-top: 8px; font-size: 11px; color: var(--muted); }
+
+  /* ---------- Rule compliance tracker ---------- */
+  .rule-tracker { }
+  .rt-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .rt-item:last-child { border-bottom: none; }
+  .rt-label { font-size: 12.5px; font-weight: 500; flex: 1; min-width: 0; }
+  .rt-bar { flex: 2; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; min-width: 60px; }
+  .rt-fill { height: 100%; border-radius: 3px; }
+  .rt-fill.ok   { background: var(--green); }
+  .rt-fill.warn { background: var(--accent); }
+  .rt-fill.bad  { background: var(--red); }
+  .rt-badge { font-size: 11px; font-weight: 600; min-width: 100px; text-align: right; }
+  .rt-badge.ok  { color: var(--green); }
+  .rt-badge.warn { color: var(--accent); }
+  .rt-badge.bad  { color: var(--red); }
+
+  @media (max-width: 900px) {
+    .grid-3, .grid-4, .stat-row.cols-3, .stat-row.cols-4, .stat-row.cols-5 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    main { padding: 16px; }
+    .topbar { padding: 12px 16px 0; }
+    .grid-2, .grid-3, .grid-4, .rules, .stat-row.cols-3, .stat-row.cols-4, .stat-row.cols-5 { grid-template-columns: 1fr; }
+    .session-pl .s { display: none; }
+  }
+
+  /* ---- Performance tab ---- */
+  .perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+  @media (max-width: 720px) { .perf-grid { grid-template-columns: 1fr; } }
+
+  .perf-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .perf-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .perf-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .perf-table tr:last-child td { border-bottom: none; }
+  .perf-table .wr-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .perf-table .wr-bar { flex: 1; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .perf-table .wr-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+  .perf-table .wr-fill.good { background: var(--green); }
+  .perf-table .wr-fill.mid  { background: var(--accent); }
+  .perf-table .wr-fill.bad  { background: var(--red); }
+
+  .streak-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .streak-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; border: 2px solid transparent; }
+  .streak-dot.clean { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .streak-dot.dirty { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .streak-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .mood-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .mood-row:last-child { border-bottom: none; }
+  .mood-name { width: 90px; font-size: 13px; font-weight: 500; }
+  .mood-bar-wrap { flex: 1; height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .mood-fill { height: 100%; border-radius: 4px; }
+  .mood-meta { font-size: 12px; color: var(--muted); font-family: var(--mono); min-width: 80px; text-align: right; }
+
+  .violation-chart-wrap { width: 100%; height: 120px; margin-top: 10px; }
+  .vol-bars { display: flex; align-items: flex-end; gap: 8px; height: 90px; padding: 0 4px; }
+  .vol-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .vol-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height .4s; }
+  .vol-bar.zero { background: var(--green); }
+  .vol-bar.low  { background: var(--accent); }
+  .vol-bar.high { background: var(--red); }
+  .vol-lbl { font-size: 10px; color: var(--muted); text-align: center; }
+  .vol-count { font-size: 11px; font-weight: 600; font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row">
+    <div class="brand">
+      <h1>ICT Trading Journal</h1>
+      <div class="meta">
+        <span class="badge">NQM26 · ESM26</span>
+        <span class="badge">Sierra Chart</span>
+        <span class="badge badge--sim">SIM</span>
+      </div>
+    </div>
+    <div class="period">
+      <div class="lbl">Période</div>
+      <div class="val" id="period-label"></div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Navigation du journal">
+    <button type="button" class="tab" role="tab" aria-selected="true" data-view="overview">Vue d'ensemble</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="sessions">Sessions</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="rules">Règles ICT</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="errors">Erreurs</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="performance">Performance</button>
+  </nav>
+</div>
+
+<main>
+  <!-- ============ VUE D'ENSEMBLE ============ -->
+  <section id="view-overview" class="view active">
+    <div class="kpis" id="kpis"></div>
+
+    <div class="section">
+      <h2>Évolution P/L cumulé (estimé)</h2>
+      <div class="chart-wrap">
+        <canvas id="plChart" role="img" aria-label="Courbe P/L cumulé estimé"></canvas>
+      </div>
+      <h2 style="margin-top:20px;margin-bottom:8px;">P/L journalier par session</h2>
+      <div class="chart-wrap-sm">
+        <canvas id="dailyChart" role="img" aria-label="P/L journalier par session"></canvas>
+      </div>
+    </div>
+
+    <div id="stats-section"></div>
+
+    <div class="section">
+      <h2>Journal des trades · cliquer une ligne pour le détail</h2>
+      <div class="filter-bar" id="trade-filters"></div>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col"></th><th scope="col">Date</th><th scope="col">Instr.</th><th scope="col">Dir.</th>
+            <th scope="col" class="r">Entrée</th><th scope="col" class="r">Sortie</th><th scope="col" class="r">R:R</th>
+            <th scope="col" class="r">P/L</th><th scope="col">Résultat</th>
+          </tr>
+        </thead>
+        <tbody id="trade-log"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ SESSIONS ============ -->
+  <section id="view-sessions" class="view">
+    <div id="sessions"></div>
+  </section>
+
+  <!-- ============ ERREURS ============ -->
+  <section id="view-errors" class="view">
+    <div id="error-tracker"></div>
+  </section>
+
+  <!-- ============ PERFORMANCE ============ -->
+  <section id="view-performance" class="view">
+    <div id="perf-content"></div>
+  </section>
+
+  <!-- ============ RÈGLES ============ -->
+  <section id="view-rules" class="view">
+    <div class="rules" id="rules"></div>
+    <div class="quote">
+      <div class="q">Un trader ICT ne réagit pas au prix — il anticipe le prix.</div>
+      <div class="s">Patience + Plan = Exécution sans émotion. Le modèle fonctionne. C'est documenté.</div>
+    </div>
+  </section>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+/* =====================================================================
+   SOURCE UNIQUE DE VÉRITÉ
+   Tout le rendu (KPIs, courbe, journal, sessions, règles) est généré
+   depuis cet objet. Pour ajouter une journée : un point dans `equity`,
+   les trades dans `trades`, une entrée dans `sessions`. Rien d'autre.
+   ===================================================================== */
+const DATA = {
+  meta: {
+    periodStart: "3 juin 2026",
+    periodEnd: "12 juin 2026",
+    account: "Sim1",
+    fills: 63,                      // source : Sierra Chart — 45 (3–11 juin) + 18 fills 12 juin (stats export ✓)
+    riskMaxDay: { value: -6525, label: "Risque max engagé", sub: "SL NQ T2 du 11 juin (non atteint)" }
+  },
+
+  /* P/L cumulé estimé, un point par session */
+  equity: [
+    { date: "3 juin",  cum: 8000 },
+    { date: "4 juin",  cum: 18000 },
+    { date: "5 juin",  cum: 28500 },
+    { date: "8 juin",  cum: 38000 },
+    { date: "9 juin",  cum: 48250 },   // recalé sur Sierra Closed P/L (74,475 NQ)
+    { date: "10 juin", cum: 54220 },
+    { date: "11 juin", cum: 67183 },
+    { date: "12 juin", cum: 75363 }    // 74,475 NQ (Sierra) + ~888 ES
+  ],
+
+  trades: [
+    { date: "08 juin", instr: "NQM26", dir: "Long",  entry: "—", exit: "High Asie", rr: "—",
+      pl: "+", plClass: "pos", result: "Win",
+      setup: "MSS + OB · 15min · SSL Asie sweep",
+      notes: "3 partiels · full TP atteint.",
+      setupType: "OB 15min", kz: "London", mood: "Confiant", processClean: true },
+    { date: "09 juin", instr: "NQM26", dir: "Short", entry: "—", exit: "—", rr: "—",
+      pl: "—", plClass: "neg", result: "Loss",
+      setup: "Breaker Block · London KZ",
+      notes: "Biais changé en cours de session · OB invalidé · sorti trop tôt.",
+      setupType: "Breaker Block", kz: "London", mood: "Impatient", processClean: false },
+    { date: "09 juin", instr: "NQM26", dir: "Long",  entry: "—", exit: "—", rr: "—",
+      pl: "—", plClass: "neg", result: "Loss",
+      setup: "Plan initial · retour long",
+      notes: "Entrée trop haute dans le range · mauvais R:R.",
+      setupType: "OB 15min", kz: "NY AM", mood: "FOMO", processClean: false },
+    { date: "09 juin", instr: "NQM26", dir: "Long",  entry: "—", exit: "SIBI 4H", rr: "—",
+      pl: "+", plClass: "pos", result: "Win",
+      setup: "Plan initial exécuté · BISI 1H",
+      notes: "Target final atteint · suivi du plan.",
+      setupType: "FVG + BISI", kz: "NY AM", mood: "Neutre", processClean: true },
+    { date: "10 juin", instr: "NQM26", dir: "Long",  entry: "28,747.75", exit: "28,664.25", rr: "1R",
+      pl: "−83.50 pts", plClass: "neg", result: "SL Hit",
+      setup: "BISI 15min · 25% range",
+      notes: "−$5,010 · 3 contrats · SL process correct.",
+      setupType: "BISI 15min", kz: "NY AM", mood: "Neutre", processClean: true },
+    { date: "10 juin", instr: "NQM26", dir: "Long",  entry: "28,677.75", exit: "sortie anticipée", rr: "—",
+      pl: "+$10,980", plClass: "pos", result: "Win",
+      setup: "Unicorn Model (FVG + Breaker) · 15min · news sweep · BISI 4H ~28,300–28,800",
+      notes: "Unicorn confirmé · bodies arrêtés pile au 25% · GAP ~28,640 = niveau optimal non utilisé · TP BSL ~29,900 atteint après la sortie anticipée · <strong>6 contrats au lieu de 3 (revenge sizing)</strong> · L.T. P/L $6,285.",
+      setupType: "Unicorn", kz: "NY AM", mood: "Revenge", processClean: false },
+    { date: "11 juin", instr: "ESM26", dir: "Long",  entry: "7,300.25", exit: "TP1 ~7,314 · stop pré-PPI", rr: "—",
+      pl: "~+$888", plClass: "pos", result: "Win",
+      setup: "Unicorn 4 couches · SMT Daily · Displacement 1H FVG · London KZ (2–5h) · Macro Run-Stop-Run 7:50–8:10",
+      notes: "TP1 +$688 ✓ · SL trailé puis BE+2 · FVG 1H tenu en support · 2 contrats stoppés par la grosse bougie pré-PPI (~8:25 NY) · résultat estimé, stats ESM26 à confirmer.",
+      setupType: "Unicorn", kz: "London", mood: "Confiant", processClean: true },
+    { date: "11 juin", instr: "NQM26", dir: "Long",  entry: "28,737.00", exit: "28,938.25 (EQH)", rr: "1.85:1",
+      pl: "+$12,075", plClass: "pos", result: "Win",
+      setup: "SMT Divergence NQ/ES · NQ new low ~28,350, ES prend uniquement le low de la bougie 9h · TP EQH",
+      notes: "3 contrats × 201.25 pts · SL 28,628.25 (−108.75 pts) · TP1 EQH ✓ · full exit.",
+      setupType: "SMT Divergence", kz: "NY AM", mood: "Confiant", processClean: true },
+    { date: "12 juin", instr: "NQM26", dir: "Long",  entry: "~29,394", exit: "SL défaut", rr: "—",
+      pl: "−$885", plClass: "neg", result: "SL Hit",
+      setup: "Equal Lows SSL sweep · Low asiatique · FIB 0.75 zone",
+      notes: "Stop réglé par défaut (non structurel) → sorti en 1 minute sur le SSL sweep. Stop structurel correct : sous le low asiatique 15min (~29,200–29,250).",
+      setupType: "SSL Sweep", kz: "Hors KZ", mood: "Impatient", processClean: false },
+    { date: "12 juin", instr: "NQM26", dir: "Long",  entry: "29,394.75", exit: "29,345.00 (SL)", rr: "—",
+      pl: "−$2,985", plClass: "neg", result: "SL Hit",
+      setup: "Equal Lows SSL sweep · Low Asie balayé · FIB range · SpaceX IPO",
+      notes: "Stop 29,345.00 atteint · −49.75 pts × 3 × $20 = −$2,985 · TP1 29,435.25 / TP2 29,645.25 / TP3 29,848.25 non atteints.",
+      setupType: "SSL Sweep", kz: "Hors KZ", mood: "Impatient", processClean: false },
+    { date: "12 juin", instr: "NQM26", dir: "Long",  entry: "29,296.25", exit: "TP ~29,645 ✅ (9:41 ET)", rr: "9.1:1",
+      pl: "+$12,050", plClass: "pos", result: "Win",
+      setup: "OB 15min retracé → Displacement 1min → FVG 1min → entrée · London KZ 3:27 AM ET · Stop structurel sous OB",
+      notes: "TP ✅ 9:41 ET · Partial 1/3 ~29,388 + TP ~29,645 (High Asie / FIB 0.875) · Last Trade P/L Sierra $6,940 (347 pts). T3 total +$12,050 = Daily $8,180 − T1 − T2 (Sierra stats ✓, = Runup). Efface T1+T2 (−$3,870) → Journée nette +$8,180. Process correct : OB 15min + Displacement + FVG 1min + London KZ + stop structurel.",
+      setupType: "OB 15min", kz: "London", mood: "Neutre", processClean: true }
+  ],
+
+  bestTrade: { value: "+$12,075", sub: "NQ · 11 juin · SMT · EQH" },
+
+  sessions: [
+    /* ================ BILAN SEMAINE 9–13 JUIN ================ */
+    {
+      date: "Semaine du 9 au 13 juin 2026", status: "closed", statusLabel: "Bilan hebdomadaire",
+      pl: "+$75,363", plSub: "Cumul 3–12 juin · NQ Sierra ✓",
+      html: `
+        <div class="callout callout--accent">
+          <h4>📋 Bilan Semaine · 9–13 juin 2026 · NQM26 / ESM26</h4>
+          <strong>6 sessions · 11 trades · Net semaine ~+$37,363</strong> (delta cumul 38,000 → 75,363) ·
+          Compte Sim1 · Source chiffres 12 juin : Sierra Chart ✓
+        </div>
+
+        <h3>Score de la semaine</h3>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Trades gagnants</div><div class="v num pos">7</div><div class="s">Win rate ~64%</div></div>
+          <div class="mini-stat"><div class="l">SL hits</div><div class="v num neg">4</div><div class="s">4 stops touchés</div></div>
+          <div class="mini-stat"><div class="l">Meilleur jour</div><div class="v num pos">+$12,963</div><div class="s">11 juin · SMT EQH</div></div>
+          <div class="mini-stat"><div class="l">Pire jour</div><div class="v num neg">T1+T2 12j</div><div class="s">−$3,870 avant correction</div></div>
+          <div class="mini-stat"><div class="l">Règle la + violée</div><div class="v acc">Stop défaut</div><div class="s">2× sur 12 juin</div></div>
+        </div>
+
+        <h3>⚠ Erreurs critiques · À corriger en priorité absolue</h3>
+
+        <div class="grid-2 mt">
+          <div class="panel panel--red">
+            <h4>🔴 CRITIQUE #1 · Stop non structurel (12 juin · T1)</h4>
+            <p>Stop réglé par <strong>défaut Sierra Chart</strong> — trop serré — sorti en <strong>1 minute</strong> sur le SSL sweep.
+            Le setup était valide à 100%. L'erreur est purement mécanique.<br/><br/>
+            <strong>Règle :</strong> Avant toute entrée → désactiver le stop par défaut → placer manuellement
+            sous le low 15min / OB / FVG structurel. Aucune exception.<br/>
+            <span class="neg num">Coût direct : −$885</span></p>
+          </div>
+          <div class="panel panel--red">
+            <h4>🔴 CRITIQUE #2 · Revenge sizing (10 juin · T2)</h4>
+            <p><strong>6 contrats au lieu de 3</strong> après le SL de T1. Le trade était gagnant — ce qui est dangereux
+            car ça renforce le comportement. Un loss avec 6 contrats = −$10,000+.<br/><br/>
+            <strong>Règle :</strong> Taille fixe = 3 contrats, toujours. Le sizing ne change jamais en réaction
+            à un résultat précédent.<br/>
+            <span class="acc num">Coût masqué : $0 (trade gagnant) — risque réel : catastrophique</span></p>
+          </div>
+        </div>
+
+        <h3>⚠ Erreurs récurrentes · À éliminer</h3>
+        <div class="grid-3 mt">
+          <div class="panel panel--accent">
+            <h4>🟡 Entrée hors Kill Zone (12 juin · T2)</h4>
+            <p>Entrée avant 2h ET sans fermeture de bougie 15min dans le PDA.
+            Exposé au bruit pré-London → stop touché facilement.<br/><br/>
+            <strong>Test avant entrée :</strong> « Est-ce que la KZ est active ?
+            Est-ce que la bougie 15min est fermée dans le PDA ? »
+            Si non aux deux → on n'entre pas.<br/>
+            <span class="neg num">Coût : inclus dans −$2,985 T2</span></p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>🟡 Biais changé en cours de session (9 juin · T1)</h4>
+            <p>OB invalidé en live → sorti trop tôt → biais retourné.
+            Résultat : perte sur T1, puis re-entrée en retard (T2 trop haute dans le range, mauvais R:R).<br/><br/>
+            <strong>Règle :</strong> Le biais pré-marché tient jusqu'à invalidation <em>structurelle</em> confirmée
+            sur 15min (close en dehors du range). Pas de décision émotionnelle en cours de session.</p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>🟡 Sortie anticipée (10 juin · T2)</h4>
+            <p>Sorti avant le TP final — le BSL ~29,900 a été atteint <em>après</em> la clôture de position.
+            Le plan était correct, l'exécution impatiente.<br/><br/>
+            <strong>Règle :</strong> Une fois les sell limits posées sur les TPs, ne pas les modifier à la baisse.
+            Laisser le plan se dérouler.</p>
+          </div>
+        </div>
+
+        <h3>✅ Ce qui a bien fonctionné · Répliquer systématiquement</h3>
+        <div class="callout callout--green">
+          <h4>Process T3 · 12 juin · Référence de la semaine</h4>
+          <strong>① OB 15min identifié en pré-marché</strong> →
+          <strong>② London KZ active (3:27 ET)</strong> →
+          <strong>③ Displacement 1min</strong> →
+          <strong>④ Retour FVG 1min → limite 3@29,296.25</strong> →
+          <strong>⑤ Stop structurel sous OB</strong> →
+          <strong>⑥ Partial 1/3 + stop déplacé BE →</strong>
+          <strong>⑦ TP 9:41 ET +$12,050 · R:R 9.1:1</strong><br/><br/>
+          Ce process est reproductible. Chaque fois qu'on dévie de ces 7 étapes, on perd de l'argent.
+          Chaque fois qu'on les suit toutes, on gagne.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--green">
+            <h4>11 juin · SMT Divergence NQ/ES</h4>
+            <p>Lecture divergence propre · NQ new low / ES tient →
+            long NQ → EQH. R:R 1.85:1 · +$12,075.
+            Analyse top-down correcte, exécution propre.</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>Stand-aside IPO SpaceX</h4>
+            <p>Journée faite en London KZ → refus d'opérer
+            sur volatilité IPO erratique. Protéger le gain
+            plutôt que chasser → décision de discipline rare
+            et correcte.</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>Correction en cours de session</h4>
+            <p>T1 et T2 ratés le 12 juin → identification immédiate
+            des erreurs → T3 exécuté avec le process complet.
+            Capacité de reset mental intra-session = point fort.</p>
+          </div>
+        </div>
+
+        <h3>📐 Checklist · 3 questions avant chaque entrée</h3>
+        <div class="stat-row cols-3 mt">
+          <div class="mini-stat"><div class="l">① Kill Zone active ?</div><div class="v acc">London 2h–5h ET</div><div class="s">NY AM 8h30–11h ET</div></div>
+          <div class="mini-stat"><div class="l">② Bougie 15min fermée dans PDA ?</div><div class="v acc">Close confirmée</div><div class="s">OB / FVG / zone discount</div></div>
+          <div class="mini-stat"><div class="l">③ Stop structurel placé manuellement ?</div><div class="v acc">Sous low 15min</div><div class="s">Jamais stop par défaut</div></div>
+        </div>
+        <div class="callout mt">
+          <h4>Si la réponse est NON à l'une de ces 3 questions → on n'entre pas.</h4>
+          100% des SL hits de la semaine auraient été évités avec cette checklist.
+        </div>
+      `
+    },
+
+    /* ---------------- 12 JUIN ---------------- */
+    {
+      date: "12 juin 2026", status: "closed", statusLabel: "Session clôturée",
+      pl: "+$8,180", plSub: "Net Sierra ✓ · T3 London KZ · Flat pour l'IPO",
+      html: `
+        <h3>Catalyseur majeur du jour</h3>
+        <div class="callout callout--accent">
+          <h4>SpaceX IPO</h4>
+          IPO SpaceX → <strong>NQ outperformance attendue</strong> · ES suit mais moins fort ·
+          SMT NQ/ES potentiel intraday · Biais <strong class="pos">BULLISH</strong> renforcé.
+        </div>
+
+        <h3>Analyse top-down · NQM26 / ESM26</h3>
+        <div class="grid-3">
+          <div class="panel panel--green">
+            <h4>Weekly · Contexte</h4>
+            <p><strong class="pos">Bullish Recovery</strong><br>
+            NQ swing bas mars ~22,800 → remontée<br>
+            ES swing bas mars ~6,300 → remontée<br>
+            ATH NQ ~30,800 · ATH ES ~7,650<br>
+            Aucune résistance majeure avant ATH<br>
+            <span class="num" style="color:var(--muted); font-size:11px;">NQ 29,524 · ES 7,406 (weekly close)</span></p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>4H · SMT + Fibonacci Range</h4>
+            <p>Range 1H (displacement 9 juin) :<br>
+            <span class="num">NQ 0% = 28,227.75 · 50% = 29,038.00 · <strong class="pos">100% = 29,848.25</strong></span><br>
+            <span class="num">ES 0% = 7,232.25 · 50% = 7,361.75 · <strong class="pos">100% = 7,491.00</strong></span><br>
+            SMT 1H : NQ ~80% range · ES ~68%<br>
+            <strong class="acc">NQ leader → biais long NQ</strong></p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>Plan d'entrée · LTF</h4>
+            <p>Target : FIB 100% = BSL Range High<br>
+            <strong class="pos num">NQ TP : 29,848.25</strong> (BSL · +322 pts)<br>
+            <strong class="pos num">ES TP : 7,491.00</strong> (BSL · +84 pts)<br>
+            Entry : 15min / 1min · MSS + FVG/OB<br>
+            Zone retour : <span class="num">NQ 0.75 = 29,443 · ES 0.625 = 7,394</span><br>
+            <span style="color:var(--muted); font-size:11px;">KZ London 2h–5h ET · NY AM 8h30+ ET</span></p>
+          </div>
+        </div>
+
+        <h3>SMT 4H · Lecture divergence NQ / ES</h3>
+        <div class="stat-row cols-4">
+          <div class="mini-stat"><div class="l">NQ · Position range</div><div class="v num acc">80%</div><div class="s num">29,526 / BSL 29,848.25</div></div>
+          <div class="mini-stat"><div class="l">ES · Position range</div><div class="v num acc">68%</div><div class="s num">7,407 / BSL 7,491.00</div></div>
+          <div class="mini-stat"><div class="l">Divergence</div><div class="v">NQ &gt; ES</div><div class="s">NQ lead +12 pts de range</div></div>
+          <div class="mini-stat"><div class="l">Implication</div><div class="v pos">Long NQ</div><div class="s">SpaceX IPO amplificateur</div></div>
+        </div>
+
+        <div class="callout callout--red mt">
+          <h4>News · 12 juin</h4>
+          Vérifier l'agenda (FOMC minutes / données macro) · Autour des news majeures = <strong>ordre limite uniquement</strong> ·
+          IPO SpaceX potentiellement en pré-marché — rester vigilant sur les pics de volatilité NQ.
+        </div>
+
+        <h3>Exécution · NQ T1 · SL Hit (stop défaut) → NQ T2 · Live</h3>
+
+        <div class="callout callout--green">
+          <h4>✅ SSL Sweep confirmé · Low de l'Asie balayé</h4>
+          Le low asiatique (SSL · Sell-Side Liquidity) a été balayé sur 15min →
+          l'algorithme a pris la liquidité sous les égales lows → accumulation institutionnelle confirmée.
+          Framework aligné : <strong>SSL sweep → Long → BSL 29,848.25</strong>.
+          IPO SpaceX amplifie le biais NQ bullish.
+        </div>
+
+        <h3>Erreur T1 · Stop par défaut</h3>
+        <div class="grid-2 mt">
+          <div class="panel panel--red">
+            <h4>❌ Ce qui s'est passé</h4>
+            <p>Entrée sur les égales lows (~29,394) avec un stop <strong>réglé par défaut</strong> (trop serré) →
+            le SSL sweep a touché le stop <strong>en 1 minute</strong> → sorti avant que le prix reparte.
+            Le setup était correct — l'exécution du stop ne l'était pas.</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>✅ Stop structurel correct (15min)</h4>
+            <p>Stop à placer <strong>sous la structure 15min</strong> : sous le low asiatique + marge →
+            zone ~29,200–29,250. Permet d'absorber le sweep SSL sans être sorti.
+            Règle : toujours désactiver le stop par défaut et placer manuellement sur la structure.</p>
+          </div>
+        </div>
+
+        <h3>NQ T2 · Live · Long 3@29,394.75</h3>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">29,394.75</div><div class="s">3 contrats</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">29,345.00</div><div class="s num">−49.75 pts</div></div>
+          <div class="mini-stat"><div class="l">TP · FIB 0.875</div><div class="v num acc">29,646.25</div><div class="s num">+251.5 pts · BSL partiel</div></div>
+          <div class="mini-stat"><div class="l">Target final · FIB 1.0</div><div class="v num pos">29,848.25</div><div class="s num">+453.5 pts · BSL range</div></div>
+          <div class="mini-stat"><div class="l">Flottant</div><div class="v num pos">+$2,925</div><div class="s num">+48.75 pts · live</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>Confluence du setup</h4>
+          Equal Lows SSL sweep (Low Asie balayé) ·
+          FIB 0.75 zone (29,443) · entrée en discount du range ·
+          SpaceX IPO (catalyseur NQ) · NQ leader vs ES (+12 pts de range) ·
+          Objectif final : <strong class="num">BSL 29,848.25</strong> (FIB 1.0 · range high).
+        </div>
+
+        <h3>Scale-out · 3 Sell Limits posés</h3>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">29,394.75</div><div class="s">3 contrats · Stop 29,345</div></div>
+          <div class="mini-stat"><div class="l">TP1 · FVG 15min</div><div class="v num acc">29,435.25</div><div class="s num">+40.5 pts · +$810 · 1 contrat</div></div>
+          <div class="mini-stat"><div class="l">TP2 · High Asie / FIB 0.875</div><div class="v num acc">29,645.25</div><div class="s num">+250.5 pts · +$5,010 · 1 contrat</div></div>
+          <div class="mini-stat"><div class="l">TP3 · BSL FIB 1.0</div><div class="v num pos">29,848.25</div><div class="s num">+453.5 pts · +$9,070 · 1 contrat</div></div>
+        </div>
+        <div class="grid-2 mt">
+          <div class="panel panel--accent">
+            <h4>Logique du scale-out</h4>
+            <p><strong>TP1 (FVG 15min) :</strong> zone qui peut se retourner en résistance → prendre 1 contrat au cas où le prix rebrousse chemin. Protège contre un retournement sur le PDA.<br>
+            <strong>TP2 (High Asie) :</strong> BSL de la session asiatique = liquidité. Double confluence avec FIB 0.875 (29,645.75). Niveau naturel de prise de profit institutionnel.<br>
+            <strong>TP3 (BSL FIB 1.0) :</strong> range high = target final du framework pré-marché.</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>Potentiel total · R:R</h4>
+            <p>Risque : 49.75 pts · Stop 29,345.00<br>
+            <span class="num">TP1 : +$810 &nbsp;·&nbsp; R:R 0.8:1</span><br>
+            <span class="num">TP2 : +$5,010 ·&nbsp; R:R 5.0:1</span><br>
+            <span class="num">TP3 : +$9,070 ·&nbsp; R:R 9.1:1</span><br>
+            <strong class="pos">Max potentiel : +$14,890</strong><br>
+            Flottant actuel : +174.75 pts · ~+$3,495 (58.25 pts/contrat)</p>
+          </div>
+        </div>
+
+        <h3>Frame d'exécution · 15min · Erreurs d'entrée</h3>
+        <div class="callout callout--accent">
+          <h4>Zone FVG / OB · Support actif sur les deux instruments</h4>
+          <strong>NQ :</strong> FVG/OB 15min ~29,360–29,408 · prix actuel 29,408 assis dessus · entre FIB 0.625 (29,240) et 0.75 (29,443).<br>
+          <strong>ES :</strong> FVG/OB 15min ~7,375–7,394 · prix 7,394 = exactement FIB 0.625 (7,394.00).<br>
+          Ces zones constituent le <strong>support structurel</strong> du setup — tant qu'elles tiennent, la direction vers les BSL reste valide.
+        </div>
+
+        <div class="grid-2 mt">
+          <div class="panel panel--red">
+            <h4>❌ Erreur #2 · Timing d'entrée</h4>
+            <p>Entré <strong>avant la London Kill Zone</strong> (2h–5h ET) et sans attendre la <strong>fermeture de la bougie 15min</strong>.
+            Résultat : exposition au bruit pré-London, stop trop facile à toucher, moins de conviction sur l'exécution.</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>✅ Process correct sur 15min</h4>
+            <p>Attendre la <strong>London KZ (2h–5h ET)</strong> · surveiller le FVG/OB 15min identifié en pré-marché ·
+            entrer uniquement après <strong>fermeture de bougie 15min</strong> à l'intérieur ou au-dessus du PDA ·
+            stop sous la structure locale (bas du FVG/OB ou low 15min).</p>
+          </div>
+        </div>
+
+        <div class="grid-4 mt">
+          <div class="mini-stat"><div class="l">FVG/OB NQ · Support</div><div class="v num acc">29,360–29,408</div><div class="s">entre FIB 0.625 et 0.75</div></div>
+          <div class="mini-stat"><div class="l">FVG/OB ES · Support</div><div class="v num acc">7,375–7,394</div><div class="s">FIB 0.625 exact</div></div>
+          <div class="mini-stat"><div class="l">London KZ</div><div class="v acc">2h–5h ET</div><div class="s">fenêtre d'exécution idéale</div></div>
+          <div class="mini-stat"><div class="l">Confirmation requise</div><div class="v">15min close</div><div class="s">dans/au-dessus du PDA</div></div>
+        </div>
+
+        <div class="callout mt">
+          <h4>Leçon · Recap erreurs du jour</h4>
+          <strong>Erreur #1 :</strong> Stop par défaut (trop serré) → sorti sur le SSL sweep en 1 minute.<br>
+          <strong>Erreur #2 :</strong> Entré avant London KZ sans attendre la fermeture bougie 15min.<br>
+          <strong>Setup :</strong> Valide, framework aligné (SSL sweep + FIB + SpaceX IPO). Les erreurs sont d'exécution, pas d'analyse.
+          Règle à graver : <strong>London KZ + bougie 15min fermée = seule entrée valide sur ce type de setup.</strong>
+        </div>
+
+        <h3>T2 · Stop atteint · −$2,985</h3>
+        <div class="callout callout--red">
+          <h4>Stop 29,345.00 atteint</h4>
+          Long 3@29,394.75 · Stop 29,345.00 · −49.75 pts × 3 × $20 = <strong>−$2,985</strong>.
+          TP1 (29,435.25) / TP2 (29,645.25) / TP3 (29,848.25) non atteints.
+          Bilan journée : T1 −$885 + T2 −$2,985 = <strong>−$3,870</strong>.
+        </div>
+
+        <h3>Plan · Re-entrée en discount du range</h3>
+        <div class="callout callout--accent">
+          <h4>Attente · Retour en discount</h4>
+          Le framework reste <strong class="pos">bullish</strong> (BSL 29,848.25 non atteint · SpaceX IPO · SSL sweep confirmé).
+          En attente d'un retour significatif vers le <strong>discount du range</strong> pour re-entrée long avec meilleur R:R.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--accent">
+            <h4>Zone cible · Discount idéal</h4>
+            <p>Sous le FIB 0.5 (29,038.00) = entrée en discount.<br>
+            Idéal : <strong class="num">FIB 0.25–0.375</strong><br>
+            <span class="num">28,633.00 – 28,835.50</span><br>
+            Meilleur R:R depuis ces niveaux vers BSL 29,848.</p>
+          </div>
+          <div class="panel">
+            <h4>Niveaux FIB de référence</h4>
+            <p><span class="num">0.5 &nbsp;= 29,038.00</span> → seuil discount<br>
+            <span class="num">0.375 = 28,835.50</span> → zone achat<br>
+            <span class="num">0.25 &nbsp;= 28,633.00</span> → zone achat prioritaire<br>
+            <span class="num">0.125 = 28,430.25</span> → limite basse</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>Conditions de re-entrée</h4>
+            <p>① Prix dans la zone 0.25–0.375<br>
+            ② Attendre <strong>London KZ ou NY AM</strong><br>
+            ③ Fermeture bougie <strong>15min</strong> confirmée<br>
+            ④ Stop <strong>sous la structure</strong> (pas défaut)<br>
+            ⑤ Même TP structure : BSL 29,848.25</p>
+          </div>
+        </div>
+
+        <h3>T3 · Win ✅ · Long 3@29,296.25 → TP ~29,645</h3>
+        <div class="callout callout--green">
+          <h4>✅ Exécution correcte · Process complet · Gestion active</h4>
+          <strong>① OB 15min</strong> — prix retracé dans l'Order Block ~29,200–29,260 · PDA structurel identifié.<br>
+          <strong>② Displacement 1min</strong> — impulsion baissière sur 1min créant un FVG · marque l'accumulation institutionnelle.<br>
+          <strong>③ Retour FVG 1min</strong> — prix revient dans le FVG créé · entrée exécutée à 29,296.25.<br>
+          <strong>④ London Kill Zone</strong> — 3:27 AM ET · fenêtre algorithmique active ✓<br>
+          <strong>⑤ Stop structurel</strong> — 29,258.00 initial · déplacé 29,264.50 à 8:22 ET ✓
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📊 Management 8:22 ET · 1/3 sorti · 2/3 en cours</h4>
+          <strong>Partial 1/3</strong> — 1 contrat sorti ~29,388 · +91.75 pts · <span class="pos">+$1,835 réalisé</span> · objective : payer le trade.<br>
+          <strong>Stop déplacé</strong> — 29,258.00 → <span class="num acc">29,264.50</span> · près de l'entrée · risque résiduel −31.75 pts × 2 = <span class="neg">−$1,270</span>.<br>
+          <strong>Plan</strong> — TP1 29,645.25 (High Asie, 1 lot) · TP2 29,848.25 (BSL, dernier lot) · Re-entrée 1 lot si displacement + FVG.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">29,296.25</div><div class="s">2/3 restants · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Stop · Près entrée</div><div class="v num neg">29,264.50</div><div class="s num">−31.75 pts · −$1,270</div></div>
+          <div class="mini-stat"><div class="l">TP1 · High Asie</div><div class="v num acc">29,645.25</div><div class="s num">+349 pts · FIB 0.875</div></div>
+          <div class="mini-stat"><div class="l">Partial réalisé</div><div class="v num pos">+$1,835</div><div class="s num">1/3 ~29,388 · +91.75 pts</div></div>
+          <div class="mini-stat"><div class="l">Flottant 2/3</div><div class="v num pos">+92.25 pts</div><div class="s num">~+$3,690 · live</div></div>
+        </div>
+        <div class="grid-2 mt">
+          <div class="panel panel--accent">
+            <h4>OB 15min · Zone d'entrée</h4>
+            <p>Order Block 15min ~29,200–29,260 · PDA structurel identifié en pré-marché.
+            Prix a retracé jusqu'à cette zone depuis le high ~29,650 · absorption institutionnelle confirmée.
+            Entrée au retour du FVG 1min à l'intérieur de l'OB.</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>Erreurs T1/T2 corrigées</h4>
+            <p>✓ Stop structurel (sous OB) au lieu du stop par défaut.<br>
+            ✓ Attente London KZ (3:27 AM ET).<br>
+            ✓ Confirmation 1min : displacement + retour FVG.<br>
+            Même biais bullish, même target — exécution propre.</p>
+          </div>
+        </div>
+
+        <h3>Bilan clôture · 12 juin 2026</h3>
+        <div class="callout callout--green">
+          <h4>✅ TP Confirmé 9:41 ET · ~29,645.25 (High Asie / FIB 0.875)</h4>
+          Journée profitable malgré deux erreurs d'exécution corrigées en cours de session. T3 efface T1+T2 et génère un profit net. SpaceX IPO catalyst confirmé — NQ leader haussier vs ES.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">T1 + T2</div><div class="v num neg">−$3,870</div><div class="s">= Drawdown Sierra ✓</div></div>
+          <div class="mini-stat"><div class="l">T3 Total</div><div class="v num pos">+$12,050</div><div class="s">= Runup Sierra ✓ · Process ✓</div></div>
+          <div class="mini-stat"><div class="l">Net Journée</div><div class="v num pos">+$8,180</div><div class="s">Sierra Chart stats export ✓</div></div>
+          <div class="mini-stat"><div class="l">Cum. 3–12 juin</div><div class="v num pos">$75,363</div><div class="s">74,475 NQ (Sierra) + ~888 ES</div></div>
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--red">
+            <h4>Leçon T1 · Stop par défaut</h4>
+            <p>Stop réglé automatiquement par Sierra Chart → trop serré → sorti en 1 minute sur le SSL sweep initial. Stop correct : structurel sous le low asiatique 15min.</p>
+          </div>
+          <div class="panel panel--red">
+            <h4>Leçon T2 · Pas de KZ</h4>
+            <p>Entrée avant London Kill Zone · sans confirmation bougie 15min fermée. Règle : attendre 2h–5h ET ET fermeture 15min AVANT toute entrée.</p>
+          </div>
+          <div class="panel panel--green">
+            <h4>T3 · Process parfait</h4>
+            <p>OB 15min → Displacement 1min → FVG 1min → London KZ 3:27 ET → stop structurel → gestion partielle → TP1 ✅. Répliquer ce process systématiquement.</p>
+          </div>
+        </div>
+
+        <h3>Décision finale · Pas de T4 · Flat pour l'IPO SpaceX</h3>
+        <div class="callout callout--green">
+          <h4>✅ Stand-aside · Discipline</h4>
+          Journée déjà faite en <strong>London KZ</strong> (T3 +$12,050) · IPO SpaceX = volatilité erratique attendue,
+          non exploitable avec le process (stops vulnérables aux spikes) ·
+          Décision : <strong>observation uniquement, aucune position</strong>.
+          Protéger le net +$8,180 &gt; chasser un trade de plus. Setup T4 ci-dessous archivé non exécuté.
+        </div>
+
+        <h3>Setup T4 pré-IPO (archivé · non exécuté)</h3>
+        <div class="callout callout--accent">
+          <h4>État NQ avant l'IPO SpaceX · 15min</h4>
+          Prix <span class="num">29,438</span> · retracement depuis le high ~29,650 (FIB 0.875) ·
+          <strong>réaction dans l'OB 15min</strong> autour de la FIB 0.75 (<span class="num">29,443</span>) ·
+          Biais <strong class="pos">BULLISH</strong> maintenu — BSL <span class="num">29,848.25</span> (FIB 1.0) toujours non pris ·
+          IPO SpaceX = catalyseur NQ.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">29,438</div><div class="s">réaction dans l'OB 15min</div></div>
+          <div class="mini-stat"><div class="l">OB 15min · Support</div><div class="v num acc">~29,400–29,450</div><div class="s">confluence FIB 0.75 (29,443)</div></div>
+          <div class="mini-stat"><div class="l">Target 1</div><div class="v num acc">29,645–29,650</div><div class="s">High Asie · FIB 0.875</div></div>
+          <div class="mini-stat"><div class="l">Target final</div><div class="v num pos">29,848.25</div><div class="s">BSL · FIB 1.0 · range high</div></div>
+        </div>
+        <div class="grid-2 mt">
+          <div class="panel panel--green">
+            <h4>Conditions d'entrée T4 (process T3)</h4>
+            <p>① OB 15min tient (29,400–29,450)<br>
+            ② Displacement 1min haussier<br>
+            ③ Retour FVG 1min → entrée limite<br>
+            ④ Stop structurel sous l'OB (pas défaut)<br>
+            ⑤ NY AM KZ active (8:30–11:00 ET)</p>
+          </div>
+          <div class="panel panel--red">
+            <h4>Règle IPO / volatilité</h4>
+            <p>IPO SpaceX = pic de volatilité attendu au listing →
+            <strong>ordres limites uniquement</strong> autour de l'ouverture du titre ·
+            si l'OB 15min casse (close 15min sous ~29,400), setup invalidé →
+            attendre retour FIB 0.625 (29,240) ou discount.</p>
+          </div>
+        </div>`
+    },
+
+    /* ---------------- 11 JUIN ---------------- */
+    {
+      date: "11 juin 2026", status: "closed", statusLabel: "Clôturée",
+      pl: "+$12,963", plSub: "ES ~+$888 · NQ +$12,075",
+      html: `
+        <h3>Pré-marché · Top-down</h3>
+        <div class="grid-3">
+          <div class="panel panel--red">
+            <h4>Daily · Biais &amp; Target</h4>
+            <p><strong class="neg">Bearish</strong> · ATH ~30,800 → drop en cours.<br>
+            Target : <strong>BISI Daily (volume in balance)</strong> sous le prix actuel · inefficacité créée pendant la montée ATH.<br>
+            <span style="color:var(--muted); font-size:11px;">Prix actuel ~28,734</span></p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>1H · Setup &amp; Structure</h4>
+            <p><strong>FVG Premium 1H</strong> ~29,300–29,600 · BSL au-dessus à prendre.<br>
+            Scénario : run UP → sweep BSL → <strong class="neg">SHORT</strong> depuis FVG 1H Premium → target BISI Daily.</p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>5min · Exécution</h4>
+            <p>Confirmation 5min depuis le FVG 1H Premium · niveaux clés marqués ·
+            <strong class="acc">PPI @ 08:30 ET</strong> → ordre <strong>limite</strong> avant la news ·
+            pas d'exécution market sur spike.</p>
+          </div>
+        </div>
+
+        <h3>Scénarios</h3>
+        <div class="grid-2">
+          <div class="callout callout--green">
+            <h4>Scénario A · Matin — Long</h4>
+            Matinée calme · montée progressive vers le FVG 1H Premium. Si setup long visible sur 5min → entrée <strong>LONG</strong>.
+            TP : <strong>FVG 1H Premium ~29,300–29,600</strong>. PPI @ 08:30 ET peut déclencher la formation du setup.
+            Ordre limite · confirmation 5min · patience sur l'entrée.
+          </div>
+          <div class="callout callout--red">
+            <h4>Scénario B · Après-midi — Short</h4>
+            Si setup short visible depuis le FVG 1H Premium → entrée <strong>SHORT</strong> · sweep BSL.
+            TP : <strong>BISI Daily</strong> sous le prix actuel. Plan initial bearish · scénario principal journalier.
+            Ordre limite · confirmation 5min · laisser aller au TP.
+          </div>
+        </div>
+
+        <h3>Framework ES · 4 couches de confluence</h3>
+        <div class="grid-4">
+          <div class="panel panel--accent"><h4>① Daily · SMT</h4><p>SMT NQ/ES divergence sur le range daily → biais haussier institutionnel confirmé.</p></div>
+          <div class="panel panel--accent"><h4>② 1H · Displacement → FVG</h4><p>Displacement fort sur le 1H → FVG créé (<span class="num">~7,290–7,310</span>) · zone d'efficience définie.</p></div>
+          <div class="panel panel--accent"><h4>③ London KZ · Unicorn</h4><p>Retour dans le FVG pendant la <strong>London KZ (2h–5h ET)</strong> · Breaker 5min = <strong class="acc">Unicorn</strong> formé.</p></div>
+          <div class="panel panel--accent"><h4>④ Macro · Run-Stop-Run</h4><p>Run-Stop-Run algorithmique dans la <strong>macro 7:50–8:10</strong> · confirmation institutionnelle · entrée <span class="num">3@7,300.25</span>.</p></div>
+        </div>
+
+        <h3>SMT · Confirmation ES · Double Unicorn NQ + ES</h3>
+        <div class="grid-4">
+          <div class="panel"><h4>ES 1H</h4><p><strong class="pos">SSL sweepé</strong><br>Low ~7,240 · liquidité prise · nouveau range créé.</p></div>
+          <div class="panel"><h4>NQ divergence</h4><p><strong class="acc">SMT confirmé ✓</strong><br>Pas de confirmation du même low → accumulation institutionnelle.</p></div>
+          <div class="panel"><h4>ES 5min · Unicorn · Macro 7:50–8:10</h4><p>FVG 1H + Breaker · Long <span class="num">3@7,300.25</span> · TP1 ✓ · FVG 1H tenu en support ✓ · TP2 <span class="num">7,361.50</span> · TP3 <span class="num">7,379.75</span>.</p></div>
+          <div class="panel"><h4>NQ · Unicorn</h4><p>FVG 1H + Breaker · Limit <span class="num">28,895.75</span> · SL <span class="num">28,651.75</span> · TP <span class="num">29,248.75</span> · R:R 1.44:1.</p></div>
+        </div>
+        <div class="callout mt">
+          NQ + ES même direction · même structure Unicorn · pas de divergence SMT =
+          <strong class="pos">confluence maximale · 4/4 confirmations</strong>.
+        </div>
+
+        <h3>Trade ES T1 · Clôturé · ~+$888 estimé</h3>
+        <div class="callout callout--red">
+          <h4>Résumé</h4>
+          TP1 ✓ (~7,314, +$688) · FVG 1H tenu en support ✓ · grosse bougie pré-PPI (~8:25 ET) a atteint le stop sur les
+          2 contrats restants · <strong class="pos">résultat net estimé ~+$888</strong> (stats ESM26 à confirmer) ·
+          décision de ne pas reprendre de position.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">7,300.25</div><div class="s">3 contrats</div></div>
+          <div class="mini-stat"><div class="l">TP1 ✓</div><div class="v num pos">~7,314.00</div><div class="s num">+13.75 pts · +$688</div></div>
+          <div class="mini-stat"><div class="l">TP2 (non atteint)</div><div class="v num">7,361.50</div><div class="s num">+61.25 pts</div></div>
+          <div class="mini-stat"><div class="l">TP3 (non atteint)</div><div class="v num">7,379.75</div><div class="s num">+79.5 pts</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">~+$888</div><div class="s">stop pré-PPI · BE+2</div></div>
+        </div>
+
+        <h3>Trade NQ T2 · Clôturé · TP atteint · +$12,075</h3>
+        <div class="callout callout--accent">
+          <h4>Setup · SMT Divergence</h4>
+          NQ fait un nouveau low (~28,350) · ES prend uniquement le low de la bougie 9h sans confirmer le même niveau →
+          divergence institutionnelle = accumulation. Long sur NQ au retour du SMT. Cible : <strong>Equal Highs (BSL)</strong> ~28,938.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">28,737.00</div><div class="s">3 contrats</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">28,628.25</div><div class="s num">−108.75 pts</div></div>
+          <div class="mini-stat"><div class="l">Target · EQH ✓</div><div class="v num pos">28,938.25</div><div class="s num">+201.25 pts · BSL EQH</div></div>
+          <div class="mini-stat"><div class="l">R:R</div><div class="v num acc">1.85:1</div><div class="s num">201 / 109 pts</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$12,075</div><div class="s">full exit · TP1 EQH ✓</div></div>
+        </div>
+
+        <h3>Post-market · Analyse du setup ESM26</h3>
+        <div class="grid-3">
+          <div class="panel panel--green">
+            <h4>Setup · 4 couches de confluence</h4>
+            <p>SMT Daily (NQ/ES divergence) → Displacement 1H → FVG créé → retour FVG pendant <strong>London Kill Zone</strong> (2h–5h ET)
+            → <strong>Breaker 5min</strong> = Unicorn → Run-Stop-Run confirmé en <strong>macro 7:50–8:10</strong>. Setup maximal en confluence.</p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>Gestion · Points positifs</h4>
+            <p>TP1 exécuté (~7,314) · SL trailé structurellement (low 1H) puis à BE+2 · FVG 1H tenu en support
+            (retour discount absorbé) · scale-out propre · décision d'arrêt disciplinée.</p>
+          </div>
+          <div class="panel panel--red">
+            <h4>Fin de trade · Grosse bougie pré-PPI</h4>
+            <p>Bougie pré-news (~8:25 ET) a balayé le stop avant le PPI 8:30. Rappel : news = liquidité soudaine, spike impossible
+            à gérer en temps réel. Ordre limite avant = règle respectée à l'entrée. Stop hit = exécution normale.</p>
+          </div>
+        </div>
+        <div class="callout callout--green mt">
+          <h4>Confirmation du modèle ✓</h4>
+          Le FVG 1H a agi comme aimant à l'entrée et comme support au retour en discount. Run-Stop-Run en macro confirmé algorithmique.
+          Setups les plus propres observés jusqu'ici : 4 couches alignées, ES plus lisible que NQ sur ce type de structure.
+          <strong class="acc">Leçon :</strong> BE+2 après le retour en discount était le bon choix — le résultat positif malgré
+          le stop pré-news valide la gestion.
+        </div>
+
+        <div class="callout callout--accent mt">
+          <h4>Rappel · Leçons du 10 juin</h4>
+          <strong>Suivre le plan · Patience.</strong> Les deux scénarios sont définis avant l'ouverture. La décision est déjà prise.
+          Il n'y a plus rien à réagir — seulement à exécuter.
+        </div>`
+    },
+
+    /* ---------------- 10 JUIN ---------------- */
+    {
+      date: "10 juin 2026", status: "closed", statusLabel: "Clôturée",
+      pl: "+$4,980", plSub: "−$5,010 SL · +$10,980 Unicorn (L.T. $6,285)",
+      html: `
+        <h3>Erreurs critiques</h3>
+        <div class="callout callout--red">
+          <h4>Revenge trading — violation majeure de process</h4>
+          Après le stop sur Trade #1, 6 contrats ont été pris sur Trade #2 au lieu des 3 contrats standards.
+          La position a été fermée avant le TP par pression émotionnelle — et le prix a atteint le TP après la sortie.
+          Double pénalité : surrisque sur l'entrée + winner coupé court sur la sortie.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--red"><h4>Erreur #1 · Sizing</h4><p>6 contrats au lieu de 3 → risque doublé · motivé par la perte précédente, pas par le setup.</p></div>
+          <div class="panel panel--red"><h4>Erreur #2 · Psychologie</h4><p>Décision prise sous l'influence émotionnelle d'un loss · « rattraper le compte » n'est pas une raison d'entrée ICT.</p></div>
+          <div class="panel panel--red"><h4>Erreur #3 · Gestion du trade</h4><p>Position fermée avant le TP par pression émotionnelle · le prix a atteint le TP après la sortie · winner coupé court.</p></div>
+          <div class="panel panel--accent"><h4>Erreur #4 · Planification</h4><p>Aucun ordre limite posé au GAP (~28,640) · premier PDA et préféré · le prix a touché 28,610 exact avant de remonter · le niveau optimal ignoré au profit du FVG.</p></div>
+          <div class="panel panel--accent"><h4>Erreur #5 · Confiance dans le setup</h4><p>Modèle Unicorn correctement identifié (displacement + FVG + Breaker) mais exécution hésitante · un setup identifié et validé doit être exécuté sans doute.</p></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>Règle à graver</h4>
+          Un résultat positif ne valide pas un mauvais process. Le sizing est fixe :
+          <strong>3 contrats, toujours, indépendamment du P/L précédent.</strong> Un stop loss ne justifie jamais
+          d'augmenter la position suivante. Et une fois dans un trade valide, laisser le prix aller au TP —
+          la sortie anticipée sous pression émotionnelle est aussi une erreur.
+        </div>
+
+        <h3>Post-market · Analyse du setup</h3>
+        <div class="grid-2">
+          <div class="panel panel--green">
+            <h4>PDA optimal · GAP ~28,640 (non utilisé)</h4>
+            <p>Premier PDA · niveau préféré · Low du jour : 28,610 → le GAP a capturé le bas exact.
+            Un ordre limite ici aurait donné l'entrée optimale avec le meilleur R:R.</p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>Unicorn Model · FVG + Breaker ~28,760–28,800 (utilisé)</h4>
+            <p>Displacement → FVG 15min → Breaker Block adjacent. Setup correctement identifié et marqué.
+            Entrée réelle : <span class="num">28,677.75</span> (entre GAP et FVG). Confluence 4H : BISI ~28,300–28,800 = zone Discount complète.</p>
+          </div>
+        </div>
+        <div class="callout callout--green mt">
+          <h4>Confirmation 4H · Structure parfaite</h4>
+          Low 28,610 dans le BISI 4H (Discount ~28,300–28,800) → réaction propre → prix monte à ~29,200 touchant
+          la zone SIBI 4H (label Sierra Chart : 4H SIBI ~29,400). Le trade Discount → Premium s'est exécuté à la perfection.
+          Corps 15min arrêtés pile au 25% du range = confirmation de la validité de la zone d'achat.
+          <strong>Seul problème : l'exécution (sizing × 2, sortie anticipée), pas l'analyse.</strong>
+        </div>
+        <div class="callout mt">
+          <h4>Clôture session · 13:54 ET · prix de retrace</h4>
+          Après avoir touché la zone SIBI 4H (~29,200), le prix retrace vers le Breaker/FVG (~28,712) à la clôture.
+          La structure reste bullish tant que le GAP ~28,640 tient. Sierra Chart affiche <span class="num">Trade: 3@28,907.25</span> —
+          potentiel setup short depuis la zone Premium, à confirmer. Session journalisée fermée.
+        </div>
+
+        <h3>Leçons de session</h3>
+        <div class="grid-2">
+          <div class="panel panel--accent">
+            <h4>Patience</h4>
+            <p>Attendre le GAP ~28,640 au lieu de s'ajuster sur le FVG. Attendre que le prix arrive au TP au lieu de fermer
+            sous pression. La structure était correcte — c'est le temps qui manquait.</p>
+          </div>
+          <div class="panel panel--accent">
+            <h4>Suivre le plan</h4>
+            <p>Quand le plan est bien construit en pré-marché — niveaux identifiés, ordres limites posés — il n'y a plus de
+            décision à prendre en temps réel. La décision est déjà prise. Réagir aux émotions, c'est abandonner le plan.</p>
+          </div>
+        </div>`
+    },
+
+    /* ---------------- 9 JUIN ---------------- */
+    {
+      date: "9 juin 2026", status: "closed", statusLabel: "Clôturée",
+      pl: "+$13,230", plSub: "2 Loss · 1 Win (plan initial)",
+      html: `
+        <h3>Analyse des erreurs</h3>
+        <div class="grid-3">
+          <div class="panel panel--red"><h4>Erreur #1</h4><p>Changement de biais en cours de session London → biais bearish abandonné.</p></div>
+          <div class="panel panel--red"><h4>Erreur #2</h4><p>Deux trades invalidés manuellement · impatience · process non respecté.</p></div>
+          <div class="panel panel--red"><h4>Erreur #3</h4><p>Entrée trop haute dans le range → mauvais R:R · trop proche du 50% et au-dessus.</p></div>
+        </div>
+        <div class="callout mt">
+          Le trade gagnant de la journée est celui qui a exécuté le <strong>plan initial</strong> (BISI 1H → target SIBI 4H atteint).
+          Les deux pertes viennent de l'abandon du plan. Détail des trades dans la Vue d'ensemble.
+        </div>`
+    }
+  ],
+
+  rules: [
+    { label: "Principe fondamental", text: "Un trader ICT ne réagit pas au prix — il anticipe le prix." },
+    { label: "No revenge trading", critical: true, text: "Sizing fixe : 3 contrats toujours. Un stop loss ne justifie jamais d'augmenter la position suivante. Le résultat ne valide pas le process." },
+    { label: "Invalidation OB", text: "Bougie CLOSE en dessous de 50% de l'OB → trade invalidé. Jamais sur la mèche." },
+    { label: "Premium / Discount (PDA)", text: "Dans un PDA : en dessous du 50% = Premium · au-dessus = Discount. Logique inversée vs range." },
+    { label: "Gestion des partiels", text: "Partiel → SL immédiat à BE. Stop dynamique : sous lower high, niveau OB, ou displacement." },
+    { label: "News (8:30 ET)", text: "Entrée sur limit order uniquement — spike trop rapide pour confirmation LTF." },
+    { label: "SMT Panel NQ", text: "YM / ES / NQ (tradés) · NVDA (primaire, non tradé) · AAPL (secondaire, non tradé)." },
+    { label: "Contrat dominant", text: "Toujours trader le contrat avec le plus de volume. Roll NQM26 → NQU26 vers le 17–18 juin." },
+    { label: "Framework range", text: "0% SSL · 25% best buys · 50% EQL · 75% best sells · 100% BSL." },
+    { label: "Modèle Unicorn (ICT)", text: "Displacement → FVG créé → prix revient dans le FVG → Breaker Block à l'intérieur ou adjacent. Confluence FVG + Breaker = setup à exécuter sans hésitation." },
+    { label: "Hiérarchie des PDAs · Zone Discount", text: "Priorité 1 : GAP (premier PDA, bottom) · Priorité 2 : FVG/Unicorn · Priorité 3 : OB. Poser un ordre limite à chaque niveau dès la planification pré-marché." },
+    { label: "Volume Imbalance · Effet aimant", text: "Tant qu'un corps de bougie ne traverse pas le Volume Imbalance, il agit comme un aimant. Seul un corps (jamais une mèche) qui le traverse en entier le neutralise." },
+    { label: "Macro ICT · Fenêtre algorithmique", text: "Toutes les heures, entre :50 et :10 (ex : 7:50–8:10, 9:50–10:10…), l'algorithme prend de la liquidité ou atteint une efficience (FVG, SSL/BSL). Run-Stop-Run = pattern typique. Instrument préféré : ES (plus propre que NQ)." },
+    { label: "Kill Zones · Haute probabilité", text: "London KZ : 2h–5h ET · NY AM : 8h30–11h ET · London Close : 10h–12h ET. Un retour dans un FVG pendant une Kill Zone est une confluence ICT forte — l'algorithme agit à heures précises, pas au hasard." }
+  ],
+
+  /* ---- Erreurs documentées (semaine du 9–13 juin) ---- */
+  weeklyErrors: [
+    { type: "critical", title: "Stop non structurel",
+      occurrences: 2, days: "12 juin T1 · T2",
+      description: "Stop Sierra par défaut (T1) ou serré sans référence structurelle (T2) → sorti sur le sweep avant que le prix reparte. Setup valide dans les deux cas, erreur purement mécanique.",
+      rule: "Désactiver le stop Sierra avant toute entrée. Placer manuellement sous le low 15min / OB / FVG. Aucune exception.",
+      costStr: "−$3,870" },
+    { type: "critical", title: "Revenge sizing",
+      occurrences: 1, days: "10 juin T2",
+      description: "6 contrats au lieu de 3 après le SL de T1. Trade gagnant cette fois — ce qui est dangereux car ça renforce le comportement. Un SL avec 6 contrats = perte catastrophique.",
+      rule: "Taille fixe = 3 contrats. Ne jamais modifier le sizing en réaction à un résultat précédent.",
+      costStr: "Risque ×2 (trade gagnant)" },
+    { type: "warning", title: "Entrée hors Kill Zone",
+      occurrences: 1, days: "12 juin T2",
+      description: "Entrée avant London KZ sans fermeture de bougie 15min dans le PDA. Exposé au bruit pré-London, stop touché facilement.",
+      rule: "Test obligatoire : KZ active ? + Bougie 15min fermée dans PDA ? Si NON à l'un des deux → pas d'entrée.",
+      costStr: "inclus dans −$2,985 T2" },
+    { type: "warning", title: "Biais changé en cours de session",
+      occurrences: 1, days: "9 juin T1",
+      description: "OB invalidé en live → sorti trop tôt → biais retourné. Résultat : perte T1 puis re-entrée T2 trop haute dans le range (mauvais R:R).",
+      rule: "Le biais pré-marché tient jusqu'à une close 15min structurelle hors du range. Pas de décision émotionnelle intra-session.",
+      costStr: "pertes 9 juin" },
+    { type: "warning", title: "Sortie anticipée",
+      occurrences: 1, days: "10 juin T2",
+      description: "Clôturé avant le TP final — le BSL ~29,900 a été atteint après la sortie. Plan correct, exécution impatiente.",
+      rule: "Sell limits posées sur les TPs du plan → ne pas les modifier à la baisse. Laisser le setup se dérouler jusqu'au bout.",
+      costStr: "manque à gagner (non quantifié)" }
+  ],
+
+  /* ---- Compliance règles ICT (semaine 9–13 juin · 6 sessions) ---- */
+  ruleCompliance: [
+    { label: "Stop structurel (sous OB/FVG/15min)", violations: 2, ok: 4 },
+    { label: "Kill Zone respectée (London / NY AM)", violations: 1, ok: 5 },
+    { label: "Bougie 15min fermée avant entrée",     violations: 1, ok: 5 },
+    { label: "Sizing fixe (3 contrats)",              violations: 1, ok: 5 },
+    { label: "Biais pré-marché tenu",                 violations: 1, ok: 5 },
+    { label: "TP atteint sans sortie anticipée",      violations: 1, ok: 4 },
+    { label: "News/IPO = ordres limites uniquement",  violations: 0, ok: 6 }
+  ],
+
+  /* ---- Stats hebdo pour Performance tab ---- */
+  weeklyStats: {
+    week: "9–13 juin 2026",
+    sessionCount: 5,
+    setupPerf: [
+      { setup: "OB 15min",       trades: 3, wins: 2, losses: 1, totalPL: 12050 },
+      { setup: "Unicorn",        trades: 2, wins: 2, losses: 0, totalPL: 11868 },
+      { setup: "SMT Divergence", trades: 1, wins: 1, losses: 0, totalPL: 12075 },
+      { setup: "FVG + BISI",     trades: 1, wins: 1, losses: 0, totalPL: 0     },
+      { setup: "SSL Sweep",      trades: 2, wins: 0, losses: 2, totalPL: -3870 },
+      { setup: "BISI 15min",     trades: 1, wins: 0, losses: 1, totalPL: -5010 },
+      { setup: "Breaker Block",  trades: 1, wins: 0, losses: 1, totalPL: 0     }
+    ],
+    kzPerf: [
+      { kz: "London",   trades: 4, wins: 3, losses: 1 },
+      { kz: "NY AM",    trades: 5, wins: 3, losses: 2 },
+      { kz: "Hors KZ",  trades: 2, wins: 0, losses: 2 }
+    ],
+    moodPerf: [
+      { mood: "Confiant",  trades: 3, wins: 3, losses: 0 },
+      { mood: "Neutre",    trades: 3, wins: 2, losses: 1 },
+      { mood: "Impatient", trades: 3, wins: 0, losses: 3 },
+      { mood: "FOMO",      trades: 1, wins: 0, losses: 1 },
+      { mood: "Revenge",   trades: 1, wins: 1, losses: 0 }
+    ],
+    processStreak: {
+      current: 1,
+      longest: 2,
+      detail: [
+        { date: "08 juin", clean: true  },
+        { date: "09 juin T1", clean: false },
+        { date: "09 juin T2", clean: false },
+        { date: "09 juin T3", clean: true  },
+        { date: "10 juin T1", clean: true  },
+        { date: "10 juin T2", clean: false },
+        { date: "11 juin ES", clean: true  },
+        { date: "11 juin NQ", clean: true  },
+        { date: "12 juin T1", clean: false },
+        { date: "12 juin T2", clean: false },
+        { date: "12 juin T3", clean: true  }
+      ]
+    },
+    violationEvolution: [
+      { session: "08 juin", violations: 0 },
+      { session: "09 juin", violations: 2 },
+      { session: "10 juin", violations: 1 },
+      { session: "11 juin", violations: 0 },
+      { session: "12 juin", violations: 2 }
+    ]
+  }
+};
+
+/* =====================================================================
+   RENDU — tout est calculé depuis DATA, aucun chiffre dupliqué.
+   ===================================================================== */
+const fmtUsd = n => (n < 0 ? "−$" : "+$") + Math.abs(n).toLocaleString("en-US");
+
+/* --- Calculs de base --- */
+const eq = DATA.equity;
+const cumPl = eq[eq.length - 1].cum;
+const dayPl = eq.length > 1 ? cumPl - eq[eq.length - 2].cum : cumPl;
+const wins        = DATA.trades.filter(t => t.result === "Win").length;
+const losses      = DATA.trades.filter(t => t.result === "SL Hit").length;
+const closedTrades = wins + losses;
+const winRate     = closedTrades ? Math.round(100 * wins / closedTrades) : 0;
+
+/* --- Parseur P/L --- */
+function parsePL(t) {
+  if (!t.pl || t.pl === "—" || t.pl === "+" || t.pl === "−") return null;
+  const str = t.pl.replace(/[^\d.]/g, "");
+  if (!str) return null;
+  const val = parseFloat(str.replace(/,/g, ""));
+  return t.plClass === "neg" ? -val : val;
+}
+const winPLs  = DATA.trades.filter(t => t.result === "Win").map(parsePL).filter(v => v !== null);
+const lossPLs = DATA.trades.filter(t => t.result === "SL Hit").map(parsePL).filter(v => v !== null);
+const avgWin  = winPLs.length  ? winPLs.reduce((a,b) => a+b, 0) / winPLs.length : 0;
+const avgLoss = lossPLs.length ? Math.abs(lossPLs.reduce((a,b) => a+b, 0) / lossPLs.length) : 0;
+const winRateD = closedTrades ? wins / closedTrades : 0;
+const expectancy = winRateD * avgWin - (1 - winRateD) * avgLoss;
+const totalWins   = winPLs.reduce((a,b) => a+b, 0);
+const totalLosses = Math.abs(lossPLs.reduce((a,b) => a+b, 0));
+const profitFactor = totalLosses > 0 ? totalWins / totalLosses : 0;
+
+/* --- KPIs --- */
+document.getElementById("period-label").textContent = DATA.meta.periodStart + " → " + DATA.meta.periodEnd;
+document.getElementById("kpis").innerHTML = `
+  <div class="kpi"><div class="label">P/L cumulé</div><div class="value num pos">${fmtUsd(cumPl)}</div><div class="sub">Depuis le ${DATA.meta.periodStart}</div></div>
+  <div class="kpi"><div class="label">P/L dernière session</div><div class="value num pos">${fmtUsd(dayPl)}</div><div class="sub">${eq[eq.length - 1].date} 2026</div></div>
+  <div class="kpi"><div class="label">Meilleur trade</div><div class="value num pos">${DATA.bestTrade.value}</div><div class="sub">${DATA.bestTrade.sub}</div></div>
+  <div class="kpi"><div class="label">Win rate</div><div class="value num">${winRate}%</div><div class="sub">${wins}W / ${losses}L · ${closedTrades} trades clôturés</div></div>
+  <div class="kpi"><div class="label">Expectancy</div><div class="value num ${expectancy >= 0 ? "pos" : "neg"}">${expectancy >= 0 ? "+" : "−"}$${Math.round(Math.abs(expectancy)).toLocaleString("en-US")}</div><div class="sub">par trade · WR ${winRate}%</div></div>
+  <div class="kpi"><div class="label">Profit Factor</div><div class="value num ${profitFactor >= 1.5 ? "pos" : profitFactor >= 1 ? "acc" : "neg"}">${profitFactor.toFixed(2)}×</div><div class="sub">gains totaux / pertes totales</div></div>
+  <div class="kpi"><div class="label">Total fills</div><div class="value num">${DATA.meta.fills}</div><div class="sub">Sierra · Trade Activity Log</div></div>
+`;
+
+/* --- Stats section --- */
+const statsEl = document.getElementById("stats-section");
+if (statsEl) {
+  statsEl.innerHTML = `
+  <div class="section">
+    <h2>Stats période · ${DATA.meta.periodStart} → ${DATA.meta.periodEnd}</h2>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="lbl">Gain moyen / trade</div><div class="val num pos">+$${Math.round(avgWin).toLocaleString("en-US")}</div><div class="sub">${winPLs.length} trade${winPLs.length>1?"s":""} gagnant${winPLs.length>1?"s":""}</div></div>
+      <div class="stat-card"><div class="lbl">Perte moyenne / trade</div><div class="val num neg">−$${Math.round(avgLoss).toLocaleString("en-US")}</div><div class="sub">${lossPLs.length} SL hit${lossPLs.length>1?"s":""}</div></div>
+      <div class="stat-card"><div class="lbl">Expectancy</div><div class="val num ${expectancy>=0?"pos":"neg"}">${expectancy>=0?"+":"−"}$${Math.round(Math.abs(expectancy)).toLocaleString("en-US")}</div><div class="sub">par trade · ${winRate}% WR</div></div>
+      <div class="stat-card"><div class="lbl">Profit Factor</div><div class="val num ${profitFactor>=1.5?"pos":profitFactor>=1?"acc":"neg"}">${profitFactor.toFixed(2)}×</div><div class="sub">$${Math.round(totalWins).toLocaleString("en-US")} gains / $${Math.round(totalLosses).toLocaleString("en-US")} pertes</div></div>
+      <div class="stat-card"><div class="lbl">Risque max engagé</div><div class="val num neg">${fmtUsd(DATA.meta.riskMaxDay.value)}</div><div class="sub">${DATA.meta.riskMaxDay.sub}</div></div>
+    </div>
+  </div>`;
+}
+
+/* --- Filter bar --- */
+const instruments = [...new Set(DATA.trades.map(t => t.instr))];
+const filterEl = document.getElementById("trade-filters");
+if (filterEl) {
+  filterEl.innerHTML = `
+    <span class="filter-lbl">Filtre :</span>
+    <button class="filter-btn active" data-filter="all">Tous</button>
+    ${instruments.map(i => `<button class="filter-btn" data-filter="${i}">${i}</button>`).join("")}
+    <button class="filter-btn" data-filter="Win">✅ Win</button>
+    <button class="filter-btn" data-filter="SL Hit">❌ SL Hit</button>
+  `;
+  filterEl.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterEl.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const f = btn.dataset.filter;
+      document.querySelectorAll(".trade-row").forEach(row => {
+        const i = parseInt(row.dataset.i);
+        const t = DATA.trades[i];
+        const show = f === "all" || t.instr === f || t.result === f;
+        const detail = row.nextElementSibling;
+        row.style.display = show ? "" : "none";
+        if (detail) {
+          if (!show) { detail.hidden = true; row.classList.remove("open"); row.setAttribute("aria-expanded", false); }
+          detail.style.display = show ? "" : "none";
+        }
+      });
+    });
+  });
+}
+
+/* --- Trade log avec lignes dépliables --- */
+const dirTag = d => `<span class="tag ${d === "Long" ? "tag-long" : "tag-short"}">${d}</span>`;
+const resTag = r => `<span class="tag ${r === "Win" ? "tag-win" : "tag-loss"}">${r}</span>`;
+function tradeMetaHtml(t) {
+  if (t.mood === undefined) return "";
+  return '<br><span style="margin-top:6px;display:inline-flex;gap:12px;flex-wrap:wrap;font-size:12px;">' +
+    '<span><strong>Setup type :</strong> ' + (t.setupType||"—") + '</span>' +
+    '<span><strong>Kill Zone :</strong> ' + (t.kz||"—") + '</span>' +
+    '<span><strong>Mood :</strong> <em>' + (t.mood||"—") + '</em></span>' +
+    '<span><strong>Process :</strong> <span class="' + (t.processClean ? "pos" : "neg") + '">' + (t.processClean ? "✅ Propre" : "❌ Impur") + '</span></span>' +
+    '</span>';
+}
+
+document.getElementById("trade-log").innerHTML = DATA.trades.map((t, i) => `
+  <tr class="trade-row" data-i="${i}" tabindex="0" aria-expanded="false">
+    <td><span class="caret">▶</span></td>
+    <td>${t.date}</td>
+    <td>${t.instr}</td>
+    <td>${dirTag(t.dir)}</td>
+    <td class="r num">${t.entry}</td>
+    <td class="r num">${t.exit}</td>
+    <td class="r num">${t.rr}</td>
+    <td class="r num ${t.plClass}">${t.pl}</td>
+    <td>${resTag(t.result)}</td>
+  </tr>
+  <tr class="trade-detail" hidden>
+    <td colspan="9"><div class="detail-inner">
+      <strong>Setup :</strong> ${t.setup}<br>
+      <strong>Notes :</strong> ${t.notes}${tradeMetaHtml(t)}
+    </div></td>
+  </tr>
+`).join("");
+
+document.querySelectorAll(".trade-row").forEach(row => {
+  const toggle = () => {
+    const detail = row.nextElementSibling;
+    const open = detail.hidden;
+    detail.hidden = !open;
+    row.classList.toggle("open", open);
+    row.setAttribute("aria-expanded", open);
+  };
+  row.addEventListener("click", toggle);
+  row.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+});
+
+/* --- Sessions (accordéon, la plus récente ouverte) --- */
+document.getElementById("sessions").innerHTML = DATA.sessions.map((s, i) => `
+  <details class="session" ${i === 0 ? "open" : ""}>
+    <summary class="session-head">
+      <div class="session-id">
+        <span class="session-date">${s.date}</span>
+        <span class="session-status session-status--${s.status === "live" ? "live" : "closed"}">${s.statusLabel}</span>
+      </div>
+      <div class="session-pl num ${s.pl ? (s.pl.startsWith('+') ? "pos" : "neg") : ""}">${s.pl ?? "—"}<span class="s">${s.plSub}</span></div>
+    </summary>
+    <div class="session-body">${s.html}</div>
+  </details>
+`).join("");
+
+/* --- Règles --- */
+document.getElementById("rules").innerHTML = DATA.rules.map(r => `
+  <div class="rule ${r.critical ? "rule--critical" : ""}"><h4>${r.label}</h4><p>${r.text}</p></div>
+`).join("");
+
+/* --- Erreurs tab --- */
+const errorEl = document.getElementById("error-tracker");
+if (errorEl && DATA.weeklyErrors) {
+  const cards = DATA.weeklyErrors.map(e => `
+    <div class="error-card ${e.type}">
+      <div class="ec-head">
+        <div class="ec-title">${e.type === "critical" ? "🔴" : "🟡"} ${e.title}</div>
+        <span class="ec-badge">${e.occurrences}× · ${e.days}</span>
+      </div>
+      <div class="ec-body">${e.description}</div>
+      <div class="ec-rule"><strong>✅ Règle correcte</strong>${e.rule}</div>
+      <div class="ec-cost">Coût : <strong>${e.costStr}</strong></div>
+    </div>`).join("");
+
+  const rtRows = (DATA.ruleCompliance || []).map(r => {
+    const total = r.violations + r.ok;
+    const pct   = total > 0 ? Math.round(r.ok / total * 100) : 100;
+    const cls   = pct === 100 ? "ok" : pct >= 67 ? "warn" : "bad";
+    const label = pct === 100 ? "✅ 0 violation" : `${r.violations} violation${r.violations > 1 ? "s" : ""}`;
+    return `<div class="rt-item">
+      <div class="rt-label">${r.label}</div>
+      <div class="rt-bar"><div class="rt-fill ${cls}" style="width:${pct}%"></div></div>
+      <div class="rt-badge ${cls}">${label}</div>
+    </div>`;
+  }).join("");
+
+  const critical = DATA.weeklyErrors.filter(e => e.type === "critical").length;
+  const warnings = DATA.weeklyErrors.filter(e => e.type === "warning").length;
+  const perfect  = (DATA.ruleCompliance || []).filter(r => r.violations === 0).length;
+
+  errorEl.innerHTML = `
+  <div class="kpis" style="margin-bottom:18px;">
+    <div class="kpi"><div class="label">Erreurs critiques</div><div class="value num neg">${critical}</div><div class="sub">À corriger en priorité absolue</div></div>
+    <div class="kpi"><div class="label">Avertissements</div><div class="value num acc">${warnings}</div><div class="sub">À éliminer progressivement</div></div>
+    <div class="kpi"><div class="label">Règles respectées</div><div class="value num pos">${perfect} / ${(DATA.ruleCompliance||[]).length}</div><div class="sub">Aucune violation cette semaine</div></div>
+    <div class="kpi"><div class="label">Pattern dominant</div><div class="value" style="font-size:14px;font-weight:600;color:var(--red)">Stop défaut</div><div class="sub">2 violations · coût −$3,870</div></div>
+  </div>
+  <div class="section">
+    <h2>Erreurs documentées · Semaine du ${DATA.meta.periodStart} → ${DATA.meta.periodEnd}</h2>
+    <div class="error-grid">${cards}</div>
+  </div>
+  <div class="section" style="margin-top:18px;">
+    <h2>Compliance règles ICT · ${(DATA.ruleCompliance||[]).length} règles trackées</h2>
+    <div class="rule-tracker">${rtRows}</div>
+  </div>`;
+}
+
+/* --- Footer (généré, une seule source) --- */
+document.getElementById("footer").textContent =
+  `ICT Trading Journal · NQM26 / ESM26 · ${DATA.meta.account} · ` +
+  `Dernière session : ${eq[eq.length - 1].date} 2026 · Jour ${fmtUsd(dayPl)} · Cumulé ${fmtUsd(cumPl)}`;
+
+/* --- Onglets --- */
+const tabs = document.querySelectorAll(".tab");
+tabs.forEach(tab => tab.addEventListener("click", () => {
+  tabs.forEach(t => t.setAttribute("aria-selected", t === tab));
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.getElementById("view-" + tab.dataset.view).classList.add("active");
+}));
+
+/* --- Courbe P/L (fallback natif si Chart.js indisponible : fichier utilisable hors-ligne) --- */
+function drawFallbackChart(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.parentElement.clientWidth, h = canvas.parentElement.clientHeight;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  canvas.style.width = w + "px"; canvas.style.height = h + "px";
+  const c = canvas.getContext("2d"); c.scale(dpr, dpr);
+  const pad = { l: 52, r: 16, t: 12, b: 28 };
+  const xs = i => pad.l + i * (w - pad.l - pad.r) / (eq.length - 1);
+  const max = Math.max(...eq.map(p => p.cum)) * 1.08;
+  const ys = v => pad.t + (1 - v / max) * (h - pad.t - pad.b);
+  c.strokeStyle = "rgba(20,28,45,0.06)"; c.fillStyle = "#66708a";
+  c.font = "11px 'IBM Plex Mono', monospace"; c.textAlign = "right";
+  for (let g = 0; g <= 4; g++) {
+    const v = max * g / 4, y = ys(v);
+    c.beginPath(); c.moveTo(pad.l, y); c.lineTo(w - pad.r, y); c.stroke();
+    c.fillText("$" + Math.round(v / 1000) + "k", pad.l - 8, y + 4);
+  }
+  c.textAlign = "center";
+  eq.forEach((p, i) => c.fillText(p.date, xs(i), h - 8));
+  c.beginPath();
+  eq.forEach((p, i) => i ? c.lineTo(xs(i), ys(p.cum)) : c.moveTo(xs(i), ys(p.cum)));
+  c.strokeStyle = "#0e9f6e"; c.lineWidth = 2; c.stroke();
+  c.lineTo(xs(eq.length - 1), ys(0)); c.lineTo(xs(0), ys(0)); c.closePath();
+  c.fillStyle = "rgba(14,159,110,0.07)"; c.fill();
+  c.fillStyle = "#0e9f6e";
+  eq.forEach((p, i) => { c.beginPath(); c.arc(xs(i), ys(p.cum), 4, 0, 7); c.fill(); });
+}
+
+const plCanvas = document.getElementById("plChart");
+if (typeof Chart !== "undefined") {
+  new Chart(plCanvas.getContext("2d"), {
+  type: "line",
+  data: {
+    labels: eq.map(p => p.date),
+    datasets: [{
+      data: eq.map(p => p.cum),
+      borderColor: "#0e9f6e",
+      backgroundColor: "rgba(14,159,110,0.07)",
+      borderWidth: 2,
+      pointBackgroundColor: "#0e9f6e",
+      pointRadius: 4,
+      fill: true,
+      tension: 0.3
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => {
+        const i = c.dataIndex;
+        const delta = i === 0 ? c.parsed.y : c.parsed.y - eq[i-1].cum;
+        return [`Cumulé : $${c.parsed.y.toLocaleString("en-US")}`, `Journée : ${delta >= 0 ? "+" : ""}$${delta.toLocaleString("en-US")}`];
+      }}}
+    },
+    scales: {
+      x: { ticks: { color: "#66708a", font: { size: 11, family: "'IBM Plex Mono', monospace" } }, grid: { color: "rgba(20,28,45,0.06)" }, border: { color: "rgba(20,28,45,0.12)" } },
+      y: { ticks: { color: "#66708a", font: { size: 11, family: "'IBM Plex Mono', monospace" }, callback: v => "$" + (v / 1000).toFixed(0) + "k" }, grid: { color: "rgba(20,28,45,0.06)" }, border: { color: "rgba(20,28,45,0.12)" } }
+    }
+  }
+  });
+} else {
+  drawFallbackChart(plCanvas);
+  window.addEventListener("resize", () => drawFallbackChart(plCanvas));
+}
+
+/* --- Bar chart P/L journalier --- */
+const dailyCanvas = document.getElementById("dailyChart");
+if (dailyCanvas && typeof Chart !== "undefined") {
+  const dailyPL     = eq.map((p, i) => i === 0 ? p.cum : p.cum - eq[i-1].cum);
+  const barColors   = dailyPL.map(v => v >= 0 ? "rgba(14,159,110,0.72)" : "rgba(210,59,75,0.72)");
+  const barBorders  = dailyPL.map(v => v >= 0 ? "#0e9f6e" : "#d23b4b");
+  new Chart(dailyCanvas.getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: eq.map(p => p.date),
+      datasets: [{ data: dailyPL, backgroundColor: barColors, borderColor: barBorders, borderWidth: 1, borderRadius: 4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => `${c.parsed.y >= 0 ? "+" : ""}$${Math.round(c.parsed.y).toLocaleString("en-US")}` }}
+      },
+      scales: {
+        x: { ticks: { color: "#66708a", font: { size: 11, family: "'IBM Plex Mono', monospace" }}, grid: { color: "rgba(20,28,45,0.06)" }, border: { color: "rgba(20,28,45,0.12)" }},
+        y: { ticks: { color: "#66708a", font: { size: 11, family: "'IBM Plex Mono', monospace" }, callback: v => (v >= 0 ? "+" : "") + "$" + (v/1000).toFixed(0) + "k" }, grid: { color: "rgba(20,28,45,0.06)" }, border: { color: "rgba(20,28,45,0.12)" }}
+      }
+    }
+  });
+}
+
+/* --- Performance tab --- */
+const perfEl = document.getElementById("perf-content");
+if (perfEl && DATA.weeklyStats) {
+  const ws = DATA.weeklyStats;
+
+  // Setup performance table
+  const setupRows = ws.setupPerf.map(s => {
+    const total = s.wins + s.losses;
+    const wr = total ? Math.round(100 * s.wins / total) : 0;
+    const cls = wr >= 67 ? "good" : wr >= 40 ? "mid" : "bad";
+    const plStr = s.totalPL !== 0 ? (s.totalPL > 0 ? `<span class="pos num">+$${s.totalPL.toLocaleString("en-US")}</span>` : `<span class="neg num">−$${Math.abs(s.totalPL).toLocaleString("en-US")}</span>`) : "<span class='muted'>—</span>";
+    return `<tr>
+      <td><strong>${s.setup}</strong></td>
+      <td class="num" style="text-align:center">${s.trades}</td>
+      <td><div class="wr-bar-wrap"><div class="wr-bar"><div class="wr-fill ${cls}" style="width:${wr}%"></div></div><span class="num" style="font-size:12px;min-width:34px">${wr}%</span></div></td>
+      <td>${plStr}</td>
+    </tr>`;
+  }).join("");
+
+  // KZ performance table
+  const kzRows = ws.kzPerf.map(k => {
+    const total = k.wins + k.losses;
+    const wr = total ? Math.round(100 * k.wins / total) : 0;
+    const cls = wr >= 67 ? "good" : wr >= 40 ? "mid" : "bad";
+    const kzIcon = k.kz === "London" ? "🇬🇧" : k.kz === "NY AM" ? "🇺🇸" : "⚠️";
+    return `<tr>
+      <td><strong>${kzIcon} ${k.kz}</strong></td>
+      <td class="num" style="text-align:center">${k.trades}</td>
+      <td><div class="wr-bar-wrap"><div class="wr-bar"><div class="wr-fill ${cls}" style="width:${wr}%"></div></div><span class="num" style="font-size:12px;min-width:34px">${wr}%</span></div></td>
+      <td class="num" style="text-align:center">${k.wins}W / ${k.losses}L</td>
+    </tr>`;
+  }).join("");
+
+  // Streak dots
+  const dots = ws.processStreak.detail.map(d =>
+    `<div class="streak-dot ${d.clean ? "clean" : "dirty"}" title="${d.date}">${d.clean ? "✓" : "✗"}</div>`
+  ).join("");
+
+  // Mood bars
+  const moodColors = { "Confiant": "var(--green)", "Neutre": "#4f8ef7", "Impatient": "var(--red)", "FOMO": "var(--red)", "Revenge": "#9b6dff" };
+  const moodRows = ws.moodPerf.map(m => {
+    const total = m.wins + m.losses;
+    const wr = total ? Math.round(100 * m.wins / total) : 0;
+    const color = moodColors[m.mood] || "var(--muted)";
+    return `<div class="mood-row">
+      <div class="mood-name">${m.mood}</div>
+      <div class="mood-bar-wrap"><div class="mood-fill" style="width:${wr}%;background:${color}"></div></div>
+      <div class="mood-meta">${m.wins}W/${m.losses}L · ${wr}%</div>
+    </div>`;
+  }).join("");
+
+  // Violation evolution bars
+  const maxV = Math.max(...ws.violationEvolution.map(v => v.violations), 1);
+  const volBars = ws.violationEvolution.map(v => {
+    const h = Math.max(8, Math.round(v.violations / maxV * 80));
+    const cls = v.violations === 0 ? "zero" : v.violations === 1 ? "low" : "high";
+    const sess = v.session.replace(" juin","j");
+    return `<div class="vol-bar-col">
+      <div class="vol-count ${v.violations === 0 ? "pos" : v.violations >= 2 ? "neg" : "acc"}">${v.violations}</div>
+      <div class="vol-bar ${cls}" style="height:${h}px"></div>
+      <div class="vol-lbl">${sess}</div>
+    </div>`;
+  }).join("");
+
+  // Best setup by WR (min 2 trades) then by totalPL
+  const bestSetup = ws.setupPerf
+    .filter(s => s.trades >= 1 && s.wins > 0)
+    .sort((a,b) => {
+      const wrA = a.wins/a.trades, wrB = b.wins/b.trades;
+      if (wrB !== wrA) return wrB - wrA;
+      return (b.totalPL||0) - (a.totalPL||0);
+    })[0] || ws.setupPerf[0];
+
+  // Streak KPI
+  const cleanTrades = ws.processStreak.detail.filter(d => d.clean).length;
+  const processRate = Math.round(100 * cleanTrades / ws.processStreak.detail.length);
+
+  perfEl.innerHTML = `
+  <div class="kpis" style="margin-bottom:18px;">
+    <div class="kpi">
+      <div class="label">Process propre</div>
+      <div class="value num ${processRate >= 60 ? "pos" : "acc"}">${processRate}%</div>
+      <div class="sub">${cleanTrades} / ${ws.processStreak.detail.length} trades</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Série actuelle</div>
+      <div class="value num pos">${ws.processStreak.current} ✓</div>
+      <div class="sub">trade(s) process propre consécutifs</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Meilleure série</div>
+      <div class="value num acc">${ws.processStreak.longest}</div>
+      <div class="sub">consécutifs cette semaine</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Setup le plus fiable</div>
+      <div class="value" style="font-size:14px;font-weight:600;color:var(--green)">${bestSetup.setup}</div>
+      <div class="sub">${bestSetup.wins}/${bestSetup.trades} win · ${Math.round(100*bestSetup.wins/bestSetup.trades)}% WR</div>
+    </div>
+  </div>
+
+  <div class="perf-grid">
+    <div class="section">
+      <h2>Performance par Setup</h2>
+      <table class="perf-table">
+        <thead><tr><th>Setup</th><th style="text-align:center">Trades</th><th>Win Rate</th><th>P/L total</th></tr></thead>
+        <tbody>${setupRows}</tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Performance par Kill Zone</h2>
+      <table class="perf-table">
+        <thead><tr><th>Kill Zone</th><th style="text-align:center">Trades</th><th>Win Rate</th><th style="text-align:center">Résultat</th></tr></thead>
+        <tbody>${kzRows}</tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Streak Process Propre</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Chaque trade : ✓ = process respecté (setup + SL structurel + sizing + KZ) · ✗ = violation</p>
+      <div class="streak-row">${dots}</div>
+      <div class="streak-label" style="margin-top:8px;">Série actuelle : <strong>${ws.processStreak.current}</strong> · Meilleure série : <strong>${ws.processStreak.longest}</strong> · Taux global : <strong class="${processRate >= 60 ? "pos" : "acc"}">${processRate}%</strong></div>
+    </div>
+
+    <div class="section">
+      <h2>Analyse par Mood</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Corrélation état émotionnel → résultat trade</p>
+      ${moodRows}
+    </div>
+  </div>
+
+  <div class="section" style="margin-top:18px;">
+    <h2>Évolution violations ICT · Sessions ${ws.week}</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Nombre de règles ICT violées par session (objectif = 0)</p>
+    <div class="vol-bars">${volBars}</div>
+  </div>`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Screenshots temporaires
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+
+# Sierra Chart exports (données brutes, non versionnées)
+*.txt
+TradeStatisticsForCharts*.txt
+
+# PDFs générés (reproductibles depuis le dashboard)
+*.pdf
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*~
+
+# Node / Python si utilisés localement
+node_modules/
+__pycache__/
+*.pyc
+.env
