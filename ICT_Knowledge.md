@@ -30,7 +30,7 @@ Tout setup se construit **avant** le mouvement, pas pendant.
 
 3. **Retracement dans le PDA** (l'OB en priorité) → **entrée en ordre limite**.
 
-4. **Target = 50% du Range 4H** (niveau d'équilibre EQL/pivot).
+4. **Target** — voir section 5 (gestion des targets selon la taille du range).
 
 ### Règle de liquidité épuisée (importante)
 
@@ -62,15 +62,24 @@ ou adjacent.** La confluence **FVG + Breaker** = setup à exécuter sans hésita
 
 ---
 
-## 5. Framework Range (FIB)
+## 5. Framework Range (FIB) + gestion des targets
 
 | Niveau | Rôle |
 |--------|------|
 | 0% | SSL · Stop invalide |
 | 25% | Best buys (zone discount) |
-| 50% | EQL · Pivot · **Target par défaut du sweep** |
-| 75% | Best sells (zone premium) |
-| 100% | BSL · Target haussier complet |
+| 50% | EQL · Pivot · premier objectif |
+| 75% | Best sells (zone premium) · **target préféré de Benjamin** |
+| 100% | BSL · Target complet |
+
+### Gestion des targets (apprise le 13 juin 2026)
+
+- Le **50% du Range n'est en général PAS le TP final** — c'est un premier objectif.
+- **Exception** : si le range est **très grand**, les 50% suffisent largement (le move
+  en absolu est déjà conséquent).
+- **Niveau préféré de Benjamin : 75% du Range Fib.**
+- **Les meilleurs setups se situent entre 25% et 75% du range** — c'est la zone de
+  travail privilégiée (entrées en discount 25%, sorties en premium 75%).
 
 ---
 
@@ -120,4 +129,5 @@ Roll NQM26 → NQU26 vers le 17–18 juin (contrat dominant = plus de volume).
 
 | Date | Source | Concept appris |
 |------|--------|----------------|
-| 13 juin 2026 | Backtest NQM26 15min | Sweep Asian Low avant KZ → OB retracement → Target 50% 4H · Règle FVG consommé par Stop Run |
+| 13 juin 2026 | Backtest NQM26 15min | Sweep Asian Low avant KZ → OB retracement → Target Range · Règle FVG consommé par Stop Run |
+| 13 juin 2026 | Précision targets | 50% rarement le TP final (sauf très grand range) · 75% = niveau préféré · meilleurs setups entre 25% et 75% du range |
