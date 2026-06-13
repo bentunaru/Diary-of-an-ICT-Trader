@@ -1,7 +1,7 @@
-# ICT Knowledge Base — Méthodologie de Benjamin
+# ICT Knowledge Base — Méthodologie du trader
 
 > Document vivant. Enrichi à chaque explication. Sert de référence pour reconnaître
-> les setups de Benjamin sans réexplication, et pour annoter les futurs screenshots.
+> les setups du trader sans réexplication, et pour annoter les futurs screenshots.
 
 ---
 
