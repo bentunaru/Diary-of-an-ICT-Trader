@@ -6,65 +6,7 @@
 <title>Diary of an ICT Trader</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
-/* --- Backtest tab --- */
-const btEl = document.getElementById("backtest-content");
-if (btEl) {
-  if (!DATA.backtests || DATA.backtests.length === 0) {
-    btEl.innerHTML = `
-    <div class="bt-empty">
-      <div class="bt-empty-icon">📊</div>
-      <p><strong>Aucun backtest enregistré pour l'instant.</strong><br>
-      Envoie un screenshot + tes commentaires et je l'ajoute ici.</p>
-    </div>`;
-  } else {
-    const resultLabel = { valid: "✅ Setup valide", invalid: "❌ Setup invalide", neutral: "⚪ Neutre / Mixte" };
-    btEl.innerHTML = DATA.backtests.map(bt => {
-      const imgs = (bt.images || []).map(img => `
-        <div class="bt-img-wrap">
-          <img src="${img.src}" alt="${img.caption||''}" data-caption="${img.caption||''}"
-               onclick="document.getElementById('bt-lightbox-img').src=this.src;
-                        document.getElementById('bt-lightbox').classList.add('open')">
-          ${img.caption ? `<div class="bt-img-caption">${img.caption}</div>` : ''}
-        </div>`).join('');
-
-      const lessons = (bt.lessons || []).map(l =>
-        `<div class="bt-lesson ${l.type||''}"><strong>${l.type === 'pos' ? '✅ Point fort' : l.type === 'neg' ? '❌ Erreur' : '📌 Note'}</strong>${l.text}</div>`
-      ).join('');
-
-      const tags = [
-        bt.instrument ? `<span class="bt-tag">${bt.instrument}</span>` : '',
-        bt.timeframe  ? `<span class="bt-tag">${bt.timeframe}</span>`  : '',
-        bt.setup      ? `<span class="bt-tag">${bt.setup}</span>`      : '',
-        bt.result     ? `<span class="bt-tag ${bt.result}">${resultLabel[bt.result]||bt.result}</span>` : '',
-      ].filter(Boolean).join('');
-
-      return `
-      <div class="bt-entry">
-        <div class="bt-entry-head">
-          <div class="bt-entry-date">📅 ${bt.date}</div>
-          <div class="bt-entry-meta">${tags}</div>
-        </div>
-        <div class="bt-body">
-          ${bt.title ? `<div class="bt-title">${bt.title}</div>` : ''}
-          ${bt.comment ? `<div class="bt-comment ${bt.result||''}">${bt.comment}</div>` : ''}
-          ${lessons ? `<div class="bt-lessons">${lessons}</div>` : ''}
-          ${imgs ? `<div class="bt-gallery">${imgs}</div>` : ''}
-        </div>
-      </div>`;
-    }).join('');
-  }
-}
-
-/* Lightbox close */
-const lbClose = document.getElementById("bt-lightbox-close");
-const lb      = document.getElementById("bt-lightbox");
-if (lbClose && lb) {
-  lbClose.addEventListener("click", () => lb.classList.remove("open"));
-  lb.addEventListener("click", e => { if (e.target === lb) lb.classList.remove("open"); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("open"); });
-}
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   :root {
     --bg: #f5f6f8;
@@ -1814,6 +1756,64 @@ if (perfEl && DATA.weeklyStats) {
     <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Nombre de règles ICT violées par session (objectif = 0)</p>
     <div class="vol-bars">${volBars}</div>
   </div>`;
+}
+
+/* --- Backtest tab --- */
+const btEl = document.getElementById("backtest-content");
+if (btEl) {
+  if (!DATA.backtests || DATA.backtests.length === 0) {
+    btEl.innerHTML = `
+    <div class="bt-empty">
+      <div class="bt-empty-icon">📊</div>
+      <p><strong>Aucun backtest enregistré pour l'instant.</strong><br>
+      Envoie un screenshot + tes commentaires et je l'ajoute ici.</p>
+    </div>`;
+  } else {
+    const resultLabel = { valid: "✅ Setup valide", invalid: "❌ Setup invalide", neutral: "⚪ Neutre / Mixte" };
+    btEl.innerHTML = DATA.backtests.map(bt => {
+      const imgs = (bt.images || []).map(img => `
+        <div class="bt-img-wrap">
+          <img src="${img.src}" alt="${img.caption||''}" data-caption="${img.caption||''}"
+               onclick="document.getElementById('bt-lightbox-img').src=this.src;
+                        document.getElementById('bt-lightbox').classList.add('open')">
+          ${img.caption ? `<div class="bt-img-caption">${img.caption}</div>` : ''}
+        </div>`).join('');
+
+      const lessons = (bt.lessons || []).map(l =>
+        `<div class="bt-lesson ${l.type||''}"><strong>${l.type === 'pos' ? '✅ Point fort' : l.type === 'neg' ? '❌ Erreur' : '📌 Note'}</strong>${l.text}</div>`
+      ).join('');
+
+      const tags = [
+        bt.instrument ? `<span class="bt-tag">${bt.instrument}</span>` : '',
+        bt.timeframe  ? `<span class="bt-tag">${bt.timeframe}</span>`  : '',
+        bt.setup      ? `<span class="bt-tag">${bt.setup}</span>`      : '',
+        bt.result     ? `<span class="bt-tag ${bt.result}">${resultLabel[bt.result]||bt.result}</span>` : '',
+      ].filter(Boolean).join('');
+
+      return `
+      <div class="bt-entry">
+        <div class="bt-entry-head">
+          <div class="bt-entry-date">📅 ${bt.date}</div>
+          <div class="bt-entry-meta">${tags}</div>
+        </div>
+        <div class="bt-body">
+          ${bt.title ? `<div class="bt-title">${bt.title}</div>` : ''}
+          ${bt.comment ? `<div class="bt-comment ${bt.result||''}">${bt.comment}</div>` : ''}
+          ${lessons ? `<div class="bt-lessons">${lessons}</div>` : ''}
+          ${imgs ? `<div class="bt-gallery">${imgs}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* Lightbox close */
+const lbClose = document.getElementById("bt-lightbox-close");
+const lb      = document.getElementById("bt-lightbox");
+if (lbClose && lb) {
+  lbClose.addEventListener("click", () => lb.classList.remove("open"));
+  lb.addEventListener("click", e => { if (e.target === lb) lb.classList.remove("open"); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("open"); });
 }
 </script>
 </body>
