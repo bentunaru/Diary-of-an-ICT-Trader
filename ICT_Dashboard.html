@@ -354,6 +354,29 @@
   .bt-lightbox-close { position: absolute; top: 20px; right: 28px; font-size: 28px;
     color: #fff; cursor: pointer; line-height: 1; opacity: 0.8; }
   .bt-lightbox-close:hover { opacity: 1; }
+
+  /* ---- Plan de la semaine ---- */
+  .plan-head { background: var(--bg2); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); padding:20px; margin-bottom:18px; }
+  .plan-head h2 { font-size:15px; font-weight:600; margin-bottom:6px; }
+  .plan-bias { display:inline-block; font-size:12px; font-weight:600; padding:3px 10px; border-radius:6px; background:var(--accent-bg); color:var(--accent); border:1px solid rgba(163,120,28,0.3); margin-bottom:10px; }
+  .plan-summary { font-size:13px; line-height:1.7; color:var(--text); }
+  .plan-grid { display:grid; grid-template-columns:1fr; gap:18px; }
+  .plan-tf { background:var(--bg2); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); overflow:hidden; }
+  .plan-tf-head { display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  .plan-tf-badge { font-size:12px; font-weight:700; padding:3px 10px; border-radius:6px; background:var(--bg3); border:1px solid var(--border); }
+  .plan-tf-title { font-size:14px; font-weight:600; }
+  .plan-tf-body { display:grid; grid-template-columns:1.4fr 1fr; gap:0; }
+  @media (max-width:780px){ .plan-tf-body{ grid-template-columns:1fr; } }
+  .plan-tf-img { background:var(--bg3); border-right:1px solid var(--border); }
+  .plan-tf-img img { width:100%; display:block; cursor:zoom-in; }
+  .plan-tf-img .ph { display:flex; align-items:center; justify-content:center; height:200px; color:var(--muted); font-size:13px; text-align:center; padding:20px; }
+  .plan-tf-side { padding:16px 18px; }
+  .plan-tf-note { font-size:13px; line-height:1.7; margin-bottom:12px; }
+  .plan-levels { display:flex; flex-direction:column; gap:6px; }
+  .plan-lvl { display:flex; justify-content:space-between; align-items:center; font-size:12.5px; padding:5px 0; border-bottom:1px solid var(--border); }
+  .plan-lvl:last-child{ border-bottom:none; }
+  .plan-lvl .lv-name{ color:var(--muted); }
+  .plan-lvl .lv-val{ font-family:var(--mono); font-weight:600; }
 </style>
 </head>
 <body>
@@ -383,6 +406,7 @@
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="errors">Erreurs</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="performance">Performance</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="backtest">Backtest</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="plan">Plan</button>
   </nav>
 </div>
 
@@ -433,6 +457,11 @@
   <!-- ============ PERFORMANCE ============ -->
   <section id="view-performance" class="view">
     <div id="perf-content"></div>
+  </section>
+
+  <!-- ============ PLAN DE LA SEMAINE ============ -->
+  <section id="view-plan" class="view">
+    <div id="plan-content"></div>
   </section>
 
   <!-- ============ BACKTEST ============ -->
@@ -1244,6 +1273,27 @@ Process propre : setup défini pré-marché, entrée limite, SL structurel.`,
       ]
     }
   ],
+
+  /* ---- Plan de la semaine (top-down) ---- */
+  weekPlan: {
+    date: "14 juin 2026", instrument: "NQM26",
+    bias: "Premium · long intraday vers Fib 100, puis short de fond",
+    summary: "Lecture top-down du dimanche soir (prix ~29,662). Biais de fond short (Weekly premium), mais on laisse d'abord le prix prendre la liquidité du haut (4H Fib 100 ≈ 29,848 / BSL). Entrée intraday : long sur retour en discount 15m + Breaker, cible le Fib 100 4H. Le short macro ne se travaille qu'après la prise du high.",
+    timeframes: [
+      { tf: "Weekly", title: "Range macro · Premium", img: "plans/plan_14juin_weekly.png",
+        note: "Range hebdo clair, prix en premium. Biais de fond short : si continuation baissière, le setup short parfait se forme dans le premium.",
+        levels: [ { name: "High range", val: "30,800" }, { name: "Prix", val: "29,662" }, { name: "Low range", val: "28,250" } ] },
+      { tf: "4H", title: "Premium · objectif Fib 100", img: "plans/plan_14juin_4h.png",
+        note: "En premium du range 4H. Attente : prise du high du range = Fib 100 (BSL) avant tout retournement.",
+        levels: [ { name: "Fib 100 (BSL)", val: "29,848" }, { name: "Fib 75", val: "29,443" }, { name: "Fib 50 (EQ)", val: "29,038" }, { name: "Fib 25", val: "28,632" }, { name: "Fib 0 (SSL)", val: "28,228" } ] },
+      { tf: "15m", title: "Entrée intraday · retour discount", img: "plans/plan_14juin_15m.png",
+        note: "Range 15m courant. Pour un long intraday : attendre un retour en discount, sous les traits rouges (~29,500 / EQ ~29,440).",
+        levels: [ { name: "Zone premium", val: "> 29,500" }, { name: "Equilibrium", val: "29,440" }, { name: "Zone d'entrée", val: "discount" } ] },
+      { tf: "15m Breaker", title: "Confluence d'entrée", img: "plans/plan_14juin_15m_breaker.png",
+        note: "15m Breaker dans la zone : renforce le point d'entrée long sur le retour en discount.",
+        levels: [ { name: "15m Breaker", val: "29,560" }, { name: "Fib 75 4H", val: "29,443" } ] }
+    ]
+  },
 };
 
 /* =====================================================================
@@ -1795,6 +1845,33 @@ if (lbClose && lb) {
   lbClose.addEventListener("click", () => lb.classList.remove("open"));
   lb.addEventListener("click", e => { if (e.target === lb) lb.classList.remove("open"); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("open"); });
+}
+
+/* --- Plan de la semaine --- */
+const planEl = document.getElementById("plan-content");
+if (planEl && DATA.weekPlan) {
+  const wp = DATA.weekPlan;
+  const cards = wp.timeframes.map(tf => {
+    const img = tf.img
+      ? `<img src="${tf.img}" alt="${tf.tf}" onerror="this.parentElement.innerHTML='&lt;div class=\'ph\'&gt;Image manquante&lt;br&gt;(${tf.img})&lt;/div&gt;'" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')">`
+      : `<div class="ph">Capture à venir</div>`;
+    const levels = (tf.levels || []).map(l =>
+      `<div class="plan-lvl"><span class="lv-name">${l.name}</span><span class="lv-val num">${l.val}</span></div>`).join("");
+    return `<div class="plan-tf">
+      <div class="plan-tf-head"><span class="plan-tf-badge">${tf.tf}</span><span class="plan-tf-title">${tf.title}</span></div>
+      <div class="plan-tf-body">
+        <div class="plan-tf-img">${img}</div>
+        <div class="plan-tf-side"><div class="plan-tf-note">${tf.note}</div><div class="plan-levels">${levels}</div></div>
+      </div>
+    </div>`;
+  }).join("");
+  planEl.innerHTML = `
+    <div class="plan-head">
+      <h2>📐 Plan de la semaine · ${wp.date} · ${wp.instrument}</h2>
+      <div class="plan-bias">${wp.bias}</div>
+      <div class="plan-summary">${wp.summary}</div>
+    </div>
+    <div class="plan-grid">${cards}</div>`;
 }
 </script>
 </body>
