@@ -125,9 +125,55 @@ Roll NQM26 → NQU26 vers le 17–18 juin (contrat dominant = plus de volume).
 
 ---
 
+## 9. Méthodologie Top-Down (Weekly → 4H → 15m)
+
+Lecture multi-timeframe systématique avant chaque semaine / session. Chaque
+timeframe a un rôle précis :
+
+**Weekly — définir le range macro et la position premium/discount.**
+On marque le range hebdo (high / low). Si le prix est en **premium** (moitié haute),
+le biais directionnel de fond est **short** : si le prix doit continuer vers le bas,
+c'est de la zone premium que viendra le **setup short parfait**. En discount, biais long.
+
+**4H — l'objectif directionnel à court terme.**
+On reporte le range et les Fib (0 / 25 / 50 / 75 / 100). En premium du 4H, l'attente
+typique est une **prise du high du range (Fib 100 = BSL)** avant tout retournement.
+→ On laisse d'abord le prix aller chercher la liquidité au-dessus (Fib 100).
+
+**15m — la zone d'entrée intraday.**
+On marque le range 15m courant. Pour un **long intraday**, on attend un **retour en
+discount** (sous les niveaux rouges = 50% et equilibrium du range 15m). La présence
+d'un **15m Breaker** dans la zone renforce le point d'entrée.
+
+**Synthèse de l'arbitrage des timeframes :**
+- Biais de fond (Weekly premium) = chercher les shorts en haut.
+- Mais d'abord (4H premium) = laisser le prix prendre le high / Fib 100 (BSL).
+- Entrée intraday (15m) = long sur retour en discount + Breaker, en visant le Fib 100 4H.
+- Le grand short Weekly ne se travaille qu'**après** la prise de liquidité du high.
+
+---
+
+## Plan de la semaine — 14 juin 2026 (NQM26)
+
+Lecture top-down du dimanche soir (prix ~29,662) :
+
+- **Weekly** : range macro **28,250 → 30,800**. Prix en **premium**. Biais de fond short
+  si continuation baissière — le setup short parfait se formera dans le premium.
+- **4H** : range **28,227.75 (Fib 0) → 29,848.25 (Fib 100)**. Niveaux : 0.25 ≈ 28,632 ·
+  0.5 ≈ 29,038 · 0.75 ≈ 29,443 · 1.0 = 29,848.25. Prix en premium (entre 0.75 et 1.0).
+  **Attente : prise du high du range, Fib 100 ≈ 29,848 (BSL).**
+- **15m** : range intraday courant. **15m Breaker ≈ 29,560.** Pour un **long intraday**,
+  attendre un retour en **discount sous les traits rouges (~29,500 / equilibrium ~29,440)**.
+
+**Scénario privilégié :** long intraday sur retour en discount 15m (+ Breaker) → cible
+le Fib 100 4H (~29,848 / BSL). Puis surveiller le premium Weekly pour le short de fond.
+
+---
+
 ## Journal d'apprentissage
 
 | Date | Source | Concept appris |
 |------|--------|----------------|
 | 13 juin 2026 | Backtest NQM26 15min | Sweep Asian Low avant KZ → OB retracement → Target Range · Règle FVG consommé par Stop Run |
 | 13 juin 2026 | Précision targets | 50% rarement le TP final (sauf très grand range) · 75% = niveau préféré · meilleurs setups entre 25% et 75% du range |
+| 14 juin 2026 | Méthodologie Top-Down (4 charts) | Weekly = range macro + premium/discount · 4H = objectif (Fib 100 BSL si premium) · 15m = entrée intraday (retour discount + Breaker). Plan semaine 14 juin documenté. |
