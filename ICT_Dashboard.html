@@ -468,101 +468,79 @@ const DATA = {
     periodStart: "3 juin 2026",
     periodEnd: "12 juin 2026",
     account: "Sim1",
-    fills: 63,                      // source : Sierra Chart — 45 (3–11 juin) + 18 fills 12 juin (stats export ✓)
+    fills: 112,                      // source : Sierra Chart — 45 (3–11 juin) + 18 fills 12 juin (stats export ✓)
     riskMaxDay: { value: -6525, label: "Risque max engagé", sub: "SL NQ T2 du 11 juin (non atteint)" }
   },
 
-  /* P/L cumulé estimé, un point par session */
+  /* P/L cumulé RÉEL — généré depuis TradeActivityLogExport par tools/update_dashboard.py */
   equity: [
-    { date: "3 juin",  cum: 8000 },
-    { date: "4 juin",  cum: 18000 },
-    { date: "5 juin",  cum: 28500 },
-    { date: "8 juin",  cum: 38000 },
-    { date: "9 juin",  cum: 48250 },   // recalé sur Sierra Closed P/L (74,475 NQ)
-    { date: "10 juin", cum: 54220 },
-    { date: "11 juin", cum: 67183 },
-    { date: "12 juin", cum: 75363 }    // 74,475 NQ (Sierra) + ~888 ES
+    // <EQUITY>
+    { date: "03 juin", cum: 12010 },
+    { date: "04 juin", cum: 23215 },
+    { date: "08 juin", cum: 45935 },
+    { date: "09 juin", cum: 61565 },
+    { date: "10 juin", cum: 66545 },
+    { date: "11 juin", cum: 77992 },
+    { date: "12 juin", cum: 86172 }
+    // </EQUITY>
   ],
 
+  /* Trades RÉELS (cycles flat→flat) — généré depuis TradeActivityLogExport · annotations ICT via tools/annotations.json */
   trades: [
-    { date: "08 juin", instr: "NQM26", dir: "Long",  entry: "—", exit: "High Asie", rr: "—",
-      pl: "+", plClass: "pos", result: "Win",
-      setup: "MSS + OB · 15min · SSL Asie sweep",
-      notes: "3 partiels · full TP atteint.",
-      setupType: "OB 15min", kz: "London", mood: "Confiant", processClean: true },
-    { date: "09 juin", instr: "NQM26", dir: "Short", entry: "—", exit: "—", rr: "—",
-      pl: "—", plClass: "neg", result: "Loss",
-      setup: "Breaker Block · London KZ",
-      notes: "Biais changé en cours de session · OB invalidé · sorti trop tôt.",
-      setupType: "Breaker Block", kz: "London", mood: "Impatient", processClean: false },
-    { date: "09 juin", instr: "NQM26", dir: "Long",  entry: "—", exit: "—", rr: "—",
-      pl: "—", plClass: "neg", result: "Loss",
-      setup: "Plan initial · retour long",
-      notes: "Entrée trop haute dans le range · mauvais R:R.",
-      setupType: "OB 15min", kz: "NY AM", mood: "FOMO", processClean: false },
-    { date: "09 juin", instr: "NQM26", dir: "Long",  entry: "—", exit: "SIBI 4H", rr: "—",
-      pl: "+", plClass: "pos", result: "Win",
-      setup: "Plan initial exécuté · BISI 1H",
-      notes: "Target final atteint · suivi du plan.",
-      setupType: "FVG + BISI", kz: "NY AM", mood: "Neutre", processClean: true },
-    { date: "10 juin", instr: "NQM26", dir: "Long",  entry: "28,747.75", exit: "28,664.25", rr: "1R",
-      pl: "−83.50 pts", plClass: "neg", result: "SL Hit",
-      setup: "BISI 15min · 25% range",
-      notes: "−$5,010 · 3 contrats · SL process correct.",
-      setupType: "BISI 15min", kz: "NY AM", mood: "Neutre", processClean: true },
-    { date: "10 juin", instr: "NQM26", dir: "Long",  entry: "28,677.75", exit: "sortie anticipée", rr: "—",
-      pl: "+$10,980", plClass: "pos", result: "Win",
-      setup: "Unicorn Model (FVG + Breaker) · 15min · news sweep · BISI 4H ~28,300–28,800",
-      notes: "Unicorn confirmé · bodies arrêtés pile au 25% · GAP ~28,640 = niveau optimal non utilisé · TP BSL ~29,900 atteint après la sortie anticipée · <strong>6 contrats au lieu de 3 (revenge sizing)</strong> · L.T. P/L $6,285.",
-      setupType: "Unicorn", kz: "NY AM", mood: "Revenge", processClean: false },
-    { date: "11 juin", instr: "ESM26", dir: "Long",  entry: "7,300.25", exit: "TP1 ~7,314 · stop pré-PPI", rr: "—",
-      pl: "~+$888", plClass: "pos", result: "Win",
-      setup: "Unicorn 4 couches · SMT Daily · Displacement 1H FVG · London KZ (2–5h) · Macro Run-Stop-Run 7:50–8:10",
-      notes: "TP1 +$688 ✓ · SL trailé puis BE+2 · FVG 1H tenu en support · 2 contrats stoppés par la grosse bougie pré-PPI (~8:25 NY) · résultat estimé, stats ESM26 à confirmer.",
-      setupType: "Unicorn", kz: "London", mood: "Confiant", processClean: true },
-    { date: "11 juin", instr: "NQM26", dir: "Long",  entry: "28,737.00", exit: "28,938.25 (EQH)", rr: "1.85:1",
-      pl: "+$12,075", plClass: "pos", result: "Win",
-      setup: "SMT Divergence NQ/ES · NQ new low ~28,350, ES prend uniquement le low de la bougie 9h · TP EQH",
-      notes: "3 contrats × 201.25 pts · SL 28,628.25 (−108.75 pts) · TP1 EQH ✓ · full exit.",
-      setupType: "SMT Divergence", kz: "NY AM", mood: "Confiant", processClean: true },
-    { date: "12 juin", instr: "NQM26", dir: "Long",  entry: "~29,394", exit: "SL défaut", rr: "—",
-      pl: "−$885", plClass: "neg", result: "SL Hit",
-      setup: "Equal Lows SSL sweep · Low asiatique · FIB 0.75 zone",
-      notes: "Stop réglé par défaut (non structurel) → sorti en 1 minute sur le SSL sweep. Stop structurel correct : sous le low asiatique 15min (~29,200–29,250).",
-      setupType: "SSL Sweep", kz: "Hors KZ", mood: "Impatient", processClean: false },
-    { date: "12 juin", instr: "NQM26", dir: "Long",  entry: "29,394.75", exit: "29,345.00 (SL)", rr: "—",
-      pl: "−$2,985", plClass: "neg", result: "SL Hit",
-      setup: "Equal Lows SSL sweep · Low Asie balayé · FIB range · SpaceX IPO",
-      notes: "Stop 29,345.00 atteint · −49.75 pts × 3 × $20 = −$2,985 · TP1 29,435.25 / TP2 29,645.25 / TP3 29,848.25 non atteints.",
-      setupType: "SSL Sweep", kz: "Hors KZ", mood: "Impatient", processClean: false },
-    { date: "12 juin", instr: "NQM26", dir: "Long",  entry: "29,296.25", exit: "TP ~29,645 ✅ (9:41 ET)", rr: "9.1:1",
-      pl: "+$12,050", plClass: "pos", result: "Win",
-      setup: "OB 15min retracé → Displacement 1min → FVG 1min → entrée · London KZ 3:27 AM ET · Stop structurel sous OB",
-      notes: "TP ✅ 9:41 ET · Partial 1/3 ~29,388 + TP ~29,645 (High Asie / FIB 0.875) · Last Trade P/L Sierra $6,940 (347 pts). T3 total +$12,050 = Daily $8,180 − T1 − T2 (Sierra stats ✓, = Runup). Efface T1+T2 (−$3,870) → Journée nette +$8,180. Process correct : OB 15min + Displacement + FVG 1min + London KZ + stop structurel.",
-      setupType: "OB 15min", kz: "London", mood: "Neutre", processClean: true }
+    // <TRADES>
+    { date: "03 juin", instr: "NQM26", dir: "Short", entry: "30,692.75", exit: "30,718.00", rr: "—", pl: "−$1,010", plClass: "neg", plNum: -1010.0, result: "Perte", setup: "—", notes: "2 contrat(s) max · 3 fills · 13:35:22→13:38:55 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "03 juin", instr: "NQM26", dir: "Short", entry: "30,690.25", exit: "30,495.25", rr: "—", pl: "+$13,020", plClass: "pos", plNum: 13020.0, result: "Win", setup: "Short OB 15min · gros déplacement baissier", notes: "Short tenu plusieurs heures · 3 contrats · meilleur trade du 3 juin (P/L réel Sierra).", kz: "NY AM", setupType: "OB 15min", mood: "Confiant", processClean: true },
+    { date: "04 juin", instr: "NQM26", dir: "Long", entry: "30,285.75", exit: "30,325.75", rr: "—", pl: "+$1,665", plClass: "pos", plNum: 1665.0, result: "Win", setup: "—", notes: "2 contrat(s) max · 3 fills · 14:22:10→14:25:24 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "04 juin", instr: "NQM26", dir: "Long", entry: "30,305.00", exit: "30,544.00", rr: "—", pl: "+$9,540", plClass: "pos", plNum: 9540.0, result: "Win", setup: "—", notes: "3 contrat(s) max · 6 fills · 14:45:37→17:50:01 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "08 juin", instr: "NQM26", dir: "Long", entry: "28,994.00", exit: "29,732.25", rr: "—", pl: "+$22,720", plClass: "pos", plNum: 22720.0, result: "Win", setup: "MSS + OB 15min · Sweep Asian Low · entrée pré-London", notes: "Meilleur trade de la semaine. Sweep du low asiatique → OB → long tenu jusqu'au High Asie. 3 contrats, plusieurs partiels.", kz: "Hors KZ", setupType: "OB 15min", mood: "Confiant", processClean: true },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,606.50", exit: "29,597.00", rr: "—", pl: "−$570", plClass: "neg", plNum: -570.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 2 fills · 07:42:18→07:53:23 · P/L réel Sierra.", kz: "London" },
+    { date: "09 juin", instr: "NQM26", dir: "Short", entry: "29,604.25", exit: "29,610.50", rr: "—", pl: "−$375", plClass: "neg", plNum: -375.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 2 fills · 07:53:32→08:03:47 · P/L réel Sierra.", kz: "London" },
+    { date: "09 juin", instr: "NQM26", dir: "Short", entry: "29,594.75", exit: "29,620.00", rr: "—", pl: "−$3,390", plClass: "neg", plNum: -3390.0, result: "Perte", setup: "Short Breaker · biais changé en cours de session", notes: "Erreur : biais retourné en live, short de 6 contrats (sizing doublé) → perte. Setup invalidé.", kz: "London", setupType: "Breaker Block", mood: "Impatient", processClean: false },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,621.25", exit: "29,664.75", rr: "—", pl: "+$2,610", plClass: "pos", plNum: 2610.0, result: "Win", setup: "—", notes: "3 contrat(s) max · 2 fills · 08:09:13→08:34:35 · P/L réel Sierra.", kz: "London" },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,670.50", exit: "29,633.50", rr: "—", pl: "−$2,220", plClass: "neg", plNum: -2220.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 2 fills · 09:19:22→10:07:03 · P/L réel Sierra.", kz: "Hors KZ" },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,663.25", exit: "29,744.75", rr: "—", pl: "+$8,570", plClass: "pos", plNum: 8570.0, result: "Win", setup: "Long FVG + BISI · retour au plan initial", notes: "Long 6 contrats sur retour dans FVG · suivi du plan · bon trade.", kz: "Hors KZ", setupType: "FVG + BISI", mood: "Neutre", processClean: true },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,798.50", exit: "29,773.50", rr: "—", pl: "−$500", plClass: "neg", plNum: -500.0, result: "Perte", setup: "—", notes: "1 contrat(s) max · 2 fills · 13:52:07→13:53:41 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,760.50", exit: "29,707.75", rr: "—", pl: "−$1,055", plClass: "neg", plNum: -1055.0, result: "Perte", setup: "—", notes: "1 contrat(s) max · 2 fills · 13:54:33→13:55:53 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,726.00", exit: "29,702.00", rr: "—", pl: "−$1,480", plClass: "neg", plNum: -1480.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 4 fills · 13:56:12→13:57:14 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,707.25", exit: "29,682.00", rr: "—", pl: "−$1,455", plClass: "neg", plNum: -1455.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 4 fills · 13:58:19→13:59:34 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "09 juin", instr: "NQM26", dir: "Short", entry: "29,668.25", exit: "29,693.25", rr: "—", pl: "−$1,500", plClass: "neg", plNum: -1500.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 4 fills · 13:59:52→14:01:20 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "09 juin", instr: "NQM26", dir: "Long", entry: "29,694.75", exit: "29,700.00", rr: "—", pl: "+$220", plClass: "pos", plNum: 220.0, result: "Win", setup: "—", notes: "3 contrat(s) max · 4 fills · 14:01:31→14:03:41 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "09 juin", instr: "NQM26", dir: "Short", entry: "29,676.00", exit: "29,567.75", rr: "—", pl: "+$16,775", plClass: "pos", plNum: 16775.0, result: "Win", setup: "Short SMT / Displacement · news sweep", notes: "Gros short gagnant (+16,775) MAIS 9 contrats — sizing très au-dessus du plan (3). Résultat positif mais comportement à risque à corriger.", kz: "NY AM", setupType: "SMT Divergence", mood: "Confiant", processClean: false },
+    { date: "10 juin", instr: "NQM26", dir: "Long", entry: "28,747.75", exit: "28,670.00", rr: "—", pl: "−$4,665", plClass: "neg", plNum: -4665.0, result: "Perte", setup: "Long BISI 15min · 25% range", notes: "SL touché, process correct (stop structurel). 3 contrats.", kz: "Hors KZ", setupType: "BISI 15min", mood: "Neutre", processClean: true },
+    { date: "10 juin", instr: "NQM26", dir: "Long", entry: "28,734.75", exit: "28,723.00", rr: "—", pl: "−$705", plClass: "neg", plNum: -705.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 2 fills · 11:18:15→11:18:35 · P/L réel Sierra.", kz: "Hors KZ" },
+    { date: "10 juin", instr: "NQM26", dir: "Long", entry: "28,713.75", exit: "28,628.25", rr: "—", pl: "−$9,645", plClass: "neg", plNum: -9645.0, result: "Perte", setup: "Long Unicorn · sizing revenge", notes: "Erreur critique : 6 contrats au lieu de 3 après une perte (revenge sizing) → plus grosse perte de la semaine (−9,645).", kz: "Hors KZ", setupType: "Unicorn", mood: "Revenge", processClean: false },
+    { date: "10 juin", instr: "NQM26", dir: "Long", entry: "28,675.00", exit: "28,825.25", rr: "—", pl: "+$9,015", plClass: "pos", plNum: 9015.0, result: "Win", setup: "—", notes: "3 contrat(s) max · 2 fills · 12:01:10→12:31:35 · P/L réel Sierra.", kz: "Hors KZ" },
+    { date: "10 juin", instr: "NQM26", dir: "Long", entry: "28,892.00", exit: "28,866.50", rr: "—", pl: "−$1,530", plClass: "neg", plNum: -1530.0, result: "Perte", setup: "—", notes: "3 contrat(s) max · 2 fills · 13:35:43→13:35:49 · P/L réel Sierra.", kz: "NY AM" },
+    { date: "10 juin", instr: "NQM26", dir: "Long", entry: "28,889.25", exit: "28,993.00", rr: "—", pl: "+$12,510", plClass: "pos", plNum: 12510.0, result: "Win", setup: "Long Unicorn (FVG + Breaker) · news sweep · BISI 4H", notes: "Unicorn confirmé · 6 contrats · TP BSL atteint. Meilleur trade du 10 juin (+12,510).", kz: "NY AM", setupType: "Unicorn", mood: "Confiant", processClean: true },
+    { date: "11 juin", instr: "ESM26", dir: "Long", entry: "7,300.25", exit: "7,305.00", rr: "—", pl: "+$1,362", plClass: "pos", plNum: 1362.5, result: "Win", setup: "Long ESM26 · Unicorn 4 couches · SMT Daily · London KZ · Macro RSR", notes: "ES Unicorn · TP1 atteint · SL trailé puis BE. 3 contrats.", kz: "London", setupType: "Unicorn", mood: "Confiant", processClean: true },
+    { date: "11 juin", instr: "NQM26", dir: "Long", entry: "28,732.75", exit: "28,940.25", rr: "—", pl: "+$10,085", plClass: "pos", plNum: 10085.0, result: "Win", setup: "Long NQ · SMT Divergence NQ/ES · TP EQH", notes: "SMT NQ/ES · NQ fait un new low, ES non → long jusqu'à EQH. 3 contrats. Très propre.", kz: "NY AM", setupType: "SMT Divergence", mood: "Confiant", processClean: true },
+    { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,404.25", exit: "29,377.50", rr: "—", pl: "−$1,605", plClass: "neg", plNum: -1605.0, result: "Perte", setup: "Long SSL sweep Low Asie · FIB 0.75 · stop défaut", notes: "Erreur : stop Sierra par défaut (non structurel) → sorti sur le sweep. Setup valide, exécution mécanique fautive.", kz: "Hors KZ", setupType: "SSL Sweep", mood: "Impatient", processClean: false },
+    { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,394.75", exit: "29,357.00", rr: "—", pl: "−$2,265", plClass: "neg", plNum: -2265.0, result: "Perte", setup: "Long SSL sweep · re-entrée · stop serré non structurel · SpaceX IPO", notes: "Re-entrée stop serré, touché avant le move. Hors Kill Zone, bruit pré-London.", kz: "Hors KZ", setupType: "SSL Sweep", mood: "Impatient", processClean: false },
+    { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,296.25", exit: "29,643.25", rr: "—", pl: "+$12,050", plClass: "pos", plNum: 12050.0, result: "Win", setup: "Long OB 15min → Displacement 1min → FVG 1min · London KZ · stop structurel", notes: "Process parfait. OB 15min retracé, displacement, FVG, entrée, stop sous OB. TP High Asie / FIB 0.875. Efface les pertes T1+T2 → journée nette +8,180. Meilleur exemple de la semaine.", kz: "London", setupType: "OB 15min", mood: "Neutre", processClean: true }
+    // </TRADES>
   ],
 
-  bestTrade: { value: "+$12,075", sub: "NQ · 11 juin · SMT · EQH" },
+  bestTrade: { value: "+$22,720", sub: "NQ · 08 juin · réel Sierra" },
 
   sessions: [
     /* ================ BILAN SEMAINE 9–13 JUIN ================ */
     {
-      date: "Semaine du 9 au 13 juin 2026", status: "closed", statusLabel: "Bilan hebdomadaire",
-      pl: "+$75,363", plSub: "Cumul 3–12 juin · NQ Sierra ✓",
+      date: "Semaine du 3 au 12 juin 2026", status: "closed", statusLabel: "Bilan hebdomadaire",
+      pl: "+$86,172", plSub: "Cumul 3–12 juin · réel Sierra ✓",
       html: `
         <div class="callout callout--accent">
-          <h4>📋 Bilan Semaine · 9–13 juin 2026 · NQM26 / ESM26</h4>
-          <strong>6 sessions · 11 trades · Net semaine ~+$37,363</strong> (delta cumul 38,000 → 75,363) ·
-          Compte Sim1 · Source chiffres 12 juin : Sierra Chart ✓
+          <h4>📋 Bilan Semaine · 3–12 juin 2026 · NQM26 / ESM26</h4>
+          <strong>7 sessions · 29 trades · P/L total +$86,172</strong> ·
+          Compte Sim1 · Source : Trade Activity Log Sierra Chart (reconstruction flat→flat ✓)
         </div>
 
         <h3>Score de la semaine</h3>
         <div class="stat-row cols-5 mt">
-          <div class="mini-stat"><div class="l">Trades gagnants</div><div class="v num pos">7</div><div class="s">Win rate ~64%</div></div>
-          <div class="mini-stat"><div class="l">SL hits</div><div class="v num neg">4</div><div class="s">4 stops touchés</div></div>
-          <div class="mini-stat"><div class="l">Meilleur jour</div><div class="v num pos">+$12,963</div><div class="s">11 juin · SMT EQH</div></div>
-          <div class="mini-stat"><div class="l">Pire jour</div><div class="v num neg">T1+T2 12j</div><div class="s">−$3,870 avant correction</div></div>
-          <div class="mini-stat"><div class="l">Règle la + violée</div><div class="v acc">Stop défaut</div><div class="s">2× sur 12 juin</div></div>
+          <div class="mini-stat"><div class="l">Trades gagnants</div><div class="v num pos">13</div><div class="s">Win rate 45%</div></div>
+          <div class="mini-stat"><div class="l">Trades perdants</div><div class="v num neg">16</div><div class="s">surtout scalps 9 juin</div></div>
+          <div class="mini-stat"><div class="l">Meilleur jour</div><div class="v num pos">+$22,720</div><div class="s">8 juin · Sweep Asian Low</div></div>
+          <div class="mini-stat"><div class="l">Pire trade</div><div class="v num neg">−$9,645</div><div class="s">10 juin · revenge 6c</div></div>
+          <div class="mini-stat"><div class="l">Règle la + violée</div><div class="v acc">Sizing</div><div class="s">6c et 9c hors plan</div></div>
         </div>
 
         <h3>⚠ Erreurs critiques · À corriger en priorité absolue</h3>
@@ -907,7 +885,7 @@ const DATA = {
           <div class="mini-stat"><div class="l">T1 + T2</div><div class="v num neg">−$3,870</div><div class="s">= Drawdown Sierra ✓</div></div>
           <div class="mini-stat"><div class="l">T3 Total</div><div class="v num pos">+$12,050</div><div class="s">= Runup Sierra ✓ · Process ✓</div></div>
           <div class="mini-stat"><div class="l">Net Journée</div><div class="v num pos">+$8,180</div><div class="s">Sierra Chart stats export ✓</div></div>
-          <div class="mini-stat"><div class="l">Cum. 3–12 juin</div><div class="v num pos">$75,363</div><div class="s">74,475 NQ (Sierra) + ~888 ES</div></div>
+          <div class="mini-stat"><div class="l">Cum. 3–12 juin</div><div class="v num pos">$86,172</div><div class="s">réel · Trade Activity Log ✓</div></div>
         </div>
         <div class="grid-3 mt">
           <div class="panel panel--red">
@@ -969,7 +947,7 @@ const DATA = {
     /* ---------------- 11 JUIN ---------------- */
     {
       date: "11 juin 2026", status: "closed", statusLabel: "Clôturée",
-      pl: "+$12,963", plSub: "ES ~+$888 · NQ +$12,075",
+      pl: "+$11,448", plSub: "ES +$1,362 · NQ +$10,085 · réel Sierra",
       html: `
         <h3>Pré-marché · Top-down</h3>
         <div class="grid-3">
@@ -1093,7 +1071,7 @@ const DATA = {
     /* ---------------- 10 JUIN ---------------- */
     {
       date: "10 juin 2026", status: "closed", statusLabel: "Clôturée",
-      pl: "+$4,980", plSub: "−$5,010 SL · +$10,980 Unicorn (L.T. $6,285)",
+      pl: "+$4,980", plSub: "6 trades · Unicorn +$12,510 · revenge 6c −$9,645 · réel Sierra",
       html: `
         <h3>Erreurs critiques</h3>
         <div class="callout callout--red">
@@ -1162,7 +1140,7 @@ const DATA = {
     /* ---------------- 9 JUIN ---------------- */
     {
       date: "9 juin 2026", status: "closed", statusLabel: "Clôturée",
-      pl: "+$13,230", plSub: "2 Loss · 1 Win (plan initial)",
+      pl: "+$15,630", plSub: "13 trades · gros short SMT +$16,775 · réel Sierra",
       html: `
         <h3>Analyse des erreurs</h3>
         <div class="grid-3">
@@ -1266,56 +1244,6 @@ Process propre : setup défini pré-marché, entrée limite, SL structurel.`,
       ]
     }
   ],
-
-  weeklyStats: {
-    week: "9–13 juin 2026",
-    sessionCount: 5,
-    setupPerf: [
-      { setup: "OB 15min",       trades: 3, wins: 2, losses: 1, totalPL: 12050 },
-      { setup: "Unicorn",        trades: 2, wins: 2, losses: 0, totalPL: 11868 },
-      { setup: "SMT Divergence", trades: 1, wins: 1, losses: 0, totalPL: 12075 },
-      { setup: "FVG + BISI",     trades: 1, wins: 1, losses: 0, totalPL: 0     },
-      { setup: "SSL Sweep",      trades: 2, wins: 0, losses: 2, totalPL: -3870 },
-      { setup: "BISI 15min",     trades: 1, wins: 0, losses: 1, totalPL: -5010 },
-      { setup: "Breaker Block",  trades: 1, wins: 0, losses: 1, totalPL: 0     }
-    ],
-    kzPerf: [
-      { kz: "London",   trades: 4, wins: 3, losses: 1 },
-      { kz: "NY AM",    trades: 5, wins: 3, losses: 2 },
-      { kz: "Hors KZ",  trades: 2, wins: 0, losses: 2 }
-    ],
-    moodPerf: [
-      { mood: "Confiant",  trades: 3, wins: 3, losses: 0 },
-      { mood: "Neutre",    trades: 3, wins: 2, losses: 1 },
-      { mood: "Impatient", trades: 3, wins: 0, losses: 3 },
-      { mood: "FOMO",      trades: 1, wins: 0, losses: 1 },
-      { mood: "Revenge",   trades: 1, wins: 1, losses: 0 }
-    ],
-    processStreak: {
-      current: 1,
-      longest: 2,
-      detail: [
-        { date: "08 juin", clean: true  },
-        { date: "09 juin T1", clean: false },
-        { date: "09 juin T2", clean: false },
-        { date: "09 juin T3", clean: true  },
-        { date: "10 juin T1", clean: true  },
-        { date: "10 juin T2", clean: false },
-        { date: "11 juin ES", clean: true  },
-        { date: "11 juin NQ", clean: true  },
-        { date: "12 juin T1", clean: false },
-        { date: "12 juin T2", clean: false },
-        { date: "12 juin T3", clean: true  }
-      ]
-    },
-    violationEvolution: [
-      { session: "08 juin", violations: 0 },
-      { session: "09 juin", violations: 2 },
-      { session: "10 juin", violations: 1 },
-      { session: "11 juin", violations: 0 },
-      { session: "12 juin", violations: 2 }
-    ]
-  }
 };
 
 /* =====================================================================
@@ -1327,21 +1255,21 @@ const fmtUsd = n => (n < 0 ? "−$" : "+$") + Math.abs(n).toLocaleString("en-US"
 const eq = DATA.equity;
 const cumPl = eq[eq.length - 1].cum;
 const dayPl = eq.length > 1 ? cumPl - eq[eq.length - 2].cum : cumPl;
-const wins        = DATA.trades.filter(t => t.result === "Win").length;
-const losses      = DATA.trades.filter(t => t.result === "SL Hit").length;
-const closedTrades = wins + losses;
-const winRate     = closedTrades ? Math.round(100 * wins / closedTrades) : 0;
-
-/* --- Parseur P/L --- */
-function parsePL(t) {
+/* P/L numérique réel par trade (plNum, généré depuis Sierra). Fallback parseur si absent. */
+function plOf(t) {
+  if (typeof t.plNum === "number") return t.plNum;
   if (!t.pl || t.pl === "—" || t.pl === "+" || t.pl === "−") return null;
   const str = t.pl.replace(/[^\d.]/g, "");
   if (!str) return null;
-  const val = parseFloat(str.replace(/,/g, ""));
-  return t.plClass === "neg" ? -val : val;
+  return t.plClass === "neg" ? -parseFloat(str) : parseFloat(str);
 }
-const winPLs  = DATA.trades.filter(t => t.result === "Win").map(parsePL).filter(v => v !== null);
-const lossPLs = DATA.trades.filter(t => t.result === "SL Hit").map(parsePL).filter(v => v !== null);
+const wins        = DATA.trades.filter(t => plOf(t) > 0).length;
+const losses      = DATA.trades.filter(t => plOf(t) < 0).length;
+const closedTrades = wins + losses;
+const winRate     = closedTrades ? Math.round(100 * wins / closedTrades) : 0;
+
+const winPLs  = DATA.trades.map(plOf).filter(v => v !== null && v > 0);
+const lossPLs = DATA.trades.map(plOf).filter(v => v !== null && v < 0);
 const avgWin  = winPLs.length  ? winPLs.reduce((a,b) => a+b, 0) / winPLs.length : 0;
 const avgLoss = lossPLs.length ? Math.abs(lossPLs.reduce((a,b) => a+b, 0) / lossPLs.length) : 0;
 const winRateD = closedTrades ? wins / closedTrades : 0;
@@ -1387,7 +1315,7 @@ if (filterEl) {
     <button class="filter-btn active" data-filter="all">Tous</button>
     ${instruments.map(i => `<button class="filter-btn" data-filter="${i}">${i}</button>`).join("")}
     <button class="filter-btn" data-filter="Win">✅ Win</button>
-    <button class="filter-btn" data-filter="SL Hit">❌ SL Hit</button>
+    <button class="filter-btn" data-filter="Perte">❌ Perte</button>
   `;
   filterEl.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -1627,10 +1555,55 @@ if (dailyCanvas && typeof Chart !== "undefined") {
   });
 }
 
-/* --- Performance tab --- */
+/* --- Performance tab (calculé dynamiquement depuis les trades réels) --- */
+function computeWeeklyStats(trades) {
+  const isWin = t => plOf(t) > 0;
+  const group = (keyFn, withPL) => {
+    const map = {};
+    trades.forEach(t => {
+      const k = keyFn(t);
+      if (!k) return;
+      if (!map[k]) map[k] = { key: k, trades: 0, wins: 0, losses: 0, totalPL: 0 };
+      map[k].trades++;
+      const v = plOf(t) || 0;
+      if (v > 0) map[k].wins++; else if (v < 0) map[k].losses++;
+      if (withPL) map[k].totalPL += v;
+    });
+    return Object.values(map);
+  };
+  const setupPerf = group(t => t.setupType, true)
+    .map(g => ({ setup: g.key, trades: g.trades, wins: g.wins, losses: g.losses, totalPL: Math.round(g.totalPL) }))
+    .sort((a, b) => b.totalPL - a.totalPL);
+  const kzPerf = group(t => t.kz, false)
+    .map(g => ({ kz: g.key, trades: g.trades, wins: g.wins, losses: g.losses }));
+  const moodPerf = group(t => t.mood, false)
+    .map(g => ({ mood: g.key, trades: g.trades, wins: g.wins, losses: g.losses }));
+
+  // Streak process propre (trades annotés uniquement)
+  const annotated = trades.filter(t => typeof t.processClean === "boolean");
+  const detail = annotated.map(t => ({ date: t.date, clean: t.processClean }));
+  let current = 0;
+  for (let i = detail.length - 1; i >= 0 && detail[i].clean; i--) current++;
+  let longest = 0, run = 0;
+  detail.forEach(d => { run = d.clean ? run + 1 : 0; longest = Math.max(longest, run); });
+
+  // Violations par jour (processClean === false)
+  const byDay = {};
+  annotated.forEach(t => {
+    if (!byDay[t.date]) byDay[t.date] = 0;
+    if (t.processClean === false) byDay[t.date]++;
+  });
+  const violationEvolution = Object.keys(byDay).map(d => ({ session: d, violations: byDay[d] }));
+
+  const dates = trades.map(t => t.date);
+  const week = dates.length ? `${dates[0]} → ${dates[dates.length - 1]}` : "";
+  return { setupPerf, kzPerf, moodPerf,
+           processStreak: { current, longest, detail }, violationEvolution, week };
+}
+
 const perfEl = document.getElementById("perf-content");
-if (perfEl && DATA.weeklyStats) {
-  const ws = DATA.weeklyStats;
+if (perfEl) {
+  const ws = computeWeeklyStats(DATA.trades);
 
   // Setup performance table
   const setupRows = ws.setupPerf.map(s => {

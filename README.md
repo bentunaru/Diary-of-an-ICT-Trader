@@ -35,7 +35,33 @@ DATA.weeklyStats      — performance par setup / KZ / mood / streak
 ### Période couverte
 
 3 juin → 12 juin 2026 · NQM26 / ESM26 · Sim1  
-P/L cumulé : **+$75,363** · 11 trades · Win Rate 64%
+P/L cumulé : **+$86,172** · 29 trades réels · Win Rate 45%  
+Source : reconstruction flat→flat du Trade Activity Log Sierra Chart.
+
+## Automatisation — mise à jour depuis Sierra Chart
+
+Les données quantitatives (equity, trades, stats) sont générées automatiquement
+depuis un export `TradeActivityLogExport_*.txt` de Sierra Chart :
+
+```bash
+python3 tools/update_dashboard.py chemin/vers/TradeActivityLogExport_AAAA-MM-JJ.txt
+```
+
+Le script :
+- parse le log (TSV), garde les lignes `Fills`
+- reconstruit les trades flat→flat par symbole (matching FIFO)
+- calcule le P/L réel (NQ $20/pt, ES $50/pt), l'equity journalier et les stats
+- déduit la Kill Zone de l'heure (log en UTC → ET)
+- fusionne les annotations ICT (`tools/annotations.json`) par trade-id
+- injecte `equity[]` + `trades[]` dans `ICT_Dashboard.html` entre marqueurs `// <EQUITY>` / `// <TRADES>`
+
+Le reste du dashboard (sessions, règles, erreurs) n'est pas touché.
+
+### Annotations ICT
+
+`tools/annotations.json` associe le contexte ICT (setup, mood, processClean, notes)
+à chaque trade par son id `AAAA-MM-JJ_HH:MM:SS` (heure UTC d'ouverture). Ces annotations
+survivent aux régénérations — il suffit de les compléter pour enrichir le journal.
 
 ## Méthodologie
 

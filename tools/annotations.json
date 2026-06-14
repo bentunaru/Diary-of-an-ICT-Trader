@@ -1,0 +1,69 @@
+{
+  "_comment": "Annotations ICT par trade-id (date_HH:MM:SS UTC). Fusionnées dans le dashboard par update_dashboard.py. La Kill Zone est dérivée automatiquement de l'heure ET sauf si 'kz' est précisé ici. Champs possibles: setupType, mood, processClean, setup, notes, rr, kz.",
+
+  "2026-06-03_14:15:33": {
+    "setupType": "OB 15min", "mood": "Confiant", "processClean": true,
+    "setup": "Short OB 15min · gros déplacement baissier",
+    "notes": "Short tenu plusieurs heures · 3 contrats · meilleur trade du 3 juin (P/L réel Sierra)."
+  },
+  "2026-06-08_05:41:26": {
+    "setupType": "OB 15min", "mood": "Confiant", "processClean": true,
+    "setup": "MSS + OB 15min · Sweep Asian Low · entrée pré-London",
+    "notes": "Meilleur trade de la semaine. Sweep du low asiatique → OB → long tenu jusqu'au High Asie. 3 contrats, plusieurs partiels."
+  },
+  "2026-06-09_08:05:08": {
+    "setupType": "Breaker Block", "mood": "Impatient", "processClean": false,
+    "setup": "Short Breaker · biais changé en cours de session",
+    "notes": "Erreur : biais retourné en live, short de 6 contrats (sizing doublé) → perte. Setup invalidé."
+  },
+  "2026-06-09_10:51:42": {
+    "setupType": "FVG + BISI", "mood": "Neutre", "processClean": true,
+    "setup": "Long FVG + BISI · retour au plan initial",
+    "notes": "Long 6 contrats sur retour dans FVG · suivi du plan · bon trade."
+  },
+  "2026-06-09_14:04:02": {
+    "setupType": "SMT Divergence", "mood": "Confiant", "processClean": false,
+    "setup": "Short SMT / Displacement · news sweep",
+    "notes": "Gros short gagnant (+16,775) MAIS 9 contrats — sizing très au-dessus du plan (3). Résultat positif mais comportement à risque à corriger."
+  },
+  "2026-06-10_09:42:49": {
+    "setupType": "BISI 15min", "mood": "Neutre", "processClean": true,
+    "setup": "Long BISI 15min · 25% range",
+    "notes": "SL touché, process correct (stop structurel). 3 contrats."
+  },
+  "2026-06-10_11:18:39": {
+    "setupType": "Unicorn", "mood": "Revenge", "processClean": false,
+    "setup": "Long Unicorn · sizing revenge",
+    "notes": "Erreur critique : 6 contrats au lieu de 3 après une perte (revenge sizing) → plus grosse perte de la semaine (−9,645)."
+  },
+  "2026-06-10_13:36:00": {
+    "setupType": "Unicorn", "mood": "Confiant", "processClean": true,
+    "setup": "Long Unicorn (FVG + Breaker) · news sweep · BISI 4H",
+    "notes": "Unicorn confirmé · 6 contrats · TP BSL atteint. Meilleur trade du 10 juin (+12,510)."
+  },
+  "2026-06-11_06:05:08": {
+    "setupType": "Unicorn", "mood": "Confiant", "processClean": true,
+    "setup": "Long ESM26 · Unicorn 4 couches · SMT Daily · London KZ · Macro RSR",
+    "notes": "ES Unicorn · TP1 atteint · SL trailé puis BE. 3 contrats."
+  },
+  "2026-06-11_12:43:37": {
+    "setupType": "SMT Divergence", "mood": "Confiant", "processClean": true,
+    "setup": "Long NQ · SMT Divergence NQ/ES · TP EQH",
+    "notes": "SMT NQ/ES · NQ fait un new low, ES non → long jusqu'à EQH. 3 contrats. Très propre."
+  },
+  "2026-06-12_05:50:47": {
+    "setupType": "SSL Sweep", "mood": "Impatient", "processClean": false,
+    "setup": "Long SSL sweep Low Asie · FIB 0.75 · stop défaut",
+    "notes": "Erreur : stop Sierra par défaut (non structurel) → sorti sur le sweep. Setup valide, exécution mécanique fautive."
+  },
+  "2026-06-12_05:51:21": {
+    "setupType": "SSL Sweep", "mood": "Impatient", "processClean": false,
+    "setup": "Long SSL sweep · re-entrée · stop serré non structurel · SpaceX IPO",
+    "notes": "Re-entrée stop serré, touché avant le move. Hors Kill Zone, bruit pré-London."
+  },
+  "2026-06-12_07:28:57": {
+    "setupType": "OB 15min", "mood": "Neutre", "processClean": true,
+    "setup": "Long OB 15min → Displacement 1min → FVG 1min · London KZ · stop structurel",
+    "notes": "Process parfait. OB 15min retracé, displacement, FVG, entrée, stop sous OB. TP High Asie / FIB 0.875. Efface les pertes T1+T2 → journée nette +8,180. Meilleur exemple de la semaine."
+  }
+}
