@@ -501,7 +501,7 @@ const DATA = {
     periodStart: "3 juin 2026",
     periodEnd: "16 juin 2026",
     account: "Sim1",
-    fills: 120,                      // source : Sierra Chart — 116 (→15 juin) + 4 fills 16 juin (2 short stoppés) ✓
+    fills: 127,                      // source : Sierra Chart — 120 + 7 fills aprem 16 juin (T3/T4/T5) ✓
     riskMaxDay: { value: -6525, label: "Risque max engagé", sub: "SL NQ T2 du 11 juin (non atteint)" }
   },
 
@@ -516,7 +516,7 @@ const DATA = {
     { date: "11 juin", cum: 77992 },
     { date: "12 juin", cum: 86172 },
     { date: "15 juin", cum: 97547 },
-    { date: "16 juin", cum: 87497 }
+    { date: "16 juin", cum: 101367 }
     // </EQUITY>
   ],
 
@@ -554,7 +554,10 @@ const DATA = {
     { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,296.25", exit: "29,643.25", rr: "—", pl: "+$12,050", plClass: "pos", plNum: 12050.0, result: "Win", setup: "Long OB 15min → Displacement 1min → FVG 1min · London KZ · stop structurel", notes: "Process parfait. OB 15min retracé, displacement, FVG, entrée, stop sous OB. TP High Asie / FIB 0.875. Efface les pertes T1+T2 → journée nette +8,180. Meilleur exemple de la semaine.", kz: "London", setupType: "OB 15min", mood: "Neutre", processClean: true },
     { date: "15 juin", instr: "NQU26", dir: "Long", entry: "30,521.75", exit: "TP 30,603.25 ✅", rr: "2.3:1", pl: "+$11,375", plClass: "pos", plNum: 11375.0, result: "Win", setup: "Long OB 1min · London Silver Bullet · Displacement + FVG BISI · OTE 62% · TP BSL 4H", notes: "Entrée Silver Bullet London (02:16 ET) au tick près (1 tick DD). OB 1min retracé (rebond 50%) → displacement → FVG BISI → entrée OTE 62%. Nouveau MM 10 contrats. Sorties échelonnées sur déviations OTE : 5c@30,568.00 + 4c@30,585.75 + 1c@30,603.25 (= BSL 4H). Stop BE puis trailé à 30,527.25. Full TP. P/L réel Sierra.", kz: "London", setupType: "Silver Bullet", mood: "Confiant", processClean: true },
     { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,830.25", exit: "SL 30,855.25", rr: "—", pl: "−$5,000", plClass: "neg", plNum: -5000.0, result: "SL Hit", setup: "Short HRLR · zone choppy haute résistance", notes: "Erreur : entrée sur un High Resistance Liquidity Run (consolidation encombrée), setup pas assez clair. Displacement baissier après l'entrée mais TP1 (30,794.50) non touché → reversal → stop à 30,855.25 (−25 pts). 10 contrats. P/L réel Sierra.", kz: "London", setupType: "HRLR", mood: "Impatient", processClean: false },
-    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,859.75", exit: "SL 30,885.00", rr: "—", pl: "−$5,050", plClass: "neg", plNum: -5050.0, result: "SL Hit", setup: "Re-entrée Short · sans confirmation (bougie non clôturée)", notes: "ERREUR GRAVE : re-entrée short avant la clôture de bougie / sans confirmation, juste après le stop de T1 et sans corriger l'erreur HRLR. Stop à 30,885.00 (−25.25 pts). 10 contrats. P/L réel Sierra.", kz: "London", setupType: "Re-entrée non confirmée", mood: "Revenge", processClean: false }
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,859.75", exit: "SL 30,885.00", rr: "—", pl: "−$5,050", plClass: "neg", plNum: -5050.0, result: "SL Hit", setup: "Re-entrée Short · sans confirmation (bougie non clôturée)", notes: "ERREUR GRAVE : re-entrée short avant la clôture de bougie / sans confirmation, juste après le stop de T1 et sans corriger l'erreur HRLR. Stop à 30,885.00 (−25.25 pts). 10 contrats. P/L réel Sierra.", kz: "London", setupType: "Re-entrée non confirmée", mood: "Revenge", processClean: false },
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,923.25", exit: "SL 30,944.50", rr: "—", pl: "−$4,250", plClass: "neg", plNum: -4250.0, result: "SL Hit", setup: "T3 · Short · PDH sweep → FVG bearish (3e short stoppé)", notes: "Short repris l'aprem (PDH pris → retrace → FVG bearish). Mais le prix est reparti à la hausse → stoppé à 30,944.50 (−21.25 pts). 3e short perdant consécutif. 10 contrats. P/L réel Sierra.", kz: "London", setupType: "FVG bearish", mood: "Impatient", processClean: false },
+    { date: "16 juin", instr: "NQU26", dir: "Long", entry: "30,784.25", exit: "TP 30,872.00 / 30,882.50 ✅", rr: "—", pl: "+$17,970", plClass: "pos", plNum: 17970.0, result: "Win", setup: "T4 · Long · OB discount + prise de liquidité (plan matinal)", notes: "LE setup du plan matinal enfin pris : prise de liquidité sous le range → long depuis l'OB discount. Stop 30,736.75. Sorties 8c@30,872.00 (+14,040) + 2c@30,882.50 (+3,930). Meilleur trade du jour, efface les 3 shorts perdants. 10 contrats. P/L réel Sierra.", kz: "NY AM", setupType: "OB discount", mood: "Confiant", processClean: true },
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,882.50", exit: "30,881.25", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "T5 · Short scalp", notes: "Petit scalp short 6 contrats juste après la sortie du long, +$150. P/L réel Sierra.", kz: "NY AM", setupType: "Scalp", mood: "Neutre", processClean: true }
     // </TRADES>
   ],
 
@@ -564,11 +567,23 @@ const DATA = {
     /* ================ SESSION 16 JUIN 2026 ================ */
     {
       date: "16 juin 2026", status: "closed", statusLabel: "Session clôturée",
-      pl: "−$10,050", plSub: "Net journée · 2 trades · 2 SL (HRLR + re-entrée)",
+      pl: "+$3,820", plSub: "Net journée · 5 trades · 2W / 3L · sauvée par T4",
       html: `
-        <div class="callout callout--red">
-          <h4>📉 Bilan · 16 juin 2026 · Net −$10,050 · 2 erreurs</h4>
-          <strong>2 trades · 0 Win · 2 SL.</strong> Deux shorts pris dans un contexte HRLR (zone choppy haute résistance), le second en re-entrée sans confirmation. Le biais bas était correct mais l'exécution a été précipitée. Source : export Trade Activity Log Sierra Chart ✓.
+        <div class="callout callout--green">
+          <h4>🔄 Bilan · 16 juin · Net +$3,820 · le long du plan a tout renversé</h4>
+          <strong>5 trades · 2 Win / 3 SL.</strong> Trois shorts perdants (T1, T2, T3 = −$14,300, à contre-courant dans le bruit), puis enfin <strong>le long du plan matinal (T4 = +$17,970)</strong> qui efface les pertes et fait basculer la journée en positif, suivi d'un petit scalp (T5 = +$150). Source : Sierra Trades List (flat→flat) ✓.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Net journée</div><div class="v num pos">+$3,820</div><div class="s">P/L réel Sierra</div></div>
+          <div class="mini-stat"><div class="l">3 shorts (T1-T3)</div><div class="v num neg">−$14,300</div><div class="s">à contre-courant</div></div>
+          <div class="mini-stat"><div class="l">T4 · Long (plan)</div><div class="v num pos">+$17,970</div><div class="s">meilleur trade du jour</div></div>
+          <div class="mini-stat"><div class="l">T5 · scalp</div><div class="v num pos">+$150</div><div class="s">short 6c</div></div>
+          <div class="mini-stat"><div class="l">Cumul période</div><div class="v num pos">+$101,367</div><div class="s">3–16 juin</div></div>
+        </div>
+        <div class="callout callout--red mt">
+          <h4>📐 Leçon du jour · POSITIF ≠ BONNE JOURNÉE</h4>
+          <strong>L'erreur centrale : ne pas avoir attendu mon setup.</strong> J'ai repris un trade <strong>juste après un SL</strong>, sans attendre une nouvelle confirmation — impatience / revenge (T2 dans la foulée de T1, T3 ensuite). 3 shorts à contre-courant = −$14,300 évitables.<br/><br/>
+          C'est <strong>le seul trade conforme au plan pré-marché (T4 long, OB discount + prise de liquidité)</strong> qui paie et fait basculer la journée en positif. Mais <strong>le résultat (+$3,820) ne valide pas le process</strong> : au niveau des règles, c'est une mauvaise journée. Règle à graver : après un SL, STOP — pas de re-entrée tant que le setup complet n'est pas re-validé (range + KZ + clôture de bougie + confirmation).
         </div>
         <div class="stat-row cols-4 mt">
           <div class="mini-stat"><div class="l">Net journée</div><div class="v num neg">−$10,050</div><div class="s">P/L réel Sierra</div></div>
@@ -609,6 +624,10 @@ const DATA = {
           <strong>Supports / zones discount :</strong> ~30,800 (psy) · ~30,760–30,770 (OB 1min) · ~30,700–30,740 (Discount OB 15min · zone d'entrée)<br>
           <strong>Note :</strong> Biais long sur retour en discount. Stop structurel sous l'OB (jamais au-delà du 50%). Sizing 10 contrats. P/L journal = export Sierra exact.
         </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/01-premarket-15m.png" alt="Pré-marché 15min Discount OB" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15min · Pré-marché : zone ATH, Discount Order Block ~30,700–30,740 identifié.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-16/02-premarket-1m.png" alt="Pré-marché 1min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Pré-marché : structure intraday avant London, niveaux du range.</figcaption></figure>
+        </div>
 
         <h3 style="margin-top:26px">T1 · Short · Sortie · Erreur HRLR</h3>
         <div class="callout callout--red">
@@ -622,6 +641,9 @@ const DATA = {
           <div class="mini-stat"><div class="l">TP1 / TP2</div><div class="v num acc">30,794.50 / 30,756.00</div><div class="s">8c / 10c · TP1 non touché</div></div>
           <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$5,000</div><div class="s">SL 30,855.25 · réel Sierra</div></div>
         </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/03-t1-short-hrlr.png" alt="T1 short HRLR" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · T1 short dans la zone choppy HRLR (~30,800–30,855). Entrée 30,830.25, stop 30,855.25, TP1 30,794.50. Setup pas assez clair → sortie.</figcaption></figure>
+        </div>
 
         <h3 style="margin-top:26px">T2 · Re-entrée Short · ERREUR GRAVE</h3>
         <div class="callout callout--red">
@@ -634,6 +656,49 @@ const DATA = {
           <div class="mini-stat"><div class="l">Entrée · Short</div><div class="v num">30,859.75</div><div class="s">10c · re-entrée non confirmée</div></div>
           <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,885.00</div><div class="s num">−25.25 pts</div></div>
           <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$5,050</div><div class="s">SL · réel Sierra · erreur grave</div></div>
+        </div>
+
+        <h3 style="margin-top:26px">T3 · Short · 3e short stoppé</h3>
+        <div class="callout callout--red">
+          <h4>❌ Short stoppé · le prix repart à la hausse (−$4,250)</h4>
+          Cadre identifié : PDH pris → retracement → petit FVG bearish → short. Mais au lieu de descendre vers le low du range, <strong>le prix est reparti à la hausse</strong> et a atteint le stop à <strong>30,944.50</strong> (−21.25 pts). 3e short perdant consécutif — insistance baissière dans une structure qui montait. La cible (low du range 30,754.75) ne sera atteinte que plus tard… et jouée en long (T4).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Entrée · Short</div><div class="v num">30,923.25</div><div class="s">10 contrats · FVG bearish</div></div>
+          <div class="mini-stat"><div class="l">Stop atteint</div><div class="v num neg">30,944.50</div><div class="s num">−21.25 pts</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$4,250</div><div class="s">réel Sierra</div></div>
+          <div class="mini-stat"><div class="l">Cible ratée</div><div class="v num acc">30,754.75</div><div class="s">low range · pas atteint en short</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/t3-short-pdh-retrace-bearish-fvg.png" alt="T3 short PDH sweep FVG bearish" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">NQ 1min · Short 30,923.25 après prise du PDH + FVG bearish. Stop 30,948.25.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-16/t3-management-1h-discount-fvg.png" alt="T3 management 1H ladder" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">NQ 1H · Sortie en 2 temps : 8c au bas du range (30,754.75), 2c runners vers le FVG discount 1H (30,671.25).</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T4 · Long · LE setup du plan matinal · WIN +$17,970</h3>
+        <div class="callout callout--green">
+          <h4>✅ Le bon setup · OB discount + prise de liquidité · meilleur trade du jour</h4>
+          Exactement le plan pré-marché : <strong>prise de liquidité sous le range</strong> (low enfin balayé) → <strong>long depuis l'Order Block discount</strong>. Le range était déterminé → exécution propre.<br/><br/>
+          Long <strong>10 @ 30,784.25</strong>, stop structurel <strong>30,736.75</strong>. Sorties réelles : <strong>8c @ 30,872.00 (+$14,040)</strong> + <strong>2c @ 30,882.50 (+$3,930)</strong> = <strong>+$17,970</strong>. Efface les 3 shorts perdants et fait basculer la journée en positif.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée · Long</div><div class="v num pos">30,784.25</div><div class="s">10 contrats · OB discount</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,736.75</div><div class="s num">jamais menacé</div></div>
+          <div class="mini-stat"><div class="l">Sortie 1 · 8c</div><div class="v num pos">30,872.00</div><div class="s num">+$14,040</div></div>
+          <div class="mini-stat"><div class="l">Sortie 2 · 2c</div><div class="v num pos">30,882.50</div><div class="s num">+$3,930</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$17,970</div><div class="s">Win · réel Sierra</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/t4-long-ob-discount-liquidity-grab.png" alt="T4 long OB discount prise de liquidité" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">NQ 15min · Long 30,784.25 sur l'OB discount après la prise de liquidité sous le range. Sorties 8c@30,872.00 + 2c@30,882.50 = +$17,970.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T5 · Short scalp · +$150</h3>
+        <div class="callout callout--green">
+          <h4>✅ Petit scalp short</h4>
+          Juste après la sortie du long, scalp short <strong>6 contrats 30,882.50 → 30,881.25 = +$150</strong>. Clôture la journée. Process correct, taille réduite.
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📊 Récap journée · +$3,820</h4>
+          T1 −$5,000 · T2 −$5,050 · T3 −$4,250 · <strong>T4 +$17,970</strong> · T5 +$150. Trois shorts à contre-courant effacés par le long du plan. Cumul période : <strong>+$101,367</strong>. Chiffres figés depuis la Sierra Trades List (flat→flat).
         </div>`
     },
     /* ================ SESSION 15 JUIN 2026 ================ */
@@ -1414,6 +1479,7 @@ const DATA = {
 
   rules: [
     { label: "Principe fondamental", text: "Un trader ICT ne réagit pas au prix — il anticipe le prix." },
+    { label: "Déterminer le range D'ABORD", critical: true, text: "1ère chose à faire avant toute exécution : déterminer le range dans lequel on va travailler. Trouver le time frame où le range est le plus CLAIR, puis descendre vers le time frame d'exécution en respectant l'alignement avec ce range. Pas de range défini = pas de trade." },
     { label: "No revenge trading", critical: true, text: "Sizing fixe : 3 contrats toujours. Un stop loss ne justifie jamais d'augmenter la position suivante. Le résultat ne valide pas le process." },
     { label: "Invalidation OB", text: "Bougie CLOSE en dessous de 50% de l'OB → trade invalidé. Jamais sur la mèche." },
     { label: "Premium / Discount (PDA)", text: "Dans un PDA : en dessous du 50% = Premium · au-dessus = Discount. Logique inversée vs range." },
@@ -1443,6 +1509,16 @@ const DATA = {
 
   /* ---- Erreurs documentées (semaine du 9–13 juin) ---- */
   weeklyErrors: [
+    { type: "critical", title: "Ne pas avoir attendu le setup (re-entrée après SL)",
+      occurrences: 1, days: "16 juin",
+      description: "ERREUR CENTRALE DU JOUR. Trades enchaînés juste après un stop loss, sans attendre une nouvelle confirmation ni le vrai setup → impatience / revenge (T2 dans la foulée de T1, T3 ensuite). La journée finit en positif grâce au seul trade conforme au plan (T4), mais le process est mauvais : résultat positif ≠ bonne journée.",
+      rule: "Après un SL : STOP. Pas de re-entrée tant que le setup complet n'est pas re-validé (range défini + Kill Zone + clôture de bougie + confirmation). Le résultat ne valide jamais le comportement.",
+      costStr: "−$14,300 de shorts évitables (avant T4)" },
+    { type: "critical", title: "Range non défini",
+      occurrences: 1, days: "16 juin (matin)",
+      description: "Trades pris sans avoir déterminé au préalable le range de travail → exécution dans le bruit (HRLR), sans cadre directionnel clair. Racine des 2 SL du matin.",
+      rule: "1ère étape obligatoire : déterminer le range sur le TF le plus lisible, puis descendre au TF d'exécution aligné avec ce range. Pas de range = pas d'entrée.",
+      costStr: "lié aux −$10,050 du 16 juin" },
     { type: "critical", title: "Stop non structurel",
       occurrences: 2, days: "12 juin T1 · T2",
       description: "Stop Sierra par défaut (T1) ou serré sans référence structurelle (T2) → sorti sur le sweep avant que le prix reparte. Setup valide dans les deux cas, erreur purement mécanique.",
@@ -1484,6 +1560,28 @@ const DATA = {
   /* ---- Stats hebdo pour Performance tab ---- */
   /* ---- Backtests (screenshots + commentaires) ---- */
   backtests: [
+    {
+      date: "16 juin 2026",
+      instrument: "NQU26",
+      timeframe: "1min",
+      setup: "London Silver Bullet · First FVG → PDH",
+      result: "valid",
+      title: "Silver Bullet Londres · réaction sur le 1er FVG → Previous Day High",
+      comment: `Setup identifié mais NON tradé (j'ai pris des shorts HRLR à la place → −$10,050). Je teste / valide ce modèle.
+
+Modèle : pendant la Silver Bullet de Londres, le PREMIER FVG doit théoriquement soutenir le prix. Entrée long sur la réaction au 1er FVG, target = Previous Day High (PDH).
+
+Déroulé observé : le prix a bien réagi sur le 1er FVG (~30,808–30,818) puis est monté jusqu'au PDH (~30,913). Le setup a joué parfaitement, dans le sens du biais (haussier).`,
+      lessons: [
+        { type: "pos", text: "1er FVG de la Silver Bullet London = support fiable → entrée long, target PDH" },
+        { type: "pos", text: "Le biais directionnel (haussier) était juste — c'est l'exécution (shorts HRLR) qui a coûté" },
+        { type: "neg", text: "Setup identifié mais non pris : ne pas se disperser sur des contre-tendances dans le bruit" },
+        { type: "note", text: "À tester sur plusieurs sessions : taux de réussite First FVG → PDH en London Silver Bullet" }
+      ],
+      images: [
+        { caption: "NQ 1min · 16 juin · réaction sur le 1er FVG (~30,810) → target PDH (~30,913) · London Silver Bullet", src: "plans/2026-06-16/silver-bullet-first-fvg-pdh.png" }
+      ]
+    },
     {
       date: "13 juin 2026",
       instrument: "NQM26",
