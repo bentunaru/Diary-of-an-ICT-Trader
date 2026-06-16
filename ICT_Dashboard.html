@@ -395,15 +395,16 @@
       </div>
     </div>
     <div class="period">
-      <div class="lbl">Période</div>
+      <div class="lbl">Period</div>
       <div class="val" id="period-label"></div>
     </div>
   </div>
-  <nav class="tabs" role="tablist" aria-label="Navigation du journal">
-    <button type="button" class="tab" role="tab" aria-selected="true" data-view="overview">Vue d'ensemble</button>
+  <nav class="tabs" role="tablist" aria-label="Journal navigation">
+    <button type="button" class="tab" role="tab" aria-selected="true" data-view="overview">Overview</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="sessions">Sessions</button>
-    <button type="button" class="tab" role="tab" aria-selected="false" data-view="rules">Règles ICT</button>
-    <button type="button" class="tab" role="tab" aria-selected="false" data-view="errors">Erreurs</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="rules">ICT Rules</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="concepts">Concepts</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" data-view="errors">Errors</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="performance">Performance</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="backtest">Backtest</button>
     <button type="button" class="tab" role="tab" aria-selected="false" data-view="plan">Plan</button>
@@ -416,27 +417,27 @@
     <div class="kpis" id="kpis"></div>
 
     <div class="section">
-      <h2>Évolution P/L cumulé (estimé)</h2>
+      <h2>Cumulative P/L (estimated)</h2>
       <div class="chart-wrap">
-        <canvas id="plChart" role="img" aria-label="Courbe P/L cumulé estimé"></canvas>
+        <canvas id="plChart" role="img" aria-label="Cumulative P/L curve"></canvas>
       </div>
-      <h2 style="margin-top:20px;margin-bottom:8px;">P/L journalier par session</h2>
+      <h2 style="margin-top:20px;margin-bottom:8px;">Daily P/L by session</h2>
       <div class="chart-wrap-sm">
-        <canvas id="dailyChart" role="img" aria-label="P/L journalier par session"></canvas>
+        <canvas id="dailyChart" role="img" aria-label="Daily P/L by session"></canvas>
       </div>
     </div>
 
     <div id="stats-section"></div>
 
     <div class="section">
-      <h2>Journal des trades · cliquer une ligne pour le détail</h2>
+      <h2>Trade log · click a row for details</h2>
       <div class="filter-bar" id="trade-filters"></div>
       <table>
         <thead>
           <tr>
             <th scope="col"></th><th scope="col">Date</th><th scope="col">Instr.</th><th scope="col">Dir.</th>
-            <th scope="col" class="r">Entrée</th><th scope="col" class="r">Sortie</th><th scope="col" class="r">R:R</th>
-            <th scope="col" class="r">P/L</th><th scope="col">Résultat</th>
+            <th scope="col" class="r">Entry</th><th scope="col" class="r">Exit</th><th scope="col" class="r">R:R</th>
+            <th scope="col" class="r">P/L</th><th scope="col">Result</th>
           </tr>
         </thead>
         <tbody id="trade-log"></tbody>
@@ -469,6 +470,11 @@
     <div id="backtest-content"></div>
   </section>
 
+  <!-- ============ CONCEPTS ============ -->
+  <section id="view-concepts" class="view">
+    <div class="rules" id="concepts"></div>
+  </section>
+
   <!-- ============ RÈGLES ============ -->
   <section id="view-rules" class="view">
     <div class="rules" id="rules"></div>
@@ -483,8 +489,6 @@
   <img id="bt-lightbox-img" src="" alt="">
 </div>
 
-<footer id="footer"></footer>
-
 <script>
 /* =====================================================================
    SOURCE UNIQUE DE VÉRITÉ
@@ -495,9 +499,9 @@
 const DATA = {
   meta: {
     periodStart: "3 juin 2026",
-    periodEnd: "12 juin 2026",
+    periodEnd: "16 juin 2026",
     account: "Sim1",
-    fills: 112,                      // source : Sierra Chart — 45 (3–11 juin) + 18 fills 12 juin (stats export ✓)
+    fills: 127,                      // source : Sierra Chart — 120 + 7 fills aprem 16 juin (T3/T4/T5) ✓
     riskMaxDay: { value: -6525, label: "Risque max engagé", sub: "SL NQ T2 du 11 juin (non atteint)" }
   },
 
@@ -510,7 +514,9 @@ const DATA = {
     { date: "09 juin", cum: 61565 },
     { date: "10 juin", cum: 66545 },
     { date: "11 juin", cum: 77992 },
-    { date: "12 juin", cum: 86172 }
+    { date: "12 juin", cum: 86172 },
+    { date: "15 juin", cum: 97547 },
+    { date: "16 juin", cum: 101367 }
     // </EQUITY>
   ],
 
@@ -545,14 +551,301 @@ const DATA = {
     { date: "11 juin", instr: "NQM26", dir: "Long", entry: "28,732.75", exit: "28,940.25", rr: "—", pl: "+$10,085", plClass: "pos", plNum: 10085.0, result: "Win", setup: "Long NQ · SMT Divergence NQ/ES · TP EQH", notes: "SMT NQ/ES · NQ fait un new low, ES non → long jusqu'à EQH. 3 contrats. Très propre.", kz: "NY AM", setupType: "SMT Divergence", mood: "Confiant", processClean: true },
     { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,404.25", exit: "29,377.50", rr: "—", pl: "−$1,605", plClass: "neg", plNum: -1605.0, result: "Perte", setup: "Long SSL sweep Low Asie · FIB 0.75 · stop défaut", notes: "Erreur : stop Sierra par défaut (non structurel) → sorti sur le sweep. Setup valide, exécution mécanique fautive.", kz: "Hors KZ", setupType: "SSL Sweep", mood: "Impatient", processClean: false },
     { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,394.75", exit: "29,357.00", rr: "—", pl: "−$2,265", plClass: "neg", plNum: -2265.0, result: "Perte", setup: "Long SSL sweep · re-entrée · stop serré non structurel · SpaceX IPO", notes: "Re-entrée stop serré, touché avant le move. Hors Kill Zone, bruit pré-London.", kz: "Hors KZ", setupType: "SSL Sweep", mood: "Impatient", processClean: false },
-    { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,296.25", exit: "29,643.25", rr: "—", pl: "+$12,050", plClass: "pos", plNum: 12050.0, result: "Win", setup: "Long OB 15min → Displacement 1min → FVG 1min · London KZ · stop structurel", notes: "Process parfait. OB 15min retracé, displacement, FVG, entrée, stop sous OB. TP High Asie / FIB 0.875. Efface les pertes T1+T2 → journée nette +8,180. Meilleur exemple de la semaine.", kz: "London", setupType: "OB 15min", mood: "Neutre", processClean: true }
+    { date: "12 juin", instr: "NQM26", dir: "Long", entry: "29,296.25", exit: "29,643.25", rr: "—", pl: "+$12,050", plClass: "pos", plNum: 12050.0, result: "Win", setup: "Long OB 15min → Displacement 1min → FVG 1min · London KZ · stop structurel", notes: "Process parfait. OB 15min retracé, displacement, FVG, entrée, stop sous OB. TP High Asie / FIB 0.875. Efface les pertes T1+T2 → journée nette +8,180. Meilleur exemple de la semaine.", kz: "London", setupType: "OB 15min", mood: "Neutre", processClean: true },
+    { date: "15 juin", instr: "NQU26", dir: "Long", entry: "30,521.75", exit: "TP 30,603.25 ✅", rr: "2.3:1", pl: "+$11,375", plClass: "pos", plNum: 11375.0, result: "Win", setup: "Long OB 1min · London Silver Bullet · Displacement + FVG BISI · OTE 62% · TP BSL 4H", notes: "Entrée Silver Bullet London (02:16 ET) au tick près (1 tick DD). OB 1min retracé (rebond 50%) → displacement → FVG BISI → entrée OTE 62%. Nouveau MM 10 contrats. Sorties échelonnées sur déviations OTE : 5c@30,568.00 + 4c@30,585.75 + 1c@30,603.25 (= BSL 4H). Stop BE puis trailé à 30,527.25. Full TP. P/L réel Sierra.", kz: "London", setupType: "Silver Bullet", mood: "Confiant", processClean: true },
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,830.25", exit: "SL 30,855.25", rr: "—", pl: "−$5,000", plClass: "neg", plNum: -5000.0, result: "SL Hit", setup: "Short HRLR · zone choppy haute résistance", notes: "Erreur : entrée sur un High Resistance Liquidity Run (consolidation encombrée), setup pas assez clair. Displacement baissier après l'entrée mais TP1 (30,794.50) non touché → reversal → stop à 30,855.25 (−25 pts). 10 contrats. P/L réel Sierra.", kz: "London", setupType: "HRLR", mood: "Impatient", processClean: false },
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,859.75", exit: "SL 30,885.00", rr: "—", pl: "−$5,050", plClass: "neg", plNum: -5050.0, result: "SL Hit", setup: "Re-entrée Short · sans confirmation (bougie non clôturée)", notes: "ERREUR GRAVE : re-entrée short avant la clôture de bougie / sans confirmation, juste après le stop de T1 et sans corriger l'erreur HRLR. Stop à 30,885.00 (−25.25 pts). 10 contrats. P/L réel Sierra.", kz: "London", setupType: "Re-entrée non confirmée", mood: "Revenge", processClean: false },
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,923.25", exit: "SL 30,944.50", rr: "—", pl: "−$4,250", plClass: "neg", plNum: -4250.0, result: "SL Hit", setup: "T3 · Short · PDH sweep → FVG bearish (3e short stoppé)", notes: "Short repris l'aprem (PDH pris → retrace → FVG bearish). Mais le prix est reparti à la hausse → stoppé à 30,944.50 (−21.25 pts). 3e short perdant consécutif. 10 contrats. P/L réel Sierra.", kz: "London", setupType: "FVG bearish", mood: "Impatient", processClean: false },
+    { date: "16 juin", instr: "NQU26", dir: "Long", entry: "30,784.25", exit: "TP 30,872.00 / 30,882.50 ✅", rr: "—", pl: "+$17,970", plClass: "pos", plNum: 17970.0, result: "Win", setup: "T4 · Long · OB discount + prise de liquidité (plan matinal)", notes: "LE setup du plan matinal enfin pris : prise de liquidité sous le range → long depuis l'OB discount. Stop 30,736.75. Sorties 8c@30,872.00 (+14,040) + 2c@30,882.50 (+3,930). Meilleur trade du jour, efface les 3 shorts perdants. 10 contrats. P/L réel Sierra.", kz: "NY AM", setupType: "OB discount", mood: "Confiant", processClean: true },
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,882.50", exit: "30,881.25", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "T5 · Short scalp", notes: "Petit scalp short 6 contrats juste après la sortie du long, +$150. P/L réel Sierra.", kz: "NY AM", setupType: "Scalp", mood: "Neutre", processClean: true }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$22,720", sub: "NQ · 08 juin · réel Sierra" },
 
   sessions: [
-    /* ================ BILAN SEMAINE 9–13 JUIN ================ */
+    /* ================ SESSION 16 JUIN 2026 ================ */
+    {
+      date: "16 juin 2026", status: "closed", statusLabel: "Session clôturée",
+      pl: "+$3,820", plSub: "Net journée · 5 trades · 2W / 3L · sauvée par T4",
+      html: `
+        <div class="callout callout--green">
+          <h4>🔄 Bilan · 16 juin · Net +$3,820 · le long du plan a tout renversé</h4>
+          <strong>5 trades · 2 Win / 3 SL.</strong> Trois shorts perdants (T1, T2, T3 = −$14,300, à contre-courant dans le bruit), puis enfin <strong>le long du plan matinal (T4 = +$17,970)</strong> qui efface les pertes et fait basculer la journée en positif, suivi d'un petit scalp (T5 = +$150). Source : Sierra Trades List (flat→flat) ✓.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Net journée</div><div class="v num pos">+$3,820</div><div class="s">P/L réel Sierra</div></div>
+          <div class="mini-stat"><div class="l">3 shorts (T1-T3)</div><div class="v num neg">−$14,300</div><div class="s">à contre-courant</div></div>
+          <div class="mini-stat"><div class="l">T4 · Long (plan)</div><div class="v num pos">+$17,970</div><div class="s">meilleur trade du jour</div></div>
+          <div class="mini-stat"><div class="l">T5 · scalp</div><div class="v num pos">+$150</div><div class="s">short 6c</div></div>
+          <div class="mini-stat"><div class="l">Cumul période</div><div class="v num pos">+$101,367</div><div class="s">3–16 juin</div></div>
+        </div>
+        <div class="callout callout--red mt">
+          <h4>📐 Leçon du jour · POSITIF ≠ BONNE JOURNÉE</h4>
+          <strong>L'erreur centrale : ne pas avoir attendu mon setup.</strong> J'ai repris un trade <strong>juste après un SL</strong>, sans attendre une nouvelle confirmation — impatience / revenge (T2 dans la foulée de T1, T3 ensuite). 3 shorts à contre-courant = −$14,300 évitables.<br/><br/>
+          C'est <strong>le seul trade conforme au plan pré-marché (T4 long, OB discount + prise de liquidité)</strong> qui paie et fait basculer la journée en positif. Mais <strong>le résultat (+$3,820) ne valide pas le process</strong> : au niveau des règles, c'est une mauvaise journée. Règle à graver : après un SL, STOP — pas de re-entrée tant que le setup complet n'est pas re-validé (range + KZ + clôture de bougie + confirmation).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Net journée</div><div class="v num neg">−$10,050</div><div class="s">P/L réel Sierra</div></div>
+          <div class="mini-stat"><div class="l">T1 · Short HRLR</div><div class="v num neg">−$5,000</div><div class="s">SL 30,855.25</div></div>
+          <div class="mini-stat"><div class="l">T2 · Re-entrée</div><div class="v num neg">−$5,050</div><div class="s">SL 30,885.00 · erreur grave</div></div>
+          <div class="mini-stat"><div class="l">Cumul période</div><div class="v num pos">+$87,497</div><div class="s">3–16 juin</div></div>
+        </div>
+        <div class="grid-2 mt">
+          <div class="panel panel--red"><h4>🔴 Erreur #1 · HRLR</h4><p>Entrée short dans une zone de forte résistance / consolidation encombrée — setup pas assez clair. Condition HRLR à éviter. Correctif : attendre un contexte propre (LRLR / Discount OB du plan).</p></div>
+          <div class="panel panel--red"><h4>🔴 Erreur #2 · Re-entrée non confirmée (GRAVE)</h4><p>Re-entrée short avant la clôture de bougie, sans confirmation et sans avoir corrigé l'erreur #1. Correctif (priorité absolue) : clôture + confirmation obligatoires, pas de re-entrée précipitée.</p></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📐 Leçon du jour</h4>
+          Le biais directionnel (bas) était juste, mais <strong>le contexte (HRLR) et le timing (pas de confirmation) ne l'étaient pas</strong>. Avoir raison sur la direction ne suffit pas : sans setup clair ni clôture confirmée, on subit le bruit. Discipline > conviction. Journée à −$10,050 qui rend ~88% du gain de la veille — d'où l'importance d'attendre les A+ setups.
+        </div>
+
+        <h3 style="margin-top:26px">Analyse Pré-Marché · Mardi 16 juin 2026 · ~1h30 ET</h3>
+        <div class="callout callout--accent">
+          <h4>⏳ Nouvelle session · Bientôt en London KZ · Biais haussier (continuation)</h4>
+          NQU26 en zone ATH (~30,800–30,910), tendance de fond haussière intacte. La <strong>BSL a été prise</strong> (liquidités en rouge sur les charts) → on cherche maintenant les <strong>EQL sur le 15min</strong>, avec un retour dans un <strong>Discount Order Block</strong> (~30,700–30,740).
+          <br/><br/><strong>Scénario :</strong> prendre la liquidité basse / EQL, <strong>tenir au maximum le 50% de l'OB</strong>, puis repartir vers le haut (long). Attente confirmation en London KZ. Anticipation : <strong>range de Londres plutôt réduit aujourd'hui</strong>.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--green"><h4>HTF · NQU26</h4><p>Continuation haussière, prix en zone ATH après expansion. Pas de signe de retournement HTF. Les pullbacks restent achetés tant que la structure tient au-dessus du Discount OB.</p></div>
+          <div class="panel panel--accent"><h4>Liquidité / Biais</h4><p>BSL prise (rouge) → purge faite. Cible : EQL 15min + Discount Order Block en discount. Surveiller SMT NQ/ES sur le balayage des lows pour confirmer le long.</p></div>
+          <div class="panel panel--accent"><h4>Plan London KZ · 2h–5h ET</h4><p>Attendre le retour dans le Discount OB (~30,700–30,740), réaction au max au 50% (~30,720) → setup long (displacement 1min + FVG). Pas d'entrée avant clôture bougie 15min dans la zone. Range réduit anticipé → objectifs modestes.</p></div>
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">High / BSL</div><div class="v num acc">~30,910</div><div class="s">Liquidité prise (rouge)</div></div>
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num pos">~30,809</div><div class="s">Consolidation ATH</div></div>
+          <div class="mini-stat"><div class="l">Discount OB (haut)</div><div class="v num">~30,740</div><div class="s">Entrée potentielle</div></div>
+          <div class="mini-stat"><div class="l">50% OB · invalidation</div><div class="v num acc">~30,720</div><div class="s">Stop max sous ce niveau</div></div>
+          <div class="mini-stat"><div class="l">Discount OB (bas) / EQL</div><div class="v num">~30,700</div><div class="s">Cible liquidité 15min</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📋 Niveaux clés (lignes Sierra Chart)</h4>
+          <strong>Résistances :</strong> ~30,910 (high / BSL) · ~30,876 · ~30,853 (BSL 1min prise)<br>
+          <strong>Supports / zones discount :</strong> ~30,800 (psy) · ~30,760–30,770 (OB 1min) · ~30,700–30,740 (Discount OB 15min · zone d'entrée)<br>
+          <strong>Note :</strong> Biais long sur retour en discount. Stop structurel sous l'OB (jamais au-delà du 50%). Sizing 10 contrats. P/L journal = export Sierra exact.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/01-premarket-15m.png" alt="Pré-marché 15min Discount OB" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15min · Pré-marché : zone ATH, Discount Order Block ~30,700–30,740 identifié.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-16/02-premarket-1m.png" alt="Pré-marché 1min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Pré-marché : structure intraday avant London, niveaux du range.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Short · Sortie · Erreur HRLR</h3>
+        <div class="callout callout--red">
+          <h4>❌ Erreur : entrée sur un High Resistance Liquidity Run (HRLR)</h4>
+          Short pris dans une zone <strong>choppy / haute résistance</strong> (consolidation ~30,800–30,855 depuis des heures) — setup <strong>pas assez clair</strong>. C'est précisément une condition <strong>HRLR à éviter</strong>. Il y a bien eu un <strong>displacement baissier après l'entrée</strong>, mais le prix <strong>n'a pas touché le TP1</strong> avant de repartir → sortie.<br/><br/>
+          <strong>Correctif :</strong> attendre un contexte plus propre (LRLR / retour net dans le Discount OB du plan) avant d'entrer. Ne pas forcer dans le bruit. <strong>Biais maintenu : prix plus bas attendus.</strong>
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Entrée · Short</div><div class="v num">30,830.25</div><div class="s">10 contrats · zone HRLR</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,855.25</div><div class="s num">~25 pts au-dessus</div></div>
+          <div class="mini-stat"><div class="l">TP1 / TP2</div><div class="v num acc">30,794.50 / 30,756.00</div><div class="s">8c / 10c · TP1 non touché</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$5,000</div><div class="s">SL 30,855.25 · réel Sierra</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/03-t1-short-hrlr.png" alt="T1 short HRLR" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · T1 short dans la zone choppy HRLR (~30,800–30,855). Entrée 30,830.25, stop 30,855.25, TP1 30,794.50. Setup pas assez clair → sortie.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T2 · Re-entrée Short · ERREUR GRAVE</h3>
+        <div class="callout callout--red">
+          <h4>🔴 ERREUR GRAVE · Re-entrée sans attendre la clôture / confirmation</h4>
+          Re-entrée en short <strong>avant la clôture de la bougie</strong> → <strong>ressorti immédiatement</strong> (stop). Double faute :
+          (1) <strong>entrée sans confirmation</strong> (bougie non clôturée), (2) <strong>re-entrée précipitée</strong> juste après une première sortie, sans avoir corrigé l'erreur précédente (HRLR).<br/><br/>
+          <strong>Règle (priorité absolue) :</strong> attendre IMPÉRATIVEMENT la <strong>clôture de la bougie + une confirmation</strong> avant toute (re)entrée. Pas de re-entrée tant que l'erreur précédente n'est pas identifiée et corrigée. Dans le doute / le bruit → <strong>ne rien faire</strong>.
+        </div>
+        <div class="stat-row cols-3 mt">
+          <div class="mini-stat"><div class="l">Entrée · Short</div><div class="v num">30,859.75</div><div class="s">10c · re-entrée non confirmée</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,885.00</div><div class="s num">−25.25 pts</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$5,050</div><div class="s">SL · réel Sierra · erreur grave</div></div>
+        </div>
+
+        <h3 style="margin-top:26px">T3 · Short · 3e short stoppé</h3>
+        <div class="callout callout--red">
+          <h4>❌ Short stoppé · le prix repart à la hausse (−$4,250)</h4>
+          Cadre identifié : PDH pris → retracement → petit FVG bearish → short. Mais au lieu de descendre vers le low du range, <strong>le prix est reparti à la hausse</strong> et a atteint le stop à <strong>30,944.50</strong> (−21.25 pts). 3e short perdant consécutif — insistance baissière dans une structure qui montait. La cible (low du range 30,754.75) ne sera atteinte que plus tard… et jouée en long (T4).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Entrée · Short</div><div class="v num">30,923.25</div><div class="s">10 contrats · FVG bearish</div></div>
+          <div class="mini-stat"><div class="l">Stop atteint</div><div class="v num neg">30,944.50</div><div class="s num">−21.25 pts</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$4,250</div><div class="s">réel Sierra</div></div>
+          <div class="mini-stat"><div class="l">Cible ratée</div><div class="v num acc">30,754.75</div><div class="s">low range · pas atteint en short</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/t3-short-pdh-retrace-bearish-fvg.png" alt="T3 short PDH sweep FVG bearish" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">NQ 1min · Short 30,923.25 après prise du PDH + FVG bearish. Stop 30,948.25.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-16/t3-management-1h-discount-fvg.png" alt="T3 management 1H ladder" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">NQ 1H · Sortie en 2 temps : 8c au bas du range (30,754.75), 2c runners vers le FVG discount 1H (30,671.25).</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T4 · Long · LE setup du plan matinal · WIN +$17,970</h3>
+        <div class="callout callout--green">
+          <h4>✅ Le bon setup · OB discount + prise de liquidité · meilleur trade du jour</h4>
+          Exactement le plan pré-marché : <strong>prise de liquidité sous le range</strong> (low enfin balayé) → <strong>long depuis l'Order Block discount</strong>. Le range était déterminé → exécution propre.<br/><br/>
+          Long <strong>10 @ 30,784.25</strong>, stop structurel <strong>30,736.75</strong>. Sorties réelles : <strong>8c @ 30,872.00 (+$14,040)</strong> + <strong>2c @ 30,882.50 (+$3,930)</strong> = <strong>+$17,970</strong>. Efface les 3 shorts perdants et fait basculer la journée en positif.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée · Long</div><div class="v num pos">30,784.25</div><div class="s">10 contrats · OB discount</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,736.75</div><div class="s num">jamais menacé</div></div>
+          <div class="mini-stat"><div class="l">Sortie 1 · 8c</div><div class="v num pos">30,872.00</div><div class="s num">+$14,040</div></div>
+          <div class="mini-stat"><div class="l">Sortie 2 · 2c</div><div class="v num pos">30,882.50</div><div class="s num">+$3,930</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$17,970</div><div class="s">Win · réel Sierra</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-16/t4-long-ob-discount-liquidity-grab.png" alt="T4 long OB discount prise de liquidité" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">NQ 15min · Long 30,784.25 sur l'OB discount après la prise de liquidité sous le range. Sorties 8c@30,872.00 + 2c@30,882.50 = +$17,970.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T5 · Short scalp · +$150</h3>
+        <div class="callout callout--green">
+          <h4>✅ Petit scalp short</h4>
+          Juste après la sortie du long, scalp short <strong>6 contrats 30,882.50 → 30,881.25 = +$150</strong>. Clôture la journée. Process correct, taille réduite.
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📊 Récap journée · +$3,820</h4>
+          T1 −$5,000 · T2 −$5,050 · T3 −$4,250 · <strong>T4 +$17,970</strong> · T5 +$150. Trois shorts à contre-courant effacés par le long du plan. Cumul période : <strong>+$101,367</strong>. Chiffres figés depuis la Sierra Trades List (flat→flat).
+        </div>`
+    },
+    /* ================ SESSION 15 JUIN 2026 ================ */
+    {
+      date: "15 juin 2026", status: "closed", statusLabel: "Session clôturée",
+      pl: "+$11,375", plSub: "Net journée · 1 trade · Full TP ✅",
+      html: `
+        <div class="callout callout--green">
+          <h4>🏆 Bilan · 15 juin 2026 · Full TP · Net +$11,375</h4>
+          <strong>1 trade · 1 Win · 0 perte · process 100% propre.</strong> Long NQU26 Silver Bullet London, entrée OTE au tick près, ladder de sorties entièrement rempli jusqu'au BSL 4H (30,603.25). Source : export Trade Activity Log Sierra Chart ✓.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Net journée</div><div class="v num pos">+$11,375</div><div class="s">P/L réel Sierra</div></div>
+          <div class="mini-stat"><div class="l">TP1 · 5c</div><div class="v num pos">+$4,625</div><div class="s">@ 30,568.00</div></div>
+          <div class="mini-stat"><div class="l">TP2 · 4c</div><div class="v num pos">+$5,120</div><div class="s">@ 30,585.75</div></div>
+          <div class="mini-stat"><div class="l">TP3 · 1c</div><div class="v num pos">+$1,630</div><div class="s">@ 30,603.25 · BSL 4H</div></div>
+          <div class="mini-stat"><div class="l">Risque initial</div><div class="v num neg">−$5,000</div><div class="s">25 pts · jamais menacé</div></div>
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--green"><h4>✅ Ce qui a marché</h4><p>Narratif clair (BSL 4H ciblé dès le pré-marché), process ICT complet (OB→displacement→FVG→OTE), entrée au tick, stop structurel, gestion en partiels disciplinée, plan tenu malgré l'inconfort sur la liquidité.</p></div>
+          <div class="panel panel--accent"><h4>📌 Nouveau MM validé</h4><p>1er trade à 10 contrats : risque $200/pt assumé, stop respecté, aucun sur-sizing. Comportement conforme — le sizing reste le point de vigilance des semaines passées.</p></div>
+          <div class="panel panel--accent"><h4>🔭 Suite</h4><p>Observation de l'ouverture New York (KZ ~7h–9h, élargie 6h–11h) pour un éventuel 2e setup cet après-midi.</p></div>
+        </div>
+
+        <h3 style="margin-top:26px">Analyse Pré-Marché · Lundi 15 juin 2026 · 1h30 ET</h3>
+        <div class="callout callout--accent">
+          <h4>⏳ Nouvelle semaine · Range TRÈS large · Observation avant London KZ</h4>
+          <strong>Roll de contrat :</strong> Sierra Chart est passé automatiquement de NQM26 (juin) à <strong>NQU26 (sept. 2026)</strong>. Les trades de cette semaine seront en NQU26.<br/><br/>
+          Prix actuel <strong>30,505.75</strong>, collé au plus haut du range / zone ATH sur le Weekly. Le range hebdo est exceptionnellement large
+          (SSL ~28,550 → BSL ~30,505 ≈ <strong>1,955 pts</strong>), prix en <strong>premium extrême (FIB ~100%)</strong>.
+          <strong>Aucun catalyseur majeur aujourd'hui.</strong> On laisse London KZ (2h00 ET) poser son comportement avant toute décision — pas d'entrée pour l'instant.
+        </div>
+
+        <div class="callout callout--red mt">
+          <h4>💰 Changement de Money Management · 10 contrats cette semaine</h4>
+          Nouvelle taille : <strong>10 mini NQ (NQU26)</strong> sur le compte démo au lieu de 3 — pour simuler le ressenti de 10 contrats micro (plan réel = tout en micro une fois le compte financé ; les challenges prop firm se passent en mini).<br/><br/>
+          <strong>Impact risque :</strong> 10 × $20/pt = <strong>$200 par point</strong> (vs $60 avant). Le risque dollar par trade est ~3,3× plus élevé → un stop de 30 pts = −$6,000. La discipline de sizing devient <u>critique</u> : <strong>10 est le plafond du plan</strong>, tout dépassement = erreur de sur-sizing (rappel des 6c/9c revenge de la semaine passée). Stop structurel obligatoire, zéro revenge.<br/><br/>
+          <strong>Comptabilité journal :</strong> le P/L inscrit = <u>exactement les valeurs exportées depuis Sierra Chart</u> (Trade Activity Log / Daily P/L), sans conversion. La formule (sortie − entrée) × 10 × $20 ne sert que de repère/back-calcul d'un trade individuel.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--accent"><h4>Weekly · NQU26</h4><p>Tendance de fond haussière intacte, prix en zone ATH (~30,500). Forte expansion des bougies hebdo depuis le low d'avril (~23,500). Contexte premium extrême → zone de prise de profit naturelle et risque de réaction au BSL. Pas de signe de retournement HTF.</p></div>
+          <div class="panel panel--accent"><h4>SMT / Biais du jour</h4><p>Biais macro haussier maintenu, MAIS prix au sommet du range (FIB ~100%) = zone de rejet potentiel. Aucun signal SMT confirmé encore. Surveiller NQ vs ES en London pour une divergence (sweep d'un seul côté).</p></div>
+          <div class="panel panel--accent"><h4>Plan London KZ · 2h–5h ET</h4><p>Range large = patience. Scénario A : rejet/sweep du BSL ~30,505 → short si displacement baissier 1min + FVG. Scénario B : pullback en discount (≤50% ~29,525 / OB 15min) → long dans la zone. Pas d'entrée avant clôture d'une bougie 15min dans la zone.</p></div>
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">SSL · FIB 0%</div><div class="v num">~28,550</div><div class="s">Low 10 juin · stop invalide</div></div>
+          <div class="mini-stat"><div class="l">FIB 50%</div><div class="v num">~29,525</div><div class="s">Pivot discount/premium</div></div>
+          <div class="mini-stat"><div class="l">FIB 75%</div><div class="v num acc">~30,015</div><div class="s">Best sells zone</div></div>
+          <div class="mini-stat"><div class="l">BSL · FIB 100%</div><div class="v num acc">~30,505</div><div class="s">Target / Rejet potentiel</div></div>
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num pos">30,505.75</div><div class="s">FIB ~100% · Premium extrême</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📋 Niveaux clés 15min (lignes Sierra Chart)</h4>
+          <strong>Résistances :</strong> ~30,505 (BSL / sommet range) · ~30,250 (consolidation overnight)<br>
+          <strong>Supports / zones discount :</strong> ~30,000 (psychologique) · ~29,750 · ~29,500 (pivot 50% / niveau majeur) · ~29,250 (OB/FVG zone) · ~29,000 · ~28,750 · ~28,550 (SSL / low du range)<br>
+          <strong>Note :</strong> Pas de news → laisser London poser le high/low de séance. Privilégier les entrées en discount (≤50%) sur pullback, ou un short uniquement sur rejet confirmé du BSL.
+        </div>
+
+        <h3 style="margin-top:26px">Lecture 4H · BuySide Liquidity & scénario NWOG · 2h01 ET</h3>
+        <div class="callout callout--accent">
+          <h4>🎯 BSL 4H à 30,603.25 = premier target</h4>
+          Sur le 240min, prix à <strong>30,488.75</strong> en rallye depuis le low du 10 juin (~28,200). Juste au-dessus se trouve une poche de
+          <strong>BuySide Liquidity (BSL) à 30,603.25</strong> — ancien swing high avant la cassure début juin (zone ATH ~30,800).
+          C'est le <strong>1er objectif</strong> : on regarde comment le prix réagit une fois la liquidité prise.<br/><br/>
+          <strong>Thèse :</strong> sweep du BSL 30,603.25 → réaction → potentiel retour vers le <strong>NWOG (New Week Opening Gap)</strong> en downside.
+          Le NWOG (gap clôture vendredi 16h ET → ouverture dimanche 18h ET) et surtout sa <strong>CE / consequent encroachment (midpoint)</strong> agit comme aimant sur le retracement.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">BSL 4H · Target 1</div><div class="v num acc">30,603.25</div><div class="s">BuySide liquidity (exact)</div></div>
+          <div class="mini-stat"><div class="l">Prix 4H actuel</div><div class="v num pos">30,488.75</div><div class="s">~114 pts sous le BSL</div></div>
+          <div class="mini-stat"><div class="l">Zone ATH 4H</div><div class="v num">~30,800</div><div class="s">High début juin · au-dessus du BSL</div></div>
+          <div class="mini-stat"><div class="l">NWOG · CE</div><div class="v num">à marquer</div><div class="s">Aimant downside (clôt. vend.→ouv. dim.)</div></div>
+        </div>
+        <div class="grid-2 mt">
+          <div class="panel panel--green"><h4>Scénario A · Continuation</h4><p>Prix prend le BSL 30,603.25 et tient au-dessus → continuation vers la zone ATH ~30,800. Validité : displacement haussier + acceptation au-dessus du BSL en London.</p></div>
+          <div class="panel panel--red"><h4>Scénario B · Sweep → retour NWOG</h4><p>Prix sweep le BSL 30,603.25 (prise de liquidité), rejet/displacement baissier → retracement vers le NWOG / sa CE. C'est le scénario à privilégier en premium extrême. Confirmer avec SMT NQ/ES au sommet.</p></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>⚠ À marquer pour exécution</h4>
+          Donne-moi la clôture de vendredi 12 juin (16h ET) et l'ouverture de dimanche 14 juin (18h ET) sur NQU26 pour tracer le <strong>NWOG exact</strong> et sa CE — ce sera le target précis du leg baissier si le scénario B se déclenche.
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Setup London Silver Bullet (en formation) · 2h–3h ET</h3>
+        <div class="callout callout--green">
+          <h4>🎯 Long en préparation · OB 50% → Displacement → FVG (BISI) tenu</h4>
+          Entrée dans la London Kill Zone, fenêtre <strong>Silver Bullet 2h–3h ET</strong>. Séquence haussière propre sur le 15min :
+          le prix a rebondi sur l'<strong>OB pile au 50%</strong>, a créé un <strong>Displacement</strong> avec un <strong>FVG (BISI)</strong>, puis est revenu dans le FVG et a <strong>rejeté</strong> (zone tenue). Biais long confirmé.<br/><br/>
+          <strong>Exécution Silver Bullet :</strong> passer en 1min et chercher un <strong>FVG + Displacement bullish</strong> → entrée limite dans le FVG 1min. Stop structurel sous l'OB (~30,455). <strong>Target = trait rouge ~30,603</strong> (= BSL 4H). Pas encore en position.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num pos">30,533.00</div><div class="s">15min · 2h ET</div></div>
+          <div class="mini-stat"><div class="l">FVG (BISI) 15min</div><div class="v num acc">~30,485–30,500</div><div class="s">Zone tenue / rejet</div></div>
+          <div class="mini-stat"><div class="l">OB 15min</div><div class="v num">~30,460–30,485</div><div class="s">Rebond au 50% ✓</div></div>
+          <div class="mini-stat"><div class="l">Stop structurel</div><div class="v num neg">~30,455</div><div class="s">Sous l'OB</div></div>
+          <div class="mini-stat"><div class="l">Target · BSL 4H</div><div class="v num acc">~30,603</div><div class="s">Trait rouge</div></div>
+        </div>
+        <div class="callout callout--green mt">
+          <h4>✅ Position OUVERTE · Long 10 @ 30,521.75 · entrée au tick près</h4>
+          Fill sur l'OB 1min avec <strong>1 seul tick de drawdown</strong> — exécution chirurgicale, process Silver Bullet parfait (OB 50% → displacement → FVG BISI → entrée limite 1min).
+          Stop structurel <strong>30,496.75</strong> en place (−25 pts), target <strong>~30,603</strong> (BSL 4H). Plan : <strong>partiels aux niveaux logiques</strong>, laisser courir vers le haut.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée · Long</div><div class="v num pos">30,521.75</div><div class="s">OB 1min · 10 contrats · fill ✓</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,496.75</div><div class="s num">−25 pts · −$5,000</div></div>
+          <div class="mini-stat"><div class="l">Target · BSL 4H</div><div class="v num acc">~30,603</div><div class="s num">+81 pts · +$16,250</div></div>
+          <div class="mini-stat"><div class="l">R:R</div><div class="v num pos">3.25:1</div><div class="s">81 / 25 pts</div></div>
+          <div class="mini-stat"><div class="l">Unrealized (live)</div><div class="v num pos">+132.5 pts</div><div class="s">~+$2,650 · non réalisé</div></div>
+        </div>
+        <div class="callout callout--green mt">
+          <h4>📊 Management · ladder de sorties sur déviation OTE</h4>
+          Échelle de prise de profit posée en sell limits sur les <strong>déviations OTE</strong> (projection au-dessus du 0% = 30,544.50). Sortie progressive 5 → 4 → 1 contrat,
+          le target se situant dans la zone d'accumulation <strong>−100% / −150%</strong>. Stop inchangé à 30,496.75 sur le reliquat (à remonter vers BE après le 1er fill).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">TP1 · −50% dév.</div><div class="v num acc">30,566.50</div><div class="s">5c · +44.75 pts (~$4,475)</div></div>
+          <div class="mini-stat"><div class="l">TP2 · −100% dév.</div><div class="v num acc">30,585.75</div><div class="s">4c · +64 pts (~$5,120)</div></div>
+          <div class="mini-stat"><div class="l">TP3 final · −150% dév.</div><div class="v num acc">30,603.25</div><div class="s">1c · +81.5 pts (~$1,630)</div></div>
+          <div class="mini-stat"><div class="l">Unrealized (live)</div><div class="v num pos">+227.5 pts</div><div class="s">~+$4,550 · prix 30,544.50</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧮 Projection si tout est touché</h4>
+          5c@30,566.50 + 4c@30,585.75 + 1c@30,603.25 ≈ <strong>+$11,225</strong> (projection, non réalisé). Le 30,603.25 = exactement le <strong>BSL 4H</strong> visé en pré-marché.
+          Le P/L réel n'entrera dans la table des trades qu'à la clôture, avec l'export Sierra exact.
+        </div>
+
+        <div class="callout callout--green mt">
+          <h4>✅ TP1 rempli · Stop à BE · trade free</h4>
+          <strong>TP1 touché : 5 contrats @ 30,566.50</strong> (−50% dév.) → ~+$4,475 réalisé. Stop remonté à <strong>break-even</strong> → <strong>position désormais sans risque</strong>.
+          Reste <strong>5 runners</strong> : TP2 = 4c @ 30,585.75 (−100%), TP3 = 1c @ 30,603.25 (−150% = BSL 4H). Unrealized ~+196 pts sur les runners.<br/><br/>
+          <strong>Note de lecture :</strong> construction de liquidité au-dessus jugée peu convaincante → léger inconfort, mais <strong>le plan est tenu</strong> (pas de sortie discrétionnaire). On laisse courir vers TP2 / TP3 puisque le risque est nul.
+        </div>
+
+        <div class="callout callout--green mt">
+          <h4>✅ TP2 rempli · SL trailé en profit</h4>
+          <strong>TP2 touché : 4 contrats @ 30,585.75</strong> (−100% dév.) → ~+$5,120 réalisé. Stop monté à <strong>30,527.25</strong> (au-dessus de l'entrée → profit verrouillé sur le dernier contrat).
+          Reste <strong>1 runner</strong> visant <strong>TP3 = 30,603.25</strong> (−150% = BSL 4H). Réalisé cumulé sur le trade ≈ <strong>+$9,595</strong> (TP1 + TP2), hors export Sierra.
+        </div>
+
+        <h3 style="margin-top:26px">Pourquoi ce trade</h3>
+        <div class="callout callout--green">
+          <h4>🧠 Raisonnement de l'entrée</h4>
+          <strong>Narratif :</strong> biais haussier, objectif = aller chercher la BuySide Liquidity 4H à <strong>30,603.25</strong> (repérée en pré-marché). Fenêtre <strong>London Silver Bullet 2h–3h ET</strong>.<br/>
+          <strong>Process ICT complet :</strong> (1) OB 15min retracé avec rebond <strong>pile au 50%</strong> → (2) <strong>Displacement</strong> haussier créant un <strong>FVG (BISI)</strong> → (3) retour dans le FVG et <strong>rejet</strong> (zone tenue) → (4) passage en 1min, <strong>Buy Limit sur l'OB</strong> dans la zone OTE (entrée au 62%). Stop <strong>structurel sous l'OB</strong> (30,496.75). Sorties échelonnées sur les déviations OTE, target final calé sur le BSL 4H. Entrée au <strong>tick près</strong> (1 tick de drawdown).
+        </div>
+        `
+    },
+    /* ================ BILAN SEMAINE 3–12 JUIN ================ */
     {
       date: "Semaine du 3 au 12 juin 2026", status: "closed", statusLabel: "Bilan hebdomadaire",
       pl: "+$86,172", plSub: "Cumul 3–12 juin · réel Sierra ✓",
@@ -1186,6 +1479,7 @@ const DATA = {
 
   rules: [
     { label: "Principe fondamental", text: "Un trader ICT ne réagit pas au prix — il anticipe le prix." },
+    { label: "Déterminer le range D'ABORD", critical: true, text: "1ère chose à faire avant toute exécution : déterminer le range dans lequel on va travailler. Trouver le time frame où le range est le plus CLAIR, puis descendre vers le time frame d'exécution en respectant l'alignement avec ce range. Pas de range défini = pas de trade." },
     { label: "No revenge trading", critical: true, text: "Sizing fixe : 3 contrats toujours. Un stop loss ne justifie jamais d'augmenter la position suivante. Le résultat ne valide pas le process." },
     { label: "Invalidation OB", text: "Bougie CLOSE en dessous de 50% de l'OB → trade invalidé. Jamais sur la mèche." },
     { label: "Premium / Discount (PDA)", text: "Dans un PDA : en dessous du 50% = Premium · au-dessus = Discount. Logique inversée vs range." },
@@ -1198,11 +1492,33 @@ const DATA = {
     { label: "Hiérarchie des PDAs · Zone Discount", text: "Priorité 1 : GAP (premier PDA, bottom) · Priorité 2 : FVG/Unicorn · Priorité 3 : OB. Poser un ordre limite à chaque niveau dès la planification pré-marché." },
     { label: "Volume Imbalance · Effet aimant", text: "Tant qu'un corps de bougie ne traverse pas le Volume Imbalance, il agit comme un aimant. Seul un corps (jamais une mèche) qui le traverse en entier le neutralise." },
     { label: "Macro ICT · Fenêtre algorithmique", text: "Toutes les heures, entre :50 et :10 (ex : 7:50–8:10, 9:50–10:10…), l'algorithme prend de la liquidité ou atteint une efficience (FVG, SSL/BSL). Run-Stop-Run = pattern typique. Instrument préféré : ES (plus propre que NQ)." },
-    { label: "Kill Zones · Haute probabilité", text: "London KZ : 2h–5h ET · NY AM : 8h30–11h ET · London Close : 10h–12h ET. Un retour dans un FVG pendant une Kill Zone est une confluence ICT forte — l'algorithme agit à heures précises, pas au hasard." }
+    { label: "Kill Zones · Haute probabilité", text: "London KZ : 2h–5h ET · NY AM : 8h30–11h ET · London Close : 10h–12h ET. Un retour dans un FVG pendant une Kill Zone est une confluence ICT forte — l'algorithme agit à heures précises, pas au hasard." },
+    { label: "TP sur liquidité · marge 1–2 ticks", critical: true, text: "Quand le TP vise une BuySide Liquidity (BSL) : placer l'ordre limite 1–2 ticks SOUS le niveau pour garantir le fill — le prix peut toucher la liquidité une seule fois sans remplir l'ordre (cas vécu 15 juin : niveau effleuré mais position non fermée). Symétrique pour une SellSide Liquidity (SSL) : placer l'ordre limite 1–2 ticks AU-DESSUS du niveau." }
+  ],
+
+  /* ---- Concepts ICT (glossaire vivant) ---- */
+  concepts: [
+    { label: "Sick Sister (sœur malade)", text: "Quand l'un des trois indices corrélés (YM / ES / NQ) manque de force ou d'énergie face au leader du mouvement : il ne parvient pas à suivre la tendance immédiate. Avec le temps, l'indice « malade » reprend des forces et se déplace en sympathie avec les deux autres — il est alors « tiré » par le plus fort. Lecture pratique : repérer l'indice à la traîne → anticiper son rattrapage en sympathie avec le leader (lié à la lecture SMT)." },
+    { label: "Macro (fenêtre :50–:10)", text: "Séquence temporelle courte et prédéterminée durant laquelle l'algorithme de marché active un mode de livraison spécifique. Les macros se produisent à chaque heure, environ entre :50 et :10 (ex. 7:50–8:10, 9:50–10:10…). Rôle opérationnel : initier un mouvement directionnel qui va chercher la liquidité au-delà des zones de protection établies lors de la session précédente. Exemple — la « lunch macro » (~11:50–12:10 ET) manipule les stops des traders profitables du matin pour offrir de la liquidité avant de poursuivre ou corriger la tendance. À retenir : ce n'est pas aléatoire mais un comportement algorithmique programmé sur le temps → permet d'anticiper renversements et accélérations avec précision." },
+    { label: "New Week Opening Gap (NWOG)", text: "Définition : l'espace entre le prix de clôture du vendredi et le prix d'ouverture du dimanche soir. ICT maintient cette zone ombrée sur les graphiques pour identifier un niveau de liquidité et de juste valeur (fair value). Utilité comme filtre : sert de cadre pour définir un biais directionnel — en règle générale, chercher à acheter en dessous de l'ouverture du dimanche, et à vendre au-dessus. Application : valable en intraday comme sur plusieurs jours/semaines ; ce n'est pas une règle rigide interdisant le trade opposé mais un filtre pour repérer les opportunités les plus qualitatives. Juste valeur : zone de fair value prolongée — en marché haussier, le prix tend à respecter ces niveaux comme support après les avoir traversés ou lors des corrections. En résumé : un aimant / point d'appui algorithmique pour éviter le bruit et se concentrer sur les zones où la réaction institutionnelle est la plus probable." },
+    { label: "Narratif (narrative)", text: "Comprendre trois éléments fondamentaux pour anticiper le comportement du marché : (1) ce que l'algorithme va faire ensuite dans le prix, (2) pourquoi il doit le faire, (3) quand il doit le faire." },
+    { label: "Kill Zone New York", text: "Cœur de la Kill Zone de New York : 7:00–9:00 (ET). Elle peut s'étendre d'une heure avant et d'une heure après, soit une fenêtre élargie de 6:00 à 11:00 (ET)." },
+    { label: "Turtle Soup", text: "Façon plus agile de trader les larges plages de consolidation (ranges) sans viser les extrêmes absolus. On utilise les niveaux 75–80% du range pour les ventes / cibles hautes, et les niveaux autour de 20% pour la partie basse. L'idée : se concentrer sur les swing highs et swing lows À L'INTÉRIEUR de ces zones pour former des configurations Turtle Soup (capture de liquidité) — sans avoir besoin que le prix sorte de la zone globale de consolidation." },
+    { label: "High Resistance Liquidity Run (HRLR)", text: "Run de liquidité en environnement de FORTE résistance : le prix chasse la liquidité à travers une zone encombrée / choppy (consolidation, allers-retours, OB et FVG opposés). C'est une condition à ÉVITER de trader — le chemin n'est pas dégagé, le risque de se faire sortir avant le TP est élevé. À l'opposé, privilégier les Low Resistance Liquidity Runs (LRLR) où le trajet vers la liquidité est propre. Règle perso : si le setup n'est pas assez clair (HRLR), attendre — ne jamais forcer l'entrée." }
   ],
 
   /* ---- Erreurs documentées (semaine du 9–13 juin) ---- */
   weeklyErrors: [
+    { type: "critical", title: "Ne pas avoir attendu le setup (re-entrée après SL)",
+      occurrences: 1, days: "16 juin",
+      description: "ERREUR CENTRALE DU JOUR. Trades enchaînés juste après un stop loss, sans attendre une nouvelle confirmation ni le vrai setup → impatience / revenge (T2 dans la foulée de T1, T3 ensuite). La journée finit en positif grâce au seul trade conforme au plan (T4), mais le process est mauvais : résultat positif ≠ bonne journée.",
+      rule: "Après un SL : STOP. Pas de re-entrée tant que le setup complet n'est pas re-validé (range défini + Kill Zone + clôture de bougie + confirmation). Le résultat ne valide jamais le comportement.",
+      costStr: "−$14,300 de shorts évitables (avant T4)" },
+    { type: "critical", title: "Range non défini",
+      occurrences: 1, days: "16 juin (matin)",
+      description: "Trades pris sans avoir déterminé au préalable le range de travail → exécution dans le bruit (HRLR), sans cadre directionnel clair. Racine des 2 SL du matin.",
+      rule: "1ère étape obligatoire : déterminer le range sur le TF le plus lisible, puis descendre au TF d'exécution aligné avec ce range. Pas de range = pas d'entrée.",
+      costStr: "lié aux −$10,050 du 16 juin" },
     { type: "critical", title: "Stop non structurel",
       occurrences: 2, days: "12 juin T1 · T2",
       description: "Stop Sierra par défaut (T1) ou serré sans référence structurelle (T2) → sorti sur le sweep avant que le prix reparte. Setup valide dans les deux cas, erreur purement mécanique.",
@@ -1245,6 +1561,28 @@ const DATA = {
   /* ---- Backtests (screenshots + commentaires) ---- */
   backtests: [
     {
+      date: "16 juin 2026",
+      instrument: "NQU26",
+      timeframe: "1min",
+      setup: "London Silver Bullet · First FVG → PDH",
+      result: "valid",
+      title: "Silver Bullet Londres · réaction sur le 1er FVG → Previous Day High",
+      comment: `Setup identifié mais NON tradé (j'ai pris des shorts HRLR à la place → −$10,050). Je teste / valide ce modèle.
+
+Modèle : pendant la Silver Bullet de Londres, le PREMIER FVG doit théoriquement soutenir le prix. Entrée long sur la réaction au 1er FVG, target = Previous Day High (PDH).
+
+Déroulé observé : le prix a bien réagi sur le 1er FVG (~30,808–30,818) puis est monté jusqu'au PDH (~30,913). Le setup a joué parfaitement, dans le sens du biais (haussier).`,
+      lessons: [
+        { type: "pos", text: "1er FVG de la Silver Bullet London = support fiable → entrée long, target PDH" },
+        { type: "pos", text: "Le biais directionnel (haussier) était juste — c'est l'exécution (shorts HRLR) qui a coûté" },
+        { type: "neg", text: "Setup identifié mais non pris : ne pas se disperser sur des contre-tendances dans le bruit" },
+        { type: "note", text: "À tester sur plusieurs sessions : taux de réussite First FVG → PDH en London Silver Bullet" }
+      ],
+      images: [
+        { caption: "NQ 1min · 16 juin · réaction sur le 1er FVG (~30,810) → target PDH (~30,913) · London Silver Bullet", src: "plans/2026-06-16/silver-bullet-first-fvg-pdh.png" }
+      ]
+    },
+    {
       date: "13 juin 2026",
       instrument: "NQM26",
       timeframe: "15min",
@@ -1276,22 +1614,43 @@ Process propre : setup défini pré-marché, entrée limite, SL structurel.`,
 
   /* ---- Plan de la semaine (top-down) ---- */
   weekPlan: {
-    date: "14 juin 2026", instrument: "NQM26",
-    bias: "Premium · long intraday vers Fib 100, puis short de fond",
-    summary: "Lecture top-down du dimanche soir (prix ~29,662). Biais de fond short (Weekly premium), mais on laisse d'abord le prix prendre la liquidité du haut (4H Fib 100 ≈ 29,848 / BSL). Entrée intraday : long sur retour en discount 15m + Breaker, cible le Fib 100 4H. Le short macro ne se travaille qu'après la prise du high.",
+    date: "Semaine du 16 juin 2026", instrument: "NQM26 · AAPL · NVDA",
+    bias: "Premium macro · long intraday NQ vers FIB 100 / AAPL rejet BSL · NVDA discount neutre",
+    summary: "Lecture top-down du dimanche 14 juin (NQ ~29,662 · AAPL 291.13 · NVDA 205.19). Contexte macro : AAPL a sweepé son BSL Weekly (~320) et rejette en large bougie bearish — actuellement sur le FIB 0.625 (291). NVDA en pullback depuis 240, niveau neutre sans signal clair. NQ : biais de fond short (Weekly premium), mais on laisse d'abord le prix prendre la liquidité du haut (4H FIB 100 ≈ 29,848 / BSL). Entrée intraday prioritaire : long sur retour en discount 15m + Breaker, cible FIB 100 4H. Le short macro ne se travaille qu'après la prise du high. Corrélation AAPL bearish renforce la prudence sur les longs NQ hors discount.",
     timeframes: [
-      { tf: "Weekly", title: "Range macro · Premium", img: "plans/plan_14juin_weekly.png",
-        note: "Range hebdo clair, prix en premium. Biais de fond short : si continuation baissière, le setup short parfait se forme dans le premium.",
-        levels: [ { name: "High range", val: "30,800" }, { name: "Prix", val: "29,662" }, { name: "Low range", val: "28,250" } ] },
-      { tf: "4H", title: "Premium · objectif Fib 100", img: "plans/plan_14juin_4h.png",
-        note: "En premium du range 4H. Attente : prise du high du range = Fib 100 (BSL) avant tout retournement.",
-        levels: [ { name: "Fib 100 (BSL)", val: "29,848" }, { name: "Fib 75", val: "29,443" }, { name: "Fib 50 (EQ)", val: "29,038" }, { name: "Fib 25", val: "28,632" }, { name: "Fib 0 (SSL)", val: "28,228" } ] },
-      { tf: "15m", title: "Entrée intraday · retour discount", img: "plans/plan_14juin_15m.png",
-        note: "Range 15m courant. Pour un long intraday : attendre un retour en discount, sous les traits rouges (~29,500 / EQ ~29,440).",
-        levels: [ { name: "Zone premium", val: "> 29,500" }, { name: "Equilibrium", val: "29,440" }, { name: "Zone d'entrée", val: "discount" } ] },
-      { tf: "15m Breaker", title: "Confluence d'entrée", img: "plans/plan_14juin_15m_breaker.png",
-        note: "15m Breaker dans la zone : renforce le point d'entrée long sur le retour en discount.",
-        levels: [ { name: "15m Breaker", val: "29,560" }, { name: "Fib 75 4H", val: "29,443" } ] }
+      { tf: "NQ · Weekly", title: "Range macro · Premium", img: "plans/plan_14juin_weekly.png",
+        note: "Range hebdo clair, prix en premium. Biais de fond short : si continuation baissière, le setup short parfait se forme dans le premium. Ne shorter qu'après prise du BSL 29,848.",
+        levels: [ { name: "High range (BSL)", val: "30,800" }, { name: "Prix", val: "29,662" }, { name: "Low range (SSL)", val: "28,250" } ] },
+      { tf: "NQ · 4H", title: "Premium · objectif FIB 100", img: "plans/plan_14juin_4h.png",
+        note: "En premium du range 4H. Attente : prise du high du range = FIB 100 (BSL 29,848) avant tout retournement. Long intraday valide en discount 4H.",
+        levels: [ { name: "FIB 100 (BSL)", val: "29,848" }, { name: "FIB 75", val: "29,443" }, { name: "FIB 50 (EQ)", val: "29,038" }, { name: "FIB 25", val: "28,632" }, { name: "FIB 0 (SSL)", val: "28,228" } ] },
+      { tf: "NQ · 15m", title: "Entrée intraday · retour discount", img: "plans/plan_14juin_15m.png",
+        note: "Range 15m courant. Pour un long intraday : attendre un retour en discount, sous les traits rouges (~29,500 / EQ ~29,440). OB 15min + displacement 1m + FVG 1m = setup complet.",
+        levels: [ { name: "Zone premium", val: "> 29,500" }, { name: "Equilibrium", val: "29,440" }, { name: "Zone d'entrée long", val: "discount" } ] },
+      { tf: "NQ · 15m Breaker", title: "Confluence d'entrée", img: "plans/plan_14juin_15m_breaker.png",
+        note: "15m Breaker dans la zone : renforce le point d'entrée long sur le retour en discount. Confluence OB + FVG + Breaker = sizing plein.",
+        levels: [ { name: "15m Breaker", val: "29,560" }, { name: "FIB 75 4H", val: "29,443" } ] },
+      { tf: "AAPL · Weekly", title: "Rejet BSL · Distribution en premium", img: "plans/aapl_weekly_16juin.png",
+        note: "AAPL a sweepé le BSL Weekly (~320) cette semaine (H=317.40), puis rejeté avec une bougie bearish massive (C=291.13). Prix exactement sur le FIB 0.625 = zone premium. La structure suggère une distribution institutionnelle au BSL. Prochains aimants baissiers : FIB 0.5 (281) = EQL, puis FIB 0.375 (270). Corrélation : une continuation bearish AAPL sous 281 renforce le biais short NQ macro. Invalidation : clôture weekly > 310 (FIB 0.875).",
+        levels: [
+          { name: "BSL sweepé", val: "~320" },
+          { name: "FIB 0.875", val: "~310" },
+          { name: "FIB 0.75", val: "~300" },
+          { name: "FIB 0.625 (Prix)", val: "291.13" },
+          { name: "FIB 0.5 (EQL)", val: "~281" },
+          { name: "FIB 0.375", val: "~270" },
+          { name: "FIB 0.25 (best buys)", val: "~260" },
+          { name: "SSL (FIB 0%)", val: "243.42" }
+        ] },
+      { tf: "NVDA · Weekly", title: "Pullback depuis ATH · Zone neutre", img: "plans/nvda_weekly_16juin.png",
+        note: "NVDA a rallié depuis l'EQL à 164.07 jusqu'à ~240 (ATH récent), et pullback actuellement à 205.19. La structure des 2 dernières semaines est un retrace depuis les highs — pas de FIB dessiné, niveau neutre (mid-range). Le support clé à surveiller est le swing low à 164.07 (EQL/SSL). Pas de setup clair cette semaine : attendre soit une compression vers 164 pour un long de qualité, soit une reprise > 220 pour confirmation d'expansion. Pas de corrélation SMT NQ/NVDA identifiée à ce stade.",
+        levels: [
+          { name: "ATH récent (BSL)", val: "~240" },
+          { name: "Résistance", val: "220" },
+          { name: "Prix", val: "205.19" },
+          { name: "Support", val: "190" },
+          { name: "EQL / SSL clé", val: "164.07" }
+        ] }
     ]
   },
 };
@@ -1331,12 +1690,12 @@ const profitFactor = totalLosses > 0 ? totalWins / totalLosses : 0;
 /* --- KPIs --- */
 document.getElementById("period-label").textContent = DATA.meta.periodStart + " → " + DATA.meta.periodEnd;
 document.getElementById("kpis").innerHTML = `
-  <div class="kpi"><div class="label">P/L cumulé</div><div class="value num pos">${fmtUsd(cumPl)}</div><div class="sub">Depuis le ${DATA.meta.periodStart}</div></div>
-  <div class="kpi"><div class="label">P/L dernière session</div><div class="value num pos">${fmtUsd(dayPl)}</div><div class="sub">${eq[eq.length - 1].date} 2026</div></div>
-  <div class="kpi"><div class="label">Meilleur trade</div><div class="value num pos">${DATA.bestTrade.value}</div><div class="sub">${DATA.bestTrade.sub}</div></div>
-  <div class="kpi"><div class="label">Win rate</div><div class="value num">${winRate}%</div><div class="sub">${wins}W / ${losses}L · ${closedTrades} trades clôturés</div></div>
-  <div class="kpi"><div class="label">Expectancy</div><div class="value num ${expectancy >= 0 ? "pos" : "neg"}">${expectancy >= 0 ? "+" : "−"}$${Math.round(Math.abs(expectancy)).toLocaleString("en-US")}</div><div class="sub">par trade · WR ${winRate}%</div></div>
-  <div class="kpi"><div class="label">Profit Factor</div><div class="value num ${profitFactor >= 1.5 ? "pos" : profitFactor >= 1 ? "acc" : "neg"}">${profitFactor.toFixed(2)}×</div><div class="sub">gains totaux / pertes totales</div></div>
+  <div class="kpi"><div class="label">Cumulative P/L</div><div class="value num ${cumPl >= 0 ? "pos" : "neg"}">${fmtUsd(cumPl)}</div><div class="sub">Since ${DATA.meta.periodStart}</div></div>
+  <div class="kpi"><div class="label">Last session P/L</div><div class="value num ${dayPl >= 0 ? "pos" : "neg"}">${fmtUsd(dayPl)}</div><div class="sub">${eq[eq.length - 1].date} 2026</div></div>
+  <div class="kpi"><div class="label">Best trade</div><div class="value num pos">${DATA.bestTrade.value}</div><div class="sub">${DATA.bestTrade.sub}</div></div>
+  <div class="kpi"><div class="label">Win rate</div><div class="value num">${winRate}%</div><div class="sub">${wins}W / ${losses}L · ${closedTrades} closed trades</div></div>
+  <div class="kpi"><div class="label">Expectancy</div><div class="value num ${expectancy >= 0 ? "pos" : "neg"}">${expectancy >= 0 ? "+" : "−"}$${Math.round(Math.abs(expectancy)).toLocaleString("en-US")}</div><div class="sub">per trade · WR ${winRate}%</div></div>
+  <div class="kpi"><div class="label">Profit Factor</div><div class="value num ${profitFactor >= 1.5 ? "pos" : profitFactor >= 1 ? "acc" : "neg"}">${profitFactor.toFixed(2)}×</div><div class="sub">total gains / total losses</div></div>
   <div class="kpi"><div class="label">Total fills</div><div class="value num">${DATA.meta.fills}</div><div class="sub">Sierra · Trade Activity Log</div></div>
 `;
 
@@ -1345,13 +1704,13 @@ const statsEl = document.getElementById("stats-section");
 if (statsEl) {
   statsEl.innerHTML = `
   <div class="section">
-    <h2>Stats période · ${DATA.meta.periodStart} → ${DATA.meta.periodEnd}</h2>
+    <h2>Period stats · ${DATA.meta.periodStart} → ${DATA.meta.periodEnd}</h2>
     <div class="stats-grid">
-      <div class="stat-card"><div class="lbl">Gain moyen / trade</div><div class="val num pos">+$${Math.round(avgWin).toLocaleString("en-US")}</div><div class="sub">${winPLs.length} trade${winPLs.length>1?"s":""} gagnant${winPLs.length>1?"s":""}</div></div>
-      <div class="stat-card"><div class="lbl">Perte moyenne / trade</div><div class="val num neg">−$${Math.round(avgLoss).toLocaleString("en-US")}</div><div class="sub">${lossPLs.length} SL hit${lossPLs.length>1?"s":""}</div></div>
-      <div class="stat-card"><div class="lbl">Expectancy</div><div class="val num ${expectancy>=0?"pos":"neg"}">${expectancy>=0?"+":"−"}$${Math.round(Math.abs(expectancy)).toLocaleString("en-US")}</div><div class="sub">par trade · ${winRate}% WR</div></div>
-      <div class="stat-card"><div class="lbl">Profit Factor</div><div class="val num ${profitFactor>=1.5?"pos":profitFactor>=1?"acc":"neg"}">${profitFactor.toFixed(2)}×</div><div class="sub">$${Math.round(totalWins).toLocaleString("en-US")} gains / $${Math.round(totalLosses).toLocaleString("en-US")} pertes</div></div>
-      <div class="stat-card"><div class="lbl">Risque max engagé</div><div class="val num neg">${fmtUsd(DATA.meta.riskMaxDay.value)}</div><div class="sub">${DATA.meta.riskMaxDay.sub}</div></div>
+      <div class="stat-card"><div class="lbl">Avg win / trade</div><div class="val num pos">+$${Math.round(avgWin).toLocaleString("en-US")}</div><div class="sub">${winPLs.length} winning trade${winPLs.length>1?"s":""}</div></div>
+      <div class="stat-card"><div class="lbl">Avg loss / trade</div><div class="val num neg">−$${Math.round(avgLoss).toLocaleString("en-US")}</div><div class="sub">${lossPLs.length} SL hit${lossPLs.length>1?"s":""}</div></div>
+      <div class="stat-card"><div class="lbl">Expectancy</div><div class="val num ${expectancy>=0?"pos":"neg"}">${expectancy>=0?"+":"−"}$${Math.round(Math.abs(expectancy)).toLocaleString("en-US")}</div><div class="sub">per trade · ${winRate}% WR</div></div>
+      <div class="stat-card"><div class="lbl">Profit Factor</div><div class="val num ${profitFactor>=1.5?"pos":profitFactor>=1?"acc":"neg"}">${profitFactor.toFixed(2)}×</div><div class="sub">$${Math.round(totalWins).toLocaleString("en-US")} gains / $${Math.round(totalLosses).toLocaleString("en-US")} losses</div></div>
+      <div class="stat-card"><div class="lbl">Max risk engaged</div><div class="val num neg">${fmtUsd(DATA.meta.riskMaxDay.value)}</div><div class="sub">${DATA.meta.riskMaxDay.sub}</div></div>
     </div>
   </div>`;
 }
@@ -1361,11 +1720,11 @@ const instruments = [...new Set(DATA.trades.map(t => t.instr))];
 const filterEl = document.getElementById("trade-filters");
 if (filterEl) {
   filterEl.innerHTML = `
-    <span class="filter-lbl">Filtre :</span>
-    <button class="filter-btn active" data-filter="all">Tous</button>
+    <span class="filter-lbl">Filter:</span>
+    <button class="filter-btn active" data-filter="all">All</button>
     ${instruments.map(i => `<button class="filter-btn" data-filter="${i}">${i}</button>`).join("")}
     <button class="filter-btn" data-filter="Win">✅ Win</button>
-    <button class="filter-btn" data-filter="Perte">❌ Perte</button>
+    <button class="filter-btn" data-filter="Perte">❌ Loss</button>
   `;
   filterEl.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -1375,7 +1734,8 @@ if (filterEl) {
       document.querySelectorAll(".trade-row").forEach(row => {
         const i = parseInt(row.dataset.i);
         const t = DATA.trades[i];
-        const show = f === "all" || t.instr === f || t.result === f;
+        const show = f === "all" || t.instr === f || t.result === f
+          || (f === "Perte" && t.plClass === "neg") || (f === "Win" && t.plClass === "pos");
         const detail = row.nextElementSibling;
         row.style.display = show ? "" : "none";
         if (detail) {
@@ -1391,16 +1751,18 @@ if (filterEl) {
 const dirTag = d => `<span class="tag ${d === "Long" ? "tag-long" : "tag-short"}">${d}</span>`;
 const resTag = r => `<span class="tag ${r === "Win" ? "tag-win" : "tag-loss"}">${r}</span>`;
 function tradeMetaHtml(t) {
-  if (t.mood === undefined) return "";
-  return '<br><span style="margin-top:6px;display:inline-flex;gap:12px;flex-wrap:wrap;font-size:12px;">' +
-    '<span><strong>Setup type :</strong> ' + (t.setupType||"—") + '</span>' +
-    '<span><strong>Kill Zone :</strong> ' + (t.kz||"—") + '</span>' +
-    '<span><strong>Mood :</strong> <em>' + (t.mood||"—") + '</em></span>' +
-    '<span><strong>Process :</strong> <span class="' + (t.processClean ? "pos" : "neg") + '">' + (t.processClean ? "✅ Propre" : "❌ Impur") + '</span></span>' +
-    '</span>';
+  // On affiche le bloc dès qu'une méta annotée existe (kz est toujours présent, donc ne sert pas de déclencheur).
+  if (t.setupType === undefined && t.mood === undefined && t.processClean === undefined) return "";
+  const parts = [];
+  if (t.setupType) parts.push('<span><strong>Setup type:</strong> ' + t.setupType + '</span>');
+  if (t.kz)        parts.push('<span><strong>Kill Zone:</strong> ' + t.kz + '</span>');
+  if (t.mood)      parts.push('<span><strong>Mood:</strong> <em>' + t.mood + '</em></span>');
+  if (t.processClean !== undefined)
+    parts.push('<span><strong>Process:</strong> <span class="' + (t.processClean ? "pos" : "neg") + '">' + (t.processClean ? "✅ Clean" : "❌ Dirty") + '</span></span>');
+  return '<br><span style="margin-top:6px;display:inline-flex;gap:12px;flex-wrap:wrap;font-size:12px;">' + parts.join("") + '</span>';
 }
 
-document.getElementById("trade-log").innerHTML = DATA.trades.map((t, i) => `
+document.getElementById("trade-log").innerHTML = DATA.trades.map((t, i) => ({ t, i })).reverse().map(({ t, i }) => `
   <tr class="trade-row" data-i="${i}" tabindex="0" aria-expanded="false">
     <td><span class="caret">▶</span></td>
     <td>${t.date}</td>
@@ -1414,8 +1776,8 @@ document.getElementById("trade-log").innerHTML = DATA.trades.map((t, i) => `
   </tr>
   <tr class="trade-detail" hidden>
     <td colspan="9"><div class="detail-inner">
-      <strong>Setup :</strong> ${t.setup}<br>
-      <strong>Notes :</strong> ${t.notes}${tradeMetaHtml(t)}
+      <strong>Setup:</strong> ${t.setup}<br>
+      <strong>Notes:</strong> ${t.notes}${tradeMetaHtml(t)}
     </div></td>
   </tr>
 `).join("");
@@ -1451,6 +1813,14 @@ document.getElementById("rules").innerHTML = DATA.rules.map(r => `
   <div class="rule ${r.critical ? "rule--critical" : ""}"><h4>${r.label}</h4><p>${r.text}</p></div>
 `).join("");
 
+/* --- Concepts tab --- */
+const conceptsEl = document.getElementById("concepts");
+if (conceptsEl && DATA.concepts) {
+  conceptsEl.innerHTML = DATA.concepts.map(c => `
+    <div class="rule"><h4>${c.label}</h4><p>${c.text}</p></div>
+  `).join("");
+}
+
 /* --- Erreurs tab --- */
 const errorEl = document.getElementById("error-tracker");
 if (errorEl && DATA.weeklyErrors) {
@@ -1461,8 +1831,8 @@ if (errorEl && DATA.weeklyErrors) {
         <span class="ec-badge">${e.occurrences}× · ${e.days}</span>
       </div>
       <div class="ec-body">${e.description}</div>
-      <div class="ec-rule"><strong>✅ Règle correcte</strong>${e.rule}</div>
-      <div class="ec-cost">Coût : <strong>${e.costStr}</strong></div>
+      <div class="ec-rule"><strong>✅ Correct rule</strong>${e.rule}</div>
+      <div class="ec-cost">Cost: <strong>${e.costStr}</strong></div>
     </div>`).join("");
 
   const rtRows = (DATA.ruleCompliance || []).map(r => {
@@ -1483,25 +1853,20 @@ if (errorEl && DATA.weeklyErrors) {
 
   errorEl.innerHTML = `
   <div class="kpis" style="margin-bottom:18px;">
-    <div class="kpi"><div class="label">Erreurs critiques</div><div class="value num neg">${critical}</div><div class="sub">À corriger en priorité absolue</div></div>
-    <div class="kpi"><div class="label">Avertissements</div><div class="value num acc">${warnings}</div><div class="sub">À éliminer progressivement</div></div>
-    <div class="kpi"><div class="label">Règles respectées</div><div class="value num pos">${perfect} / ${(DATA.ruleCompliance||[]).length}</div><div class="sub">Aucune violation cette semaine</div></div>
-    <div class="kpi"><div class="label">Pattern dominant</div><div class="value" style="font-size:14px;font-weight:600;color:var(--red)">Stop défaut</div><div class="sub">2 violations · coût −$3,870</div></div>
+    <div class="kpi"><div class="label">Critical errors</div><div class="value num neg">${critical}</div><div class="sub">Top priority to fix</div></div>
+    <div class="kpi"><div class="label">Warnings</div><div class="value num acc">${warnings}</div><div class="sub">Eliminate progressively</div></div>
+    <div class="kpi"><div class="label">Rules respected</div><div class="value num pos">${perfect} / ${(DATA.ruleCompliance||[]).length}</div><div class="sub">No violations this week</div></div>
+    <div class="kpi"><div class="label">Dominant pattern</div><div class="value" style="font-size:14px;font-weight:600;color:var(--red)">Default stop</div><div class="sub">2 violations · cost −$3,870</div></div>
   </div>
   <div class="section">
-    <h2>Erreurs documentées · Semaine du ${DATA.meta.periodStart} → ${DATA.meta.periodEnd}</h2>
+    <h2>Documented errors · Week of ${DATA.meta.periodStart} → ${DATA.meta.periodEnd}</h2>
     <div class="error-grid">${cards}</div>
   </div>
   <div class="section" style="margin-top:18px;">
-    <h2>Compliance règles ICT · ${(DATA.ruleCompliance||[]).length} règles trackées</h2>
+    <h2>ICT rule compliance · ${(DATA.ruleCompliance||[]).length} rules tracked</h2>
     <div class="rule-tracker">${rtRows}</div>
   </div>`;
 }
-
-/* --- Footer (généré, une seule source) --- */
-document.getElementById("footer").textContent =
-  `Diary of an ICT Trader · NQM26 / ESM26 · ${DATA.meta.account} · ` +
-  `Dernière session : ${eq[eq.length - 1].date} 2026 · Jour ${fmtUsd(dayPl)} · Cumulé ${fmtUsd(cumPl)}`;
 
 /* --- Onglets --- */
 const tabs = document.querySelectorAll(".tab");
@@ -1519,13 +1884,20 @@ function drawFallbackChart(canvas) {
   canvas.style.width = w + "px"; canvas.style.height = h + "px";
   const c = canvas.getContext("2d"); c.scale(dpr, dpr);
   const pad = { l: 52, r: 16, t: 12, b: 28 };
-  const xs = i => pad.l + i * (w - pad.l - pad.r) / (eq.length - 1);
-  const max = Math.max(...eq.map(p => p.cum)) * 1.08;
-  const ys = v => pad.t + (1 - v / max) * (h - pad.t - pad.b);
+  // Bornes : on inclut toujours 0 (la base) et on gère l'equity négative.
+  const cums = eq.map(p => p.cum);
+  let lo = Math.min(0, ...cums), hi = Math.max(0, ...cums);
+  if (hi === lo) hi = lo + 1;                       // évite la division par zéro (equity plate)
+  const span = (hi - lo) * 1.08;
+  const mid = (hi + lo) / 2;
+  lo = mid - span / 2; hi = mid + span / 2;
+  // Point unique : on le centre horizontalement plutôt que de diviser par (n-1)=0.
+  const xs = i => eq.length > 1 ? pad.l + i * (w - pad.l - pad.r) / (eq.length - 1) : (pad.l + w - pad.r) / 2;
+  const ys = v => pad.t + (1 - (v - lo) / (hi - lo)) * (h - pad.t - pad.b);
   c.strokeStyle = "rgba(20,28,45,0.06)"; c.fillStyle = "#66708a";
   c.font = "11px 'IBM Plex Mono', monospace"; c.textAlign = "right";
   for (let g = 0; g <= 4; g++) {
-    const v = max * g / 4, y = ys(v);
+    const v = lo + (hi - lo) * g / 4, y = ys(v);
     c.beginPath(); c.moveTo(pad.l, y); c.lineTo(w - pad.r, y); c.stroke();
     c.fillText("$" + Math.round(v / 1000) + "k", pad.l - 8, y + 4);
   }
@@ -1565,7 +1937,7 @@ if (typeof Chart !== "undefined") {
       tooltip: { callbacks: { label: c => {
         const i = c.dataIndex;
         const delta = i === 0 ? c.parsed.y : c.parsed.y - eq[i-1].cum;
-        return [`Cumulé : $${c.parsed.y.toLocaleString("en-US")}`, `Journée : ${delta >= 0 ? "+" : ""}$${delta.toLocaleString("en-US")}`];
+        return [`Cumulative: $${c.parsed.y.toLocaleString("en-US")}`, `Day: ${delta >= 0 ? "+" : ""}$${delta.toLocaleString("en-US")}`];
       }}}
     },
     scales: {
@@ -1715,76 +2087,78 @@ if (perfEl) {
   }).join("");
 
   // Best setup by WR (min 2 trades) then by totalPL
+  // Fallback neutre si aucun setup annoté (sinon bestSetup.setup planterait l'onglet).
   const bestSetup = ws.setupPerf
     .filter(s => s.trades >= 1 && s.wins > 0)
     .sort((a,b) => {
       const wrA = a.wins/a.trades, wrB = b.wins/b.trades;
       if (wrB !== wrA) return wrB - wrA;
       return (b.totalPL||0) - (a.totalPL||0);
-    })[0] || ws.setupPerf[0];
+    })[0] || ws.setupPerf[0] || { setup: "—", wins: 0, trades: 0 };
 
   // Streak KPI
   const cleanTrades = ws.processStreak.detail.filter(d => d.clean).length;
-  const processRate = Math.round(100 * cleanTrades / ws.processStreak.detail.length);
+  const detailCount = ws.processStreak.detail.length;
+  const processRate = detailCount ? Math.round(100 * cleanTrades / detailCount) : 0;
 
   perfEl.innerHTML = `
   <div class="kpis" style="margin-bottom:18px;">
     <div class="kpi">
-      <div class="label">Process propre</div>
+      <div class="label">Clean process</div>
       <div class="value num ${processRate >= 60 ? "pos" : "acc"}">${processRate}%</div>
       <div class="sub">${cleanTrades} / ${ws.processStreak.detail.length} trades</div>
     </div>
     <div class="kpi">
-      <div class="label">Série actuelle</div>
+      <div class="label">Current streak</div>
       <div class="value num pos">${ws.processStreak.current} ✓</div>
-      <div class="sub">trade(s) process propre consécutifs</div>
+      <div class="sub">consecutive clean process trade(s)</div>
     </div>
     <div class="kpi">
-      <div class="label">Meilleure série</div>
+      <div class="label">Best streak</div>
       <div class="value num acc">${ws.processStreak.longest}</div>
-      <div class="sub">consécutifs cette semaine</div>
+      <div class="sub">consecutive this week</div>
     </div>
     <div class="kpi">
-      <div class="label">Setup le plus fiable</div>
+      <div class="label">Most reliable setup</div>
       <div class="value" style="font-size:14px;font-weight:600;color:var(--green)">${bestSetup.setup}</div>
-      <div class="sub">${bestSetup.wins}/${bestSetup.trades} win · ${Math.round(100*bestSetup.wins/bestSetup.trades)}% WR</div>
+      <div class="sub">${bestSetup.trades ? `${bestSetup.wins}/${bestSetup.trades} win · ${Math.round(100*bestSetup.wins/bestSetup.trades)}% WR` : "no annotated setup"}</div>
     </div>
   </div>
 
   <div class="perf-grid">
     <div class="section">
-      <h2>Performance par Setup</h2>
+      <h2>Setup performance</h2>
       <table class="perf-table">
-        <thead><tr><th>Setup</th><th style="text-align:center">Trades</th><th>Win Rate</th><th>P/L total</th></tr></thead>
+        <thead><tr><th>Setup</th><th style="text-align:center">Trades</th><th>Win Rate</th><th>Total P/L</th></tr></thead>
         <tbody>${setupRows}</tbody>
       </table>
     </div>
 
     <div class="section">
-      <h2>Performance par Kill Zone</h2>
+      <h2>Kill Zone performance</h2>
       <table class="perf-table">
-        <thead><tr><th>Kill Zone</th><th style="text-align:center">Trades</th><th>Win Rate</th><th style="text-align:center">Résultat</th></tr></thead>
+        <thead><tr><th>Kill Zone</th><th style="text-align:center">Trades</th><th>Win Rate</th><th style="text-align:center">Result</th></tr></thead>
         <tbody>${kzRows}</tbody>
       </table>
     </div>
 
     <div class="section">
-      <h2>Streak Process Propre</h2>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Chaque trade : ✓ = process respecté (setup + SL structurel + sizing + KZ) · ✗ = violation</p>
+      <h2>Clean Process Streak</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Each trade: ✓ = process respected (setup + structural SL + sizing + KZ) · ✗ = violation</p>
       <div class="streak-row">${dots}</div>
-      <div class="streak-label" style="margin-top:8px;">Série actuelle : <strong>${ws.processStreak.current}</strong> · Meilleure série : <strong>${ws.processStreak.longest}</strong> · Taux global : <strong class="${processRate >= 60 ? "pos" : "acc"}">${processRate}%</strong></div>
+      <div class="streak-label" style="margin-top:8px;">Current streak: <strong>${ws.processStreak.current}</strong> · Best streak: <strong>${ws.processStreak.longest}</strong> · Overall rate: <strong class="${processRate >= 60 ? "pos" : "acc"}">${processRate}%</strong></div>
     </div>
 
     <div class="section">
-      <h2>Analyse par Mood</h2>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Corrélation état émotionnel → résultat trade</p>
+      <h2>Mood analysis</h2>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Emotional state → trade result correlation</p>
       ${moodRows}
     </div>
   </div>
 
   <div class="section" style="margin-top:18px;">
-    <h2>Évolution violations ICT · Sessions ${ws.week}</h2>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Nombre de règles ICT violées par session (objectif = 0)</p>
+    <h2>ICT violations trend · Sessions ${ws.week}</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Number of ICT rules violated per session (target = 0)</p>
     <div class="vol-bars">${volBars}</div>
   </div>`;
 }
@@ -1796,11 +2170,11 @@ if (btEl) {
     btEl.innerHTML = `
     <div class="bt-empty">
       <div class="bt-empty-icon">📊</div>
-      <p><strong>Aucun backtest enregistré pour l'instant.</strong><br>
-      Envoie un screenshot + tes commentaires et je l'ajoute ici.</p>
+      <p><strong>No backtests recorded yet.</strong><br>
+      Share a screenshot + your comments and I'll add it here.</p>
     </div>`;
   } else {
-    const resultLabel = { valid: "✅ Setup valide", invalid: "❌ Setup invalide", neutral: "⚪ Neutre / Mixte" };
+    const resultLabel = { valid: "✅ Valid setup", invalid: "❌ Invalid setup", neutral: "⚪ Neutral / Mixed" };
     btEl.innerHTML = DATA.backtests.map(bt => {
       const imgs = (bt.images || []).map(img => `
         <div class="bt-img-wrap">
@@ -1811,7 +2185,7 @@ if (btEl) {
         </div>`).join('');
 
       const lessons = (bt.lessons || []).map(l =>
-        `<div class="bt-lesson ${l.type||''}"><strong>${l.type === 'pos' ? '✅ Point fort' : l.type === 'neg' ? '❌ Erreur' : '📌 Note'}</strong>${l.text}</div>`
+        `<div class="bt-lesson ${l.type||''}"><strong>${l.type === 'pos' ? '✅ Strength' : l.type === 'neg' ? '❌ Error' : '📌 Note'}</strong>${l.text}</div>`
       ).join('');
 
       const tags = [
@@ -1867,7 +2241,7 @@ if (planEl && DATA.weekPlan) {
   }).join("");
   planEl.innerHTML = `
     <div class="plan-head">
-      <h2>📐 Plan de la semaine · ${wp.date} · ${wp.instrument}</h2>
+      <h2>📐 Weekly Plan · ${wp.date} · ${wp.instrument}</h2>
       <div class="plan-bias">${wp.bias}</div>
       <div class="plan-summary">${wp.summary}</div>
     </div>
