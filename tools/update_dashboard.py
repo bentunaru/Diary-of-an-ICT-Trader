@@ -87,36 +87,47 @@ def reconstruct(fills):
         qty = int(fl["FilledQuantity"]); px = float(fl["FillPrice"]) / 100.0
         side = 1 if fl["BuySell"] == "Buy" else -1
         t = fl["DateTime"]; st = state[sym]
-        if st["pos"] == 0:
-            st.update(open_time=t, dir=("Long" if side == 1 else "Short"),
-                      realized=0.0, entry_px=px, maxq=0, fills=0)
-            st["lots"].clear()
-        st["fills"] += 1
-        q = qty
-        while q > 0 and st["lots"] and (st["lots"][0][0] * side < 0):
-            lot_side, lot_qty, lot_px = st["lots"][0]
-            m = min(q, lot_qty)
-            pl = (px - lot_px) * m * mult if lot_side == 1 else (lot_px - px) * m * mult
-            st["realized"] += pl
-            q -= m
-            if m == lot_qty:
-                st["lots"].popleft()
+        # Un fill peut à la fois fermer la position et en ouvrir une opposée (flip).
+        # On le traite par tranches bornées au retour à plat, pour ne jamais
+        # mélanger deux trades dans une même position reconstruite.
+        remaining = qty
+        while remaining > 0:
+            if st["pos"] == 0:
+                st.update(open_time=t, dir=("Long" if side == 1 else "Short"),
+                          realized=0.0, entry_px=px, maxq=0, fills=0)
+                st["lots"].clear()
+            # Si ce fill réduit la position, on s'arrête au flat ; sinon on prend tout.
+            if st["pos"] != 0 and st["pos"] * side < 0:
+                chunk = min(remaining, abs(st["pos"]))
             else:
-                st["lots"][0] = (lot_side, lot_qty - m, lot_px)
-        if q > 0:
-            st["lots"].append((side, q, px))
-        st["pos"] += side * qty
-        st["maxq"] = max(st["maxq"], abs(st["pos"]))
-        if st["pos"] == 0:
-            trades.append({
-                "id": f"{st['open_time'][:10]}_{st['open_time'][12:20]}",
-                "symbol": short, "instr": instr_full(sym),
-                "date_iso": st["open_time"][:10], "date": fr_date(st["open_time"][:10]),
-                "open_time": st["open_time"][12:20], "close_time": t[12:20],
-                "dir": st["dir"], "entry": round(st["entry_px"], 2),
-                "exit": round(px, 2), "maxq": st["maxq"],
-                "pl": round(st["realized"], 2), "fills": st["fills"],
-            })
+                chunk = remaining
+            st["fills"] += 1
+            q = chunk
+            while q > 0 and st["lots"] and (st["lots"][0][0] * side < 0):
+                lot_side, lot_qty, lot_px = st["lots"][0]
+                m = min(q, lot_qty)
+                pl = (px - lot_px) * m * mult if lot_side == 1 else (lot_px - px) * m * mult
+                st["realized"] += pl
+                q -= m
+                if m == lot_qty:
+                    st["lots"].popleft()
+                else:
+                    st["lots"][0] = (lot_side, lot_qty - m, lot_px)
+            if q > 0:
+                st["lots"].append((side, q, px))
+            st["pos"] += side * chunk
+            st["maxq"] = max(st["maxq"], abs(st["pos"]))
+            if st["pos"] == 0:
+                trades.append({
+                    "id": f"{st['open_time'][:10]}_{st['open_time'][12:20]}",
+                    "symbol": short, "instr": instr_full(sym),
+                    "date_iso": st["open_time"][:10], "date": fr_date(st["open_time"][:10]),
+                    "open_time": st["open_time"][12:20], "close_time": t[12:20],
+                    "dir": st["dir"], "entry": round(st["entry_px"], 2),
+                    "exit": round(px, 2), "maxq": st["maxq"],
+                    "pl": round(st["realized"], 2), "fills": st["fills"],
+                })
+            remaining -= chunk
     return trades
 
 
@@ -139,8 +150,8 @@ def build_data(trades, annotations):
         cum += daily[d]
         equity.append({"date": fr_date(d), "cum": round(cum)})
 
-    # Best trade
-    best = max(trades, key=lambda t: t["pl"])
+    # Best trade (None si aucun trade)
+    best = max(trades, key=lambda t: t["pl"]) if trades else None
 
     # Render trades JS
     trade_objs = []
@@ -202,6 +213,8 @@ def main():
     rows, fills = parse_log(export)
     trades = reconstruct(fills)
     print(f"Fills : {len(fills)} · Trades reconstruits : {len(trades)}")
+    if not trades:
+        raise SystemExit("Aucun trade flat→flat reconstruit : le dashboard n'est pas modifié.")
 
     annotations = {}
     if os.path.exists(ANNOTATIONS):
@@ -213,7 +226,9 @@ def main():
     total = sum(t["pl"] for t in trades)
     wins = sum(1 for t in trades if t["pl"] > 0)
     losses = sum(1 for t in trades if t["pl"] < 0)
-    print(f"P/L total : {fmt_pl(total)} · {wins}W / {losses}L · WR {round(100*wins/(wins+losses))}%")
+    closed = wins + losses
+    wr = round(100 * wins / closed) if closed else 0
+    print(f"P/L total : {fmt_pl(total)} · {wins}W / {losses}L · WR {wr}%")
 
     # Render blocks
     equity_js = ",\n".join(
