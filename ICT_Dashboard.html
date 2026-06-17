@@ -509,6 +509,29 @@
   .hm-cell .n { font-size: 10px; color: var(--muted); margin-top: 2px; }
   .hm-cell.empty { opacity: 0.4; }
 
+  /* ---------- Prop Firm ---------- */
+  .pf-verdict { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px; border: 1px solid var(--border); }
+  .pf-verdict.ok   { background: var(--green-bg);  border-color: color-mix(in srgb, var(--green) 30%, transparent);  color: var(--green); }
+  .pf-verdict.warn { background: var(--accent-bg); border-color: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); }
+  .pf-verdict.bad  { background: var(--red-bg);    border-color: color-mix(in srgb, var(--red) 30%, transparent);   color: var(--red); }
+  .pf-rule { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .pf-rule:last-child { border-bottom: none; }
+  .pf-rule .pf-name { flex: 1; font-size: 13px; font-weight: 500; min-width: 0; }
+  .pf-rule .pf-name .sub { display: block; font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+  .pf-rule .pf-val { font-size: 12.5px; color: var(--muted); font-family: var(--mono); text-align: right; }
+  .pf-status { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; white-space: nowrap; min-width: 70px; text-align: center; }
+  .pf-status.ok   { background: var(--green-bg);  color: var(--green); }
+  .pf-status.warn { background: var(--accent-bg); color: var(--accent); }
+  .pf-status.bad  { background: var(--red-bg);    color: var(--red); }
+  .pf-status.na   { background: var(--bg3);       color: var(--muted); }
+  .pf-progress { height: 10px; border-radius: 5px; background: var(--bg3); border: 1px solid var(--border); overflow: hidden; margin: 6px 0; }
+  .pf-progress-fill { height: 100%; border-radius: 5px; background: var(--green); transition: width .5s; }
+  .pf-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .pf-select-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .pf-select { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--text); background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; cursor: pointer; transition: border-color .15s; }
+  .pf-select:hover { border-color: var(--border-strong); }
+  .pf-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
   /* ---------- Accessibilité : contenu réservé aux lecteurs d'écran ---------- */
   .sr-only {
     position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -561,6 +584,8 @@
     <button type="button" class="tab" role="tab" aria-selected="true" tabindex="0" data-view="overview">Overview</button>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="performance">Performance</button>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="errors">Errors</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="prop">Prop Firm</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="mm">Money Mgmt</button>
     <span class="tab-sep" aria-hidden="true"></span>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="sessions">Sessions</button>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="backtest">Backtest</button>
@@ -641,6 +666,16 @@
     <div id="error-tracker"></div>
   </section>
 
+  <!-- ============ PROP FIRM ============ -->
+  <section id="view-prop" class="view" role="tabpanel" aria-label="Prop Firm">
+    <div id="prop-content"></div>
+  </section>
+
+  <!-- ============ MONEY MANAGEMENT ============ -->
+  <section id="view-mm" class="view" role="tabpanel" aria-label="Money Management">
+    <div id="mm-content"></div>
+  </section>
+
   <!-- ============ PERFORMANCE ============ -->
   <section id="view-performance" class="view" role="tabpanel" aria-label="Performance">
     <div id="perf-content"></div>
@@ -696,7 +731,36 @@ const DATA = {
     account: "Sim1",
     fills: 127,                      // source : Sierra Chart — 120 + 7 fills aprem 16 juin (T3/T4/T5) ✓
     riskMaxDay: { value: -6525, label: "Risque max engagé", sub: "SL NQ T2 du 11 juin (non atteint)" },
-    maxDrawdownLimit: -20000          // limite de drawdown (jauge prop firm) — éditable à la main
+    maxDrawdownLimit: -20000,         // limite de drawdown (jauge prop firm) — éditable à la main
+    // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
+    // ddModel : "trailing-eod" | "trailing-intraday" | "static". Une règle à null = carte désactivée.
+    // Seuils éditables, à confirmer sur le rulebook courant de chaque firme.
+    propFirms: [
+      { id: "ts50",  firm: "Topstep", plan: "Combine 50K",  ddModel: "trailing-eod",
+        accountSize: 50000,  profitTarget: 3000, mll: 2000, dailyLossLimit: 1000,
+        consistencyPct: 50, minWinDays: 5, winDayThreshold: 200, maxContracts: 5,  flatByCT: "15:10" },
+      { id: "ts100", firm: "Topstep", plan: "Combine 100K", ddModel: "trailing-eod",
+        accountSize: 100000, profitTarget: 6000, mll: 3000, dailyLossLimit: 2000,
+        consistencyPct: 50, minWinDays: 5, winDayThreshold: 200, maxContracts: 10, flatByCT: "15:10" },
+      { id: "ts150", firm: "Topstep", plan: "Combine 150K", ddModel: "trailing-eod",
+        accountSize: 150000, profitTarget: 9000, mll: 4500, dailyLossLimit: 3000,
+        consistencyPct: 50, minWinDays: 5, winDayThreshold: 200, maxContracts: 15, flatByCT: "15:10" }
+    ],
+    // Money management — profil CONSERVATEUR. Tout est dérivé de propFirms ci-dessus : aucun seuil en dur.
+    mm: {
+      profile: "Conservateur",
+      dailyStopPctOfDLL: 0.40,     // stop perso = 40 % du Daily Loss Limit Topstep…
+      minBufferDays: 5,            // …et jamais plus que MLL ÷ 5 (≥ 5 journées rouges de marge avant blow-up)
+      riskTradesPerDay: 2,         // risque/trade = stop quotidien ÷ 2 (≤ 2 trades perdants par jour)
+      dailyGainPctOfTarget: 0.40,  // plafond de gain/jour = 40 % de l'objectif (marge sous la règle de consistance 50 %)
+      stopGrid: [5, 8, 10, 12, 15, 20, 25, 30],   // distances de stop (points) listées dans la table de référence
+      instruments: [
+        { sym: "NQ",  label: "NQ — mini",   perPt: 20, micro: false },
+        { sym: "MNQ", label: "MNQ — micro", perPt: 2,  micro: true  },
+        { sym: "ES",  label: "ES — mini",   perPt: 50, micro: false },
+        { sym: "MES", label: "MES — micro", perPt: 5,  micro: true  }
+      ]
+    }
   },
 
   /* P/L cumulé RÉEL — généré depuis TradeActivityLogExport par tools/update_dashboard.py */
@@ -752,7 +816,8 @@ const DATA = {
     { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,923.25", exit: "SL 30,944.50", rr: "—", pl: "−$4,250", plClass: "neg", plNum: -4250.0, result: "SL Hit", setup: "T3 · Short · PDH sweep → FVG bearish (3e short stoppé)", notes: "Short repris l'aprem (PDH pris → retrace → FVG bearish). Mais le prix est reparti à la hausse → stoppé à 30,944.50 (−21.25 pts). 3e short perdant consécutif. 10 contrats. P/L réel Sierra.", kz: "London", setupType: "FVG bearish", mood: "Impatient", processClean: false },
     { date: "16 juin", instr: "NQU26", dir: "Long", entry: "30,784.25", exit: "TP 30,872.00 / 30,882.50 ✅", rr: "—", pl: "+$17,970", plClass: "pos", plNum: 17970.0, result: "Win", setup: "T4 · Long · OB discount + prise de liquidité (plan matinal)", notes: "LE setup du plan matinal enfin pris : prise de liquidité sous le range → long depuis l'OB discount. Stop 30,736.75. Sorties 8c@30,872.00 (+14,040) + 2c@30,882.50 (+3,930). Meilleur trade du jour, efface les 3 shorts perdants. 10 contrats. P/L réel Sierra.", kz: "NY AM", setupType: "OB discount", mood: "Confiant", processClean: true },
     { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,882.50", exit: "30,881.25", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "T5 · Short scalp", notes: "Petit scalp short 6 contrats juste après la sortie du long, +$150. P/L réel Sierra.", kz: "NY AM", setupType: "Scalp", mood: "Neutre", processClean: true },
-    { date: "17 juin", instr: "NQU26", dir: "Long", entry: "30,522.50", exit: "TP 30,664.00 · SL 30,489.75 (live)", rr: "4.3:1", pl: "—", plClass: "", result: "Live", setup: "Long · Sweep SSL + Breaker · London KZ", notes: "Entrée long 10 contrats sur sweep de la sellside liquidity (~30,490) suivi d\u0027un Breaker. Stop structurel 30,489.75 (−32.75 pts · risque −$6,550). TP 30,664.00 (+141.5 pts · R:R 4.3:1). Pris dans les 25% du range (discount) = meilleure zone d\u0027entrée long. Le biais de fond reste bearish, mais on achète le discount pour viser le premium : TP 30,664.00 ≈ 75% du range. Plan : fermer le long au 75%, puis potentiellement reprendre un short AVEC confirmation (premium = zone de vente, aligné au biais bearish). Position ouverte. Jour FOMC : sortir/réduire avant 14:00.", kz: "London", setupType: "Sweep SSL + Breaker", mood: "Neutre", processClean: true }
+    { date: "17 juin", instr: "NQU26", dir: "Long", entry: "30,522.50", exit: "SL 30,489.75 ❌", rr: "—", pl: "−$6,550", plClass: "neg", plNum: -6550.0, result: "SL Hit", setup: "Long · Sweep SSL + Breaker · London KZ", notes: "Entrée long 10 contrats sur sweep de la sellside liquidity (~30,490) suivi d\u0027un Breaker. Stop structurel 30,489.75 (−32.75 pts · risque −$6,550). TP 30,664.00 (+141.5 pts · R:R 4.3:1). Pris dans les 25% du range (discount) = meilleure zone d\u0027entrée long. Le biais de fond reste bearish, mais on achète le discount pour viser le premium : TP 30,664.00 ≈ 75% du range. Plan initial : fermer au 75% puis short au premium. BON TRADE sorti AU TICK PRÈS : une dernière mèche un tick plus bas a pris le stop (30,489.75) avant que le prix reparte à la hausse (biais haussier confirmé). Setup + direction justes ; stop juste trop collé au niveau du sweep. −32.75 pts · −$6,550 (à confirmer export Sierra).", kz: "London", setupType: "Sweep SSL + Breaker", mood: "Neutre", processClean: true },
+    { date: "17 juin", instr: "NQU26", dir: "Short", entry: "30,490.00", exit: "SL 30,515.00 ❌", rr: "—", pl: "−$5,000", plClass: "neg", plNum: -5000.0, result: "SL Hit", setup: "T2 · Short flip sans confirmation → SL", notes: "ERREUR RÉCURRENTE (cf. 16 juin) : flip short à 30,490.00 juste après le stop du long, SANS confirmation (ni clôture de bougie, ni displacement). Stoppé à 30,515.00 (+25 pts · −$5,000). Le prix est reparti à la hausse vers le premium → mauvaise jambe. Règle violée : après un SL, STOP — pas de re-entrée / flip tant que range + KZ + clôture + confirmation ne sont pas re-validés. 10c.", kz: "London", setupType: "Short flip non confirmé", mood: "Revenge", processClean: false }
     // </TRADES>
   ],
 
@@ -798,17 +863,17 @@ const DATA = {
           <figure style="margin:0"><img src="plans/2026-06-17/01-weekly-uptrend.png" alt="Weekly contexte" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · Contexte HTF : tendance haussière de fond, le short reste un trade de range intraday.</figcaption></figure>
         </div>
 
-        <h3 style="margin-top:26px">T1 · Long · Sweep SSL + Breaker · London KZ <span style="color:var(--muted);font-size:13px">· position ouverte</span></h3>
-        <div class="callout callout--green">
-          <h4>🟢 Entrée Live · Long 10@30,522.50 · Sweep SSL + Breaker</h4>
-          Sweep de la <strong>sellside liquidity (~30,490)</strong> en London Kill Zone, suivi d\u0027un <strong>Breaker</strong> → entrée long. Stop structurel juste sous le sweep à 30,489.75, TP au-dessus (BSL) à 30,664.00.
+        <h3 style="margin-top:26px">T1 · SL au tick près · Long Sweep SSL + Breaker <span style="color:var(--muted);font-size:13px">· bon trade · −$6,550</span></h3>
+        <div class="callout callout--accent">
+          <h4>⚠️ SL au tick près · Long 10@30,522.50 → 30,489.75 · −$6,550 (bon trade)</h4>
+          Le trade était <strong>bon</strong> : sweep SSL + Breaker, dans le sens du biais haussier. Une <strong>dernière mèche un tick plus bas</strong> est venue chercher le stop (30,489.75) avant que le prix reparte vers le haut — sorti <strong>au tick près</strong>. Setup et direction justes : c'est le <strong>placement du stop, pile sur le niveau du sweep</strong>, qui était un cran trop serré. −32.75 pts · −$6,550 (à confirmer export Sierra).
         </div>
         <div class="stat-row cols-5 mt">
           <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,522.50</div><div class="s">Long 10c · London KZ</div></div>
           <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,489.75</div><div class="s num">−32.75 pts · −$6,550</div></div>
           <div class="mini-stat"><div class="l">TP · 75% range</div><div class="v num acc">30,664.00</div><div class="s num">+141.5 pts · +$28,300</div></div>
           <div class="mini-stat"><div class="l">R:R</div><div class="v num pos">4.3:1</div><div class="s">141.5 / 32.75</div></div>
-          <div class="mini-stat"><div class="l">Statut</div><div class="v acc">Live</div><div class="s">P/L Sierra à la clôture</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$6,550</div><div class="s">SL Hit · à confirmer Sierra</div></div>
         </div>
         <div class="callout callout--accent mt">
           <h4>🧭 Logique · long au discount (25%) pour viser le premium (75%)</h4>
@@ -817,6 +882,41 @@ const DATA = {
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
           <figure style="margin:0"><img src="plans/2026-06-17/06-t1-long-sweep-ssl-breaker.png" alt="T1 Long Sweep SSL + Breaker" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById(\u0027bt-lightbox-img\u0027).src=this.src;document.getElementById(\u0027bt-lightbox\u0027).classList.add(\u0027open\u0027)"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Long 10@30,522.50 · Sweep SSL (~30,490) + Breaker · Stop 30,489.75 · TP 30,664.00 · R:R 4.3:1.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T2 · SL Hit ❌ · Short flip sans confirmation → stoppé <span style="color:var(--muted);font-size:13px">· −$5,000</span></h3>
+        <div class="callout callout--red">
+          <h4>❌ Même erreur qu\u0027hier · short flip SANS confirmation → stoppé 30,515.00 · −$5,000</h4>
+          Juste après le stop du long, <strong>flip short à 30,490.00 sans attendre de confirmation</strong> (ni clôture de bougie, ni displacement) — exactement <strong>l\u0027erreur récurrente du 16 juin</strong> (re-entrée immédiate après un SL). Stoppé à 30,515.00 (+25 pts · <strong>−$5,000</strong>). Ironie : le prix est reparti <strong>à la hausse vers le premium</strong> → mauvaise jambe. <strong>Règle violée :</strong> après un SL, STOP — pas de re-entrée / flip tant que range + KZ + clôture + confirmation ne sont pas re-validés.<br/>
+          <span style="color:var(--muted)">Plan initial (interrompu) : short → cover TDO 30,465.75 → flip long 30,460.25 → haut FVG ~30,800 → short premium avec confirmation.</span>
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée short</div><div class="v num neg">30,490.00</div><div class="s">Short 10c · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,515.00</div><div class="s num">+25 pts · −$5,000</div></div>
+          <div class="mini-stat"><div class="l">Cover · TDO</div><div class="v num acc">30,465.75</div><div class="s num">−24.25 pts · ≈1:1</div></div>
+          <div class="mini-stat"><div class="l">Long limite</div><div class="v num pos">30,460.25</div><div class="s">→ haut FVG ~30,800</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">−$5,000</div><div class="s">SL Hit · sans confirmation</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📋 Séquence prévue</h4>
+          <strong>1.</strong> Short 30,490.00 → cover au TDO 30,465.75. · <strong>2.</strong> Flip long sur limite 30,460.25 (rebond du TDO). · <strong>3.</strong> Long jusqu\u0027au haut du FVG / premium ~30,800 (OTE marqué en premier). · <strong>4.</strong> Au premium : short de continuation AVEC confirmation (Plan A complet, aligné biais bearish).<br/>
+          <strong>FOMC 14:00 :</strong> tout doit être bouclé / réduit avant la décision — pas de position nue dans le dot plot.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-17/07-t2-short-target-tdo.png" alt="T2 Short target TDO + long limite" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById(\u0027bt-lightbox-img\u0027).src=this.src;document.getElementById(\u0027bt-lightbox\u0027).classList.add(\u0027open\u0027)"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Short 10@30,490.00 · Stop 30,515.00 · Cover/TDO buy-limit 30,465.75 · Long limite 30,460.25 → haut FVG.</figcaption></figure>
+        </div>
+
+        <div class="callout callout--red mt">
+          <h4>🧠 Leçon en direct · NE PAS FLIPPER LE BIAIS</h4>
+          La plus grosse erreur du jour, au-delà du « sans confirmation » : <strong>j'avais la conviction que le marché allait MONTER</strong> — et pourtant j'ai <strong>flippé en short, contre ma propre conviction</strong>. Quand j'ai une conviction directionnelle forte, je ne dois PAS prendre de trades dans l'autre sens. Le long était dans le bon sens ; après son stop, la bonne action était de <strong>ré-attendre une entrée longue</strong> (ou de ne rien faire), pas de shorter. <strong>Une conviction = une direction.</strong>
+        </div>
+
+        <div class="callout callout--green mt">
+          <h4>🧭 Biais principal · HAUSSIER (confirmé SMT)</h4>
+          Lecture SMT sur 4 panneaux — <strong>NQ · ES · YM · DXY</strong> (sessions en couleur) : pour moi <strong>c'est clair, on va vers le haut</strong>. Le biais principal du jour était donc <strong>haussier</strong> — et je ne m'y suis pas tenu (notamment avant le short en fenêtre macro). Même leçon vue côté analyse : le SMT donnait la direction, il fallait <strong>rester acheteur</strong> et ignorer les shorts contre-tendance. Le DXY (bas-droite) sert de confirmation inverse : faiblesse du dollar = soutien des indices.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-17/08-smt-sessions-bullish.png" alt="SMT NQ ES YM DXY sessions" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">SMT 15min · NQ / ES / YM / DXY, sessions colorées · lecture haussière = biais principal du jour.</figcaption></figure>
         </div>
       `
     },
@@ -1753,7 +1853,9 @@ const DATA = {
     { label: "Volume Imbalance · Effet aimant", text: "Tant qu'un corps de bougie ne traverse pas le Volume Imbalance, il agit comme un aimant. Seul un corps (jamais une mèche) qui le traverse en entier le neutralise." },
     { label: "Macro ICT · Fenêtre algorithmique", text: "Toutes les heures, entre :50 et :10 (ex : 7:50–8:10, 9:50–10:10…), l'algorithme prend de la liquidité ou atteint une efficience (FVG, SSL/BSL). Run-Stop-Run = pattern typique. Instrument préféré : ES (plus propre que NQ)." },
     { label: "Kill Zones · Haute probabilité", text: "London KZ : 2h–5h ET · NY AM : 8h30–11h ET · London Close : 10h–12h ET. Un retour dans un FVG pendant une Kill Zone est une confluence ICT forte — l'algorithme agit à heures précises, pas au hasard." },
-    { label: "TP sur liquidité · marge 1–2 ticks", critical: true, text: "Quand le TP vise une BuySide Liquidity (BSL) : placer l'ordre limite 1–2 ticks SOUS le niveau pour garantir le fill — le prix peut toucher la liquidité une seule fois sans remplir l'ordre (cas vécu 15 juin : niveau effleuré mais position non fermée). Symétrique pour une SellSide Liquidity (SSL) : placer l'ordre limite 1–2 ticks AU-DESSUS du niveau." }
+    { label: "TP sur liquidité · marge 1–2 ticks", critical: true, text: "Quand le TP vise une BuySide Liquidity (BSL) : placer l'ordre limite 1–2 ticks SOUS le niveau pour garantir le fill — le prix peut toucher la liquidité une seule fois sans remplir l'ordre (cas vécu 15 juin : niveau effleuré mais position non fermée). Symétrique pour une SellSide Liquidity (SSL) : placer l'ordre limite 1–2 ticks AU-DESSUS du niveau." },
+    { label: "Ne pas flipper le biais", critical: true, text: "Quand j'ai une conviction directionnelle forte (ex. 17 juin : convaincu que ça monte), NE PAS prendre de trades CONTRE cette conviction. Flipper le biais en cours de session = se retrouver à shorter un marché qu'on croit haussier → stops à répétition. Une conviction = une direction : si stoppé dans le sens du biais, ré-évaluer ou attendre une meilleure entrée DANS le sens du biais — jamais inverser." },
+    { label: "Buffer de stop au-delà du sweep", critical: true, text: "Quand le stop est placé derrière une liquidité prise (sweep SSL/BSL), lui donner 2–3 ticks de marge AU-DELÀ de l'extrême de la mèche — jamais pile sur le niveau. Une dernière mèche vient souvent chercher le tick exact avant le vrai mouvement (cas 17 juin T1 : bon trade, sorti au tick près, puis le prix repart). Stop structurel ≠ stop collé au niveau du sweep." }
   ],
 
   /* ---- Concepts ICT (glossaire vivant) ---- */
@@ -1769,6 +1871,11 @@ const DATA = {
 
   /* ---- Erreurs documentées (semaine du 9–13 juin) ---- */
   weeklyErrors: [
+    { type: "critical", title: "Flipper le biais (trader contre sa conviction)",
+      occurrences: 1, days: "17 juin",
+      description: "ERREUR MAJEURE DU 17 JUIN. Conviction claire que le marché allait MONTER, mais après le stop du long, flip en SHORT (T2) — donc contre ma propre conviction → stoppé immédiatement. Combinée à la re-entrée sans confirmation, c'est la racine des 2 SL du jour.",
+      rule: "Conviction directionnelle forte = une seule direction. Si stoppé dans le sens du biais : ré-évaluer ou attendre une meilleure entrée DANS le sens du biais — ne JAMAIS inverser le biais en cours de session.",
+      costStr: "−$11,550 (T1 + T2, à confirmer Sierra)" },
     { type: "critical", title: "Ne pas avoir attendu le setup (re-entrée après SL)",
       occurrences: 1, days: "16 juin",
       description: "ERREUR CENTRALE DU JOUR. Trades enchaînés juste après un stop loss, sans attendre une nouvelle confirmation ni le vrai setup → impatience / revenge (T2 dans la foulée de T1, T3 ensuite). La journée finit en positif grâce au seul trade conforme au plan (T4), mais le process est mauvais : résultat positif ≠ bonne journée.",
@@ -2768,6 +2875,338 @@ if (planEl && DATA.weekPlan) {
       <div class="plan-summary">${wp.summary}</div>
     </div>
     <div class="plan-grid">${cards}</div>`;
+}
+
+/* =====================================================================
+   PROP FIRM · conformité multi-comptes (V1 · base fin-de-journée)
+   Moteur ddModel-driven : ajouter un compte/firme = une entrée dans meta.propFirms.
+   ===================================================================== */
+const propEl = document.getElementById("prop-content");
+const propFirms = DATA.meta.propFirms || (DATA.meta.propFirm ? [DATA.meta.propFirm] : []);
+if (propEl && propFirms.length) {
+  propFirms.forEach((p, i) => { if (!p.id) p.id = "acct" + i; });
+  let propSel; try { propSel = localStorage.getItem("ict-prop"); } catch (e) {}
+  if (!propFirms.some(p => p.id === propSel)) propSel = propFirms[0].id;
+
+  const pfDaily = eq.map((p, i) => i === 0 ? p.cum : p.cum - eq[i-1].cum);
+
+  function computeProf(pf) {
+    const start = pf.accountSize;
+    const balances = eq.map(p => start + p.cum);
+    const ddAmt = pf.mll;
+    let thrSeries;
+    if (pf.ddModel === "static") {
+      thrSeries = balances.map(() => start - ddAmt);
+    } else {                       // trailing-eod (trailing-intraday approximé en EOD pour la V1)
+      let hw = start;
+      thrSeries = balances.map(b => { hw = Math.max(hw, b); return Math.min(start, hw - ddAmt); });
+    }
+    const curBal = balances[balances.length - 1];
+    const curThr = thrSeries[thrSeries.length - 1];
+    const distMLL = curBal - curThr;
+    const mllBreached = balances.some((b, i) => b <= thrSeries[i]);
+    const mllLocked = pf.ddModel !== "static" && curThr >= start;
+
+    const tgtPct = pf.profitTarget > 0 ? Math.max(0, Math.min(100, Math.round(100 * cumPl / pf.profitTarget))) : 100;
+    const tgtReached = cumPl >= pf.profitTarget;
+
+    const dllActive = pf.dailyLossLimit != null;
+    const worstDay = Math.min(0, ...pfDaily);
+    const dllBreached = dllActive && pfDaily.some(v => v <= -pf.dailyLossLimit);
+
+    const consActive = pf.consistencyPct != null;
+    const bestDay = Math.max(0, ...pfDaily);
+    const consPct = cumPl > 0 ? bestDay / cumPl : 0;
+    const consPass = !consActive || !tgtReached || consPct <= pf.consistencyPct / 100;
+
+    const winActive = pf.minWinDays != null;
+    const winDays = pfDaily.filter(v => v >= (pf.winDayThreshold || 200)).length;
+    const winPass = !winActive || winDays >= pf.minWinDays;
+
+    const bad  = mllBreached || dllBreached;
+    const warn = !bad && (distMLL < ddAmt * 0.5 || (tgtReached && !consPass));
+    return { start, curBal, curThr, distMLL, mllBreached, mllLocked, ddAmt,
+             tgtPct, tgtReached, dllActive, worstDay, dllBreached,
+             consActive, bestDay, consPct, consPass, winActive, winDays, winPass, bad, warn };
+  }
+
+  const ddLabel = m => m === "static" ? "statique" : m === "trailing-intraday" ? "trailing (intraday · EOD approx V1)" : "trailing (EOD)";
+
+  function renderProp() {
+    const pf = propFirms.find(p => p.id === propSel) || propFirms[0];
+    const r = computeProf(pf);
+    const verdict = r.bad ? { cls: "bad", dot: "red", txt: "Compte en violation (règle franchie)" }
+                  : r.warn ? { cls: "warn", dot: "accent", txt: "Compte à risque (marge faible / consistance)" }
+                  : { cls: "ok", dot: "green", txt: "Compte sain — aucune règle franchie" };
+    const st = (active, pass, ok, ko) => !active ? `<span class="pf-status na">non applicable</span>`
+                  : `<span class="pf-status ${pass ? "ok" : "bad"}">${pass ? ok : ko}</span>`;
+    const options = propFirms.map(p => `<option value="${p.id}"${p.id === propSel ? " selected" : ""}>${p.firm} · ${p.plan} (${fmtUsdAbs(p.accountSize)})</option>`).join("");
+
+    propEl.innerHTML = `
+    <p class="view-intro">Conformité prop firm — <strong>V1 fin-de-journée</strong>. Les seuils s'appliquent en réalité <em>en intraday</em> ; les creux/pics infra-journaliers ne sont pas encore captés (V2 via equity au fill). Tous les comptes sont évalués contre la même equity (le flux de trades actuel) — la séparation par compte réel viendra avec le tag par trade dans le pipeline.</p>
+
+    <div class="pf-head">
+      <label class="pf-select-lbl" for="pf-select">Compte</label>
+      <select id="pf-select" class="pf-select" aria-label="Choix du compte prop firm">${options}</select>
+    </div>
+
+    <div class="pf-verdict ${verdict.cls}"><span class="idot ${verdict.dot}"></span>${verdict.txt}</div>
+
+    <div class="kpis" style="margin-bottom:18px;">
+      <div class="kpi"><div class="label">Balance courante</div><div class="value num">${fmtUsdAbs(r.curBal)}</div><div class="sub">capital ${fmtUsdAbs(r.start)} ${cumPl >= 0 ? "+" : "−"} ${fmtUsdAbs(cumPl)}</div></div>
+      <div class="kpi"><div class="label">Seuil MLL</div><div class="value num">${fmtUsdAbs(r.curThr)}</div><div class="sub">${ddLabel(pf.ddModel)}${r.mllLocked ? " · verrouillé" : ""}</div></div>
+      <div class="kpi"><div class="label">Marge avant MLL</div><div class="value num ${r.distMLL <= r.ddAmt * 0.5 ? "neg" : "pos"}">${fmtUsdAbs(r.distMLL)}</div><div class="sub">${r.mllBreached ? "MLL franchi (EOD)" : "avant blow-up (EOD)"}</div></div>
+      <div class="kpi"><div class="label">Objectif de profit</div><div class="value num ${r.tgtReached ? "pos" : "acc"}">${r.tgtPct}%</div><div class="sub">${fmtUsd(cumPl)} / ${fmtUsdAbs(pf.profitTarget)}</div></div>
+    </div>
+
+    <div class="section">
+      <h2>Progression vers l'objectif</h2>
+      <div class="pf-progress"><div class="pf-progress-fill" style="width:${r.tgtPct}%;background:${r.tgtReached ? "var(--green)" : "var(--accent)"}"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>${fmtUsd(cumPl)}</span><span>cible ${fmtUsdAbs(pf.profitTarget)}</span></div>
+    </div>
+
+    <div class="section">
+      <h2>Conformité ${pf.firm} · ${pf.plan}</h2>
+      <div class="pf-rule">
+        <div class="pf-name">Objectif de profit<span class="sub">Atteindre +${fmtUsdAbs(pf.profitTarget)} net</span></div>
+        <div class="pf-val">${fmtUsd(cumPl)} (${r.tgtPct}%)</div>
+        ${r.tgtReached ? `<span class="pf-status ok">Atteint</span>` : `<span class="pf-status warn">En cours</span>`}
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Maximum Loss Limit ${ddLabel(pf.ddModel)} −${fmtUsdAbs(r.ddAmt)}<span class="sub">Seuil ${fmtUsdAbs(r.curThr)}${r.mllLocked ? " · verrouillé au capital" : ""}</span></div>
+        <div class="pf-val">marge ${fmtUsdAbs(r.distMLL)}</div>
+        ${st(true, !r.mllBreached, "Sain", "Franchi")}
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Daily Loss Limit ${r.dllActive ? "(−" + fmtUsdAbs(pf.dailyLossLimit) + ")" : ""}<span class="sub">${r.dllActive ? "Pire journée nette : " + fmtUsd(r.worstDay) + " — calcul EOD (intraday en V2)" : "Pas de daily loss limit sur ce plan"}</span></div>
+        <div class="pf-val">${r.dllActive ? fmtUsd(r.worstDay) : "—"}</div>
+        ${st(r.dllActive, !r.dllBreached, "Respecté", "Franchi")}
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Règle de consistance ${r.consActive ? "(≤ " + pf.consistencyPct + "% / jour)" : ""}<span class="sub">${r.consActive ? "Meilleure journée = " + Math.round(r.consPct * 100) + "% du profit total" + (r.tgtReached ? "" : " · vérifiée à l'atteinte de l'objectif") : "Non applicable sur ce plan"}</span></div>
+        <div class="pf-val">${r.consActive ? fmtUsd(r.bestDay) : "—"}</div>
+        ${st(r.consActive, r.consPass, "OK", "Dépassé")}
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Jours gagnants ${r.winActive ? "(≥ " + pf.minWinDays + ")" : ""}<span class="sub">${r.winActive ? "Jour gagnant = P&L ≥ " + fmtUsdAbs(pf.winDayThreshold) : "Non applicable sur ce plan"}</span></div>
+        <div class="pf-val">${r.winActive ? r.winDays + " / " + pf.minWinDays : "—"}</div>
+        ${st(r.winActive, r.winPass, "OK", "Insuffisant")}
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Limite de contrats (${pf.maxContracts} max)<span class="sub">Nb de contrats par trade non encore exporté dans DATA</span></div>
+        <div class="pf-val">—</div>
+        <span class="pf-status na">V2 (pipeline)</span>
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Flat à la clôture (${pf.flatByCT} CT)<span class="sub">Horaires de sortie vs fenêtre interdite</span></div>
+        <div class="pf-val">—</div>
+        <span class="pf-status na">V2 (intraday)</span>
+      </div>
+      <p class="pf-note">⚠ V1 = base fin-de-journée. Ex. 16 juin : net +$3 820 (vu « OK »), mais l'intraday a plongé à −$14 300 — un calcul intraday (V2) pourrait y détecter un franchissement DLL/MLL. Seuils éditables dans <code>meta.propFirms</code>.</p>
+    </div>`;
+
+    const sel = document.getElementById("pf-select");
+    if (sel) sel.addEventListener("change", () => {
+      propSel = sel.value;
+      try { localStorage.setItem("ict-prop", propSel); } catch (e) {}
+      renderProp();
+    });
+  }
+  renderProp();
+}
+
+/* =====================================================================
+   MONEY MANAGEMENT · plan de sizing conservateur (Topstep 50/100/150K)
+   Tout est dérivé de meta.propFirms + meta.mm — aucune règle codée en dur.
+   ===================================================================== */
+const mmEl = document.getElementById("mm-content");
+const mmCfg = DATA.meta.mm;
+if (mmEl && mmCfg && propFirms.length) {
+  const mmAccts = propFirms;
+  let mmSel, mmInstr, mmStop;
+  try {
+    mmSel   = localStorage.getItem("ict-mm-acct");
+    mmInstr = localStorage.getItem("ict-mm-instr");
+    mmStop  = localStorage.getItem("ict-mm-stop");
+  } catch (e) {}
+  if (!mmAccts.some(p => p.id === mmSel)) mmSel = mmAccts[0].id;
+  if (!mmCfg.instruments.some(i => i.sym === mmInstr)) mmInstr = mmCfg.instruments[0].sym;
+  if (!(parseFloat(mmStop) > 0)) mmStop = "15";
+
+  const curPf = () => mmAccts.find(p => p.id === mmSel) || mmAccts[0];
+
+  // Garde-fous dérivés d'un compte
+  function mmParams(pf) {
+    const dailyStop = Math.round(Math.min(pf.dailyLossLimit * mmCfg.dailyStopPctOfDLL, pf.mll / mmCfg.minBufferDays));
+    const riskPerTrade = Math.round(dailyStop / mmCfg.riskTradesPerDay);
+    const bufferDays = Math.floor(pf.mll / dailyStop);
+    const dailyGainCap = Math.round(pf.profitTarget * mmCfg.dailyGainPctOfTarget);
+    const bestDayMax = Math.round(pf.profitTarget * (pf.consistencyPct || 50) / 100);
+    const minDaysToPass = Math.ceil(pf.profitTarget / dailyGainCap);
+    return { dailyStop, riskPerTrade, bufferDays, dailyGainCap, bestDayMax, minDaysToPass };
+  }
+
+  // Sizing : risque fixe + distance de stop → nb de contrats (plafonné Topstep)
+  function calc(pf, sym, stopPts) {
+    const inst = mmCfg.instruments.find(i => i.sym === sym) || mmCfg.instruments[0];
+    const par = mmParams(pf);
+    const cap = inst.micro ? pf.maxContracts * 10 : pf.maxContracts;
+    let n = stopPts > 0 ? Math.floor(par.riskPerTrade / (stopPts * inst.perPt)) : 0;
+    let capped = false;
+    if (n > cap) { n = cap; capped = true; }
+    return { inst, par, cap, n, capped, risk: n * stopPts * inst.perPt };
+  }
+
+  function renderMM() {
+    const pf = curPf();
+    const par = mmParams(pf);
+    const options = mmAccts.map(p => `<option value="${p.id}"${p.id === mmSel ? " selected" : ""}>${p.firm} · ${p.plan}</option>`).join("");
+
+    // Table de référence : stop (points) × instrument → contrats (risque $)
+    const head = mmCfg.instruments.map(i => `<th class="r">${i.label}</th>`).join("");
+    const rows = mmCfg.stopGrid.map(sp => {
+      const cells = mmCfg.instruments.map(i => {
+        const c = calc(pf, i.sym, sp);
+        return c.n < 1
+          ? `<td class="r" style="color:var(--muted)">—</td>`
+          : `<td class="r">${c.n}<span style="color:var(--muted);font-size:11px"> (${fmtUsdAbs(c.risk)}${c.capped ? " ⤒" : ""})</span></td>`;
+      }).join("");
+      return `<tr><th style="text-align:left;font-weight:600">${sp} pts</th>${cells}</tr>`;
+    }).join("");
+
+    const instrOpts = mmCfg.instruments.map(i => `<option value="${i.sym}"${i.sym === mmInstr ? " selected" : ""}>${i.label} · ${fmtUsdAbs(i.perPt)}/pt</option>`).join("");
+
+    mmEl.innerHTML = `
+    <p class="view-intro">Money management <strong>${mmCfg.profile}</strong> pour les comptes Topstep — pensé pour <em>ne jamais</em> franchir une règle, en challenge comme en live. Ennemi n°1 : le <strong>trailing drawdown</strong>, qui suit ton pic d'equity <em>intraday</em> (non-réalisé inclus) et ne redescend jamais. Tous les chiffres ci-dessous sont dérivés des seuils Topstep (<code>meta.propFirms</code>) et du profil (<code>meta.mm</code>) — édite-les là, pas ici.</p>
+
+    <div class="pf-head">
+      <label class="pf-select-lbl" for="mm-select">Compte</label>
+      <select id="mm-select" class="pf-select" aria-label="Choix du compte">${options}</select>
+    </div>
+
+    <div class="kpis" style="margin-bottom:18px;">
+      <div class="kpi"><div class="label">Risque par trade</div><div class="value num">${fmtUsdAbs(par.riskPerTrade)}</div><div class="sub">fixe — traduit en contrats</div></div>
+      <div class="kpi"><div class="label">Stop quotidien perso</div><div class="value num">${fmtUsdAbs(par.dailyStop)}</div><div class="sub">Topstep coupe à ${fmtUsdAbs(pf.dailyLossLimit)}</div></div>
+      <div class="kpi"><div class="label">Contrats max Topstep</div><div class="value num">${pf.maxContracts}<span style="font-size:13px;color:var(--muted)"> / ${pf.maxContracts * 10} µ</span></div><div class="sub">plafond dur — jamais dépasser</div></div>
+      <div class="kpi"><div class="label">Marge avant blow-up</div><div class="value num pos">${par.bufferDays} j</div><div class="sub">journées rouges pleines · MLL ${fmtUsdAbs(pf.mll)}</div></div>
+    </div>
+
+    <div class="section">
+      <h2>Garde-fous dérivés — ${pf.plan}</h2>
+      <div class="pf-rule">
+        <div class="pf-name">Stop quotidien perso<span class="sub">Tu coupes la plateforme à −${fmtUsdAbs(par.dailyStop)} (Topstep DLL : −${fmtUsdAbs(pf.dailyLossLimit)}). Aucune exception, aucun revenge trade.</span></div>
+        <div class="pf-val">${fmtUsdAbs(par.dailyStop)}</div>
+        <span class="pf-status ok">${Math.round(par.dailyStop / pf.dailyLossLimit * 100)} % du DLL</span>
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Risque par trade<span class="sub">Stop quotidien ÷ ${mmCfg.riskTradesPerDay} → max ${mmCfg.riskTradesPerDay} trades perdants/jour. Risque fixe, jamais augmenté après une perte.</span></div>
+        <div class="pf-val">${fmtUsdAbs(par.riskPerTrade)}</div>
+        <span class="pf-status ok">fixe</span>
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Plafond de gain / jour<span class="sub">Reste sous le best-day max ${fmtUsdAbs(par.bestDayMax)} (règle de consistance ${pf.consistencyPct || 50} %). Plafond atteint → réduis ou arrête.</span></div>
+        <div class="pf-val">${fmtUsdAbs(par.dailyGainCap)}</div>
+        <span class="pf-status ok">${Math.round(mmCfg.dailyGainPctOfTarget * 100)} % de l'objectif</span>
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Jours minimum pour valider<span class="sub">Objectif ${fmtUsdAbs(pf.profitTarget)} étalé à ≤ ${fmtUsdAbs(par.dailyGainCap)}/jour. La régularité valide ; le spike disqualifie.</span></div>
+        <div class="pf-val">${par.minDaysToPass} j</div>
+        <span class="pf-status ok">≥ 2 requis</span>
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Marge trailing avant blow-up<span class="sub">À stop perso plein chaque jour, depuis ton pic d'equity, avant de toucher le MLL ${fmtUsdAbs(pf.mll)}.</span></div>
+        <div class="pf-val">${par.bufferDays} jours</div>
+        <span class="pf-status ok">coussin</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Calculateur de taille de position</h2>
+      <p class="pf-note" style="margin-top:0">Risque par trade <strong>${fmtUsdAbs(par.riskPerTrade)}</strong> ÷ (stop en points × $/pt) → contrats, plafonnés à la limite Topstep.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px">
+        <div><label class="pf-select-lbl" for="mm-instr">Instrument</label><br><select id="mm-instr" class="pf-select">${instrOpts}</select></div>
+        <div><label class="pf-select-lbl" for="mm-stop">Distance de stop (points)</label><br><input id="mm-stop" type="number" min="0.25" step="0.25" value="${mmStop}" class="pf-select" style="width:140px"></div>
+      </div>
+      <div id="mm-calc-result"></div>
+    </div>
+
+    <div class="section">
+      <h2>Table de référence — contrats par taille de stop</h2>
+      <div style="overflow-x:auto"><table>
+        <thead><tr><th style="text-align:left">Stop</th>${head}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      <p class="pf-note">Cellule = nb de contrats au risque ${fmtUsdAbs(par.riskPerTrade)} ; entre parenthèses = risque réel en $. « — » = stop trop large pour 1 contrat à ce risque (réduis le stop ou passe en micro). « ⤒ » = plafonné à la limite Topstep.</p>
+    </div>
+
+    <div class="section">
+      <h2>Plan en 2 phases</h2>
+      <div class="pf-rule">
+        <div class="pf-name">Phase 1 — Challenge (Combine)<span class="sub">Atteindre ${fmtUsdAbs(pf.profitTarget)} SANS jamais toucher DLL (${fmtUsdAbs(pf.dailyLossLimit)}) ni MLL trailing (${fmtUsdAbs(pf.mll)}), best day &lt; ${fmtUsdAbs(par.bestDayMax)}. Sizing conservateur, survie &gt; vitesse. ${par.minDaysToPass}+ jours gagnants étalés.</span></div>
+        <div class="pf-val">survie</div>
+        <span class="pf-status ok">objectif</span>
+      </div>
+      <div class="pf-rule">
+        <div class="pf-name">Phase 2 — Compte financé / Live<span class="sub">DLL &amp; MLL trailing s'appliquent toujours. Payout : best day &lt; ${pf.consistencyPct || 50} % du profit total, ≥ ${pf.minWinDays} jours gagnants ≥ ${fmtUsdAbs(pf.winDayThreshold)}. Garde le même sizing — un compte live perdu = un challenge à repayer.</span></div>
+        <div class="pf-val">protéger</div>
+        <span class="pf-status ok">payout</span>
+      </div>
+      <p class="pf-note">Quand l'objectif est dépassé et que le MLL trailing se verrouille à ton capital de départ, tu obtiens un coussin « break-even garanti ». Tu peux respirer — mais tu ne changes pas les règles ci-dessus.</p>
+    </div>
+
+    <div class="section">
+      <h2>Règles d'or</h2>
+      <div class="pf-rule"><div class="pf-name">1. Le trailing drawdown est l'ennemi n°1<span class="sub">Il grave ton pic intraday (non-réalisé inclus). Sécurise : partiels, stop au break-even dès +1R. Un gros gain non encaissé qui repart = drawdown perdu à jamais.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">2. Stop quotidien perso STRICT<span class="sub">−${fmtUsdAbs(par.dailyStop)} atteint → tu fermes la plateforme. Terminé pour la journée. Zéro revenge trade.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">3. ${mmCfg.riskTradesPerDay} trades perdants max / jour<span class="sub">Risque fixe ${fmtUsdAbs(par.riskPerTrade)}, jamais augmenté après une perte (no martingale, no moyenne à la baisse).</span></div></div>
+      <div class="pf-rule"><div class="pf-name">4. Taille = calcul, jamais feeling<span class="sub">Contrats dérivés du risque fixe ÷ distance de stop (calculateur ci-dessus). Pas de stop, pas de trade.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">5. Plafond de gain / jour ≤ ${fmtUsdAbs(par.dailyGainCap)}<span class="sub">Un méga-jour casse la règle de consistance et peut bloquer la validation / le payout. Plafond atteint → réduis ou arrête.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">6. Flat avant ${pf.flatByCT} CT<span class="sub">Clôture Topstep — jamais de position overnight, jamais dans la fenêtre interdite.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">7. Une seule idée à la fois<span class="sub">Pas de cumul de corrélés : NQ + ES en même temps = le même risque directionnel compté deux fois.</span></div></div>
+    </div>`;
+
+    const sel = document.getElementById("mm-select");
+    if (sel) sel.addEventListener("change", () => {
+      mmSel = sel.value;
+      try { localStorage.setItem("ict-mm-acct", mmSel); } catch (e) {}
+      renderMM();
+    });
+    const instrSel = document.getElementById("mm-instr");
+    const stopInp = document.getElementById("mm-stop");
+    if (instrSel) instrSel.addEventListener("change", () => { mmInstr = instrSel.value; updateCalc(); });
+    if (stopInp) stopInp.addEventListener("input", () => { mmStop = stopInp.value; updateCalc(); });
+    updateCalc();
+  }
+
+  function updateCalc() {
+    const res = document.getElementById("mm-calc-result");
+    if (!res) return;
+    const pf = curPf();
+    const stop = parseFloat(mmStop);
+    const c = calc(pf, mmInstr, stop);
+    try {
+      localStorage.setItem("ict-mm-instr", mmInstr);
+      localStorage.setItem("ict-mm-stop", mmStop);
+    } catch (e) {}
+    if (!(stop > 0)) {
+      res.innerHTML = `<div class="pf-verdict warn"><span class="idot accent"></span>Saisis une distance de stop &gt; 0.</div>`;
+      return;
+    }
+    if (c.n < 1) {
+      res.innerHTML = `<div class="pf-verdict bad"><span class="idot red"></span>Stop de ${stop} pts trop large sur ${c.inst.label} pour le risque ${fmtUsdAbs(c.par.riskPerTrade)} (= ${fmtUsdAbs(stop * c.inst.perPt)}/contrat). Réduis le stop ou passe en micro.</div>`;
+      return;
+    }
+    res.innerHTML = `
+      <div class="kpis">
+        <div class="kpi"><div class="label">Contrats</div><div class="value num pos">${c.n}${c.capped ? '<span style="font-size:13px;color:var(--accent)"> ⤒ max</span>' : ''}</div><div class="sub">${c.inst.label} · plafond ${c.cap}</div></div>
+        <div class="kpi"><div class="label">Risque réel</div><div class="value num">${fmtUsdAbs(c.risk)}</div><div class="sub">${Math.round(c.risk / c.par.riskPerTrade * 100)} % du risque cible</div></div>
+        <div class="kpi"><div class="label">Stop</div><div class="value num">${stop} pts</div><div class="sub">${fmtUsdAbs(stop * c.inst.perPt)} / contrat</div></div>
+        <div class="kpi"><div class="label">Si TP à 2R</div><div class="value num pos">+${fmtUsdAbs(c.risk * 2)}</div><div class="sub">sous le plafond/jour ${fmtUsdAbs(c.par.dailyGainCap)}</div></div>
+      </div>
+      ${c.capped ? `<p class="pf-note">⤒ Plafonné à la limite Topstep (${c.cap}). Le risque réel est donc &lt; ton risque cible — c'est conservateur, ok.</p>` : ``}`;
+  }
+
+  renderMM();
 }
 
 /* =====================================================================
