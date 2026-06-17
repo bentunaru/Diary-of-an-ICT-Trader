@@ -3229,6 +3229,47 @@ if (mmEl && mmCfg && propFirms.length) {
              overCapCount, lossOverCount, worstLossMult, daysBroken, cleanDays };
   }
 
+  // Simulation de challenge « au sizing du plan » : on rejoue les MÊMES trades en
+  // R-normalisé (1R = risque/trade du plan, R-multiples réels préservés) à travers
+  // un vrai moteur Topstep, dans l'ordre chronologique. MLL trailing = blow-up ;
+  // DLL = la journée s'arrête ; objectif + consistance = challenge validé.
+  function simulateChallenge(pf) {
+    const par = mmParams(pf);
+    const R = par.riskPerTrade, target = pf.profitTarget, mll = pf.mll, dll = pf.dailyLossLimit;
+    const consPct = (pf.consistencyPct || 50) / 100;
+    let cum = 0, peak = 0, dayOpen = 0, curDay = null, dayBlocked = false, bestDay = 0, dayPL = 0;
+    let result = "in-progress", blownAt = null, passedAt = null, dllDays = 0;
+    const dllSeen = {}, path = [];
+    for (let i = 0; i < DATA.trades.length; i++) {
+      const t = DATA.trades[i], r = rOf(t);
+      if (r === null) continue;
+      if (t.date !== curDay) {
+        if (curDay !== null) bestDay = Math.max(bestDay, dayPL);
+        curDay = t.date; dayOpen = cum; dayBlocked = false; dayPL = 0;
+      }
+      if (dayBlocked) continue;                              // DLL touché ce jour → on ne trade plus
+      const pl = r * R;
+      cum += pl; dayPL += pl; peak = Math.max(peak, cum);
+      path.push({ date: t.date, cum });
+      if (cum <= Math.min(0, peak - mll)) { result = "blown"; bestDay = Math.max(bestDay, dayPL); blownAt = { date: t.date }; break; }   // MLL = mort
+      if (cum >= target) {                                   // objectif atteint → on s'arrête, on vérifie la consistance
+        const bd = bestDay = Math.max(bestDay, dayPL);
+        result = bd <= target * consPct ? "passed" : "target-inconsistent";
+        passedAt = { date: t.date, bestDay: bd }; break;
+      }
+      if (dll != null && (cum - dayOpen) <= -dll) {          // DLL = la journée s'arrête
+        dayBlocked = true; if (!dllSeen[t.date]) { dllSeen[t.date] = 1; dllDays++; }
+      }
+    }
+    if (result !== "blown" && result !== "passed" && result !== "target-inconsistent") bestDay = Math.max(bestDay, dayPL);
+    const k = oneR ? R / oneR : 0;
+    const lowSim = path.length ? Math.min(0, ...path.map(p => p.cum)) : 0;
+    const highSim = path.length ? Math.max(0, ...path.map(p => p.cum)) : 0;
+    const tgtPct = Math.max(0, Math.min(100, Math.round(100 * cum / target)));
+    return { par, R, k, oneR, target, mll, dll, result, blownAt, passedAt, cumFinal: cum,
+             bestDay, dllDays, lowSim, highSim, tgtPct, tradesUsed: path.length };
+  }
+
   function renderMM() {
     const pf = curPf();
     const par = mmParams(pf);
@@ -3262,6 +3303,15 @@ if (mmEl && mmCfg && propFirms.length) {
              `<td>${tags.join(" ")}${dirty ? ` <span style="color:var(--muted);font-size:11px">· hors-process</span>` : ""}</td></tr>`;
     }).join("");
     const audBreached = aud.overCapCount || aud.lossOverCount || aud.daysBroken;
+
+    // Simulation challenge au sizing du plan
+    const sim = simulateChallenge(pf);
+    const simVerdict = {
+      "blown":               { cls: "bad",  dot: "red",    txt: `Compte grillé${sim.blownAt ? " le " + sim.blownAt.date : ""} — MLL touché avant l'objectif` },
+      "passed":              { cls: "ok",   dot: "green",  txt: `Challenge validé${sim.passedAt ? " le " + sim.passedAt.date : ""} — objectif atteint, consistance OK` },
+      "target-inconsistent": { cls: "warn", dot: "accent", txt: `Objectif atteint mais best-day ${fmtUsdAbs(sim.passedAt ? sim.passedAt.bestDay : sim.bestDay)} > 50% — validation bloquée (consistance)` },
+      "in-progress":         { cls: "warn", dot: "accent", txt: `Ni grillé ni validé sur la période — ${fmtUsd(sim.cumFinal)} / ${fmtUsdAbs(sim.target)}` },
+    }[sim.result];
 
     mmEl.innerHTML = `
     <p class="view-intro">Money management <strong>${mmCfg.profile}</strong> pour les comptes Topstep — pensé pour <em>ne jamais</em> franchir une règle, en challenge comme en live. Ennemi n°1 : le <strong>trailing drawdown</strong>, qui suit ton pic d'equity <em>intraday</em> (non-réalisé inclus) et ne redescend jamais. Tous les chiffres ci-dessous sont dérivés des seuils Topstep (<code>meta.propFirms</code>) et du profil (<code>meta.mm</code>) — édite-les là, pas ici.</p>
@@ -3340,6 +3390,25 @@ if (mmEl && mmCfg && propFirms.length) {
         <tbody>${audRowsHtml}</tbody>
       </table></div>${aud.rows.length > AUD_MAX ? `<p class="pf-note">+ ${aud.rows.length - AUD_MAX} autres trades en infraction non affichés.</p>` : ""}` : `<div class="pf-verdict ok"><span class="idot green"></span>Aucune infraction au plan sur la période.</div>`}
       <p class="pf-note">⚠ Évalué contre l'equity réelle Sim1 (sizing libre, bien au-delà d'un compte Topstep). L'écart est volontairement brutal : il mesure la distance entre ton trading actuel et le plan ${pf.plan}. « Perte ×N budget » = de combien le risque/trade autorisé a été dépassé.</p>
+    </div>
+
+    <div class="section">
+      <h2>Simulation challenge — au sizing du plan</h2>
+      <p class="view-intro" style="margin-top:0">« Et si j'avais pris <strong>les mêmes setups</strong> mais au sizing ${mmCfg.profile} ? » On rejoue tes trades <strong>R-normalisés</strong> (1R = ${fmtUsdAbs(sim.R)} = risque/trade du plan ; tes R-multiples réels sont préservés) dans un moteur Topstep complet : MLL trailing → blow-up, DLL → journée stoppée, objectif + consistance → validé. Échelle ≈ <strong>${(sim.k).toFixed(2)}×</strong> ta taille réelle (1R réel ≈ ${fmtUsdAbs(sim.oneR)} de perte moyenne).</p>
+
+      <div class="pf-verdict ${simVerdict.cls}"><span class="idot ${simVerdict.dot}"></span>${simVerdict.txt}</div>
+
+      <div class="kpis" style="margin:14px 0">
+        <div class="kpi"><div class="label">P/L simulé final</div><div class="value num ${sim.cumFinal >= 0 ? "pos" : "neg"}">${fmtUsd(sim.cumFinal)}</div><div class="sub">sur ${sim.tradesUsed} trades · objectif ${fmtUsdAbs(sim.target)}</div></div>
+        <div class="kpi"><div class="label">Plus-bas simulé</div><div class="value num ${sim.lowSim <= -sim.mll ? "neg" : ""}">${fmtUsd(sim.lowSim)}</div><div class="sub">MLL trailing −${fmtUsdAbs(sim.mll)}</div></div>
+        <div class="kpi"><div class="label">Meilleure journée</div><div class="value num">${fmtUsd(sim.bestDay)}</div><div class="sub">plafond consistance ${fmtUsdAbs(sim.target * (pf.consistencyPct || 50) / 100)}</div></div>
+        <div class="kpi"><div class="label">Jours DLL touchés</div><div class="value num ${sim.dllDays ? "neg" : "pos"}">${sim.dllDays}</div><div class="sub">stop Topstep −${fmtUsdAbs(sim.dll)}</div></div>
+      </div>
+
+      <div class="pf-progress"><div class="pf-progress-fill" style="width:${sim.tgtPct}%;background:${sim.result === "passed" ? "var(--green)" : sim.result === "blown" ? "var(--red)" : "var(--accent)"}"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>${fmtUsd(sim.cumFinal)}</span><span>cible ${fmtUsdAbs(sim.target)}</span></div>
+
+      <p class="pf-note">Hypothèse : R-normalisation uniforme (taille telle qu'une perte type = ${fmtUsdAbs(sim.R)}). Ça isole <strong>l'effet sizing</strong> à edge constant — si le verdict reste « grillé », le problème n'est pas que la taille : tu tiens à travers de trop grosses excursions (à corriger via partiels / stop au BE). Re-teste sur 100K / 150K via le sélecteur en haut.</p>
     </div>
 
     <div class="section">
