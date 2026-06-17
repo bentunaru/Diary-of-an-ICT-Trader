@@ -20,6 +20,7 @@ Le script ne touche PAS au reste du dashboard (sessions, règles, etc.).
 """
 import csv, json, sys, os, glob, re
 from collections import deque, defaultdict
+from datetime import datetime, timedelta
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -48,18 +49,29 @@ def fr_date(iso):  # "2026-06-08" -> "08 juin"
     return f"{d} {MONTHS_FR[int(m)]}"
 
 
-# Le log Sierra est en UTC. ET (EDT en juin) = UTC - 4h.
-UTC_TO_ET_OFFSET = -4
+# Le log Sierra est en UTC. On convertit en ET (US Eastern) en tenant compte
+# de l'heure d'été (DST) : EDT = UTC-4 (2e dim. mars → 1er dim. nov), sinon EST = UTC-5.
+# Stdlib pur (pas de zoneinfo/tzdata) → portable et déterministe.
+def _nth_sunday(year, month, n):
+    d = datetime(year, month, 1)
+    first = d + timedelta(days=(6 - d.weekday()) % 7)   # 1er dimanche du mois
+    return first + timedelta(weeks=n - 1)
 
-def to_et_minutes(hhmmss):
-    """'07:28:57' UTC -> minutes depuis minuit en ET."""
-    h, m, s = map(int, hhmmss.split(":"))
-    et_h = (h + UTC_TO_ET_OFFSET) % 24
-    return et_h * 60 + m
+def _et_offset_hours(dt_utc):
+    """Offset ET (en heures) pour un datetime UTC naïf, selon les règles US DST."""
+    dst_start = _nth_sunday(dt_utc.year, 3, 2).replace(hour=7)   # 02:00 EST = 07:00 UTC
+    dst_end   = _nth_sunday(dt_utc.year, 11, 1).replace(hour=6)  # 02:00 EDT = 06:00 UTC
+    return -4 if dst_start <= dt_utc < dst_end else -5
 
-def kill_zone(hhmmss):
+def to_et_minutes(date_iso, hhmmss):
+    """date 'YYYY-MM-DD' + heure 'HH:MM:SS' UTC -> minutes depuis minuit en ET (DST-aware)."""
+    dt_utc = datetime.strptime(f"{date_iso} {hhmmss}", "%Y-%m-%d %H:%M:%S")
+    et = dt_utc + timedelta(hours=_et_offset_hours(dt_utc))
+    return et.hour * 60 + et.minute
+
+def kill_zone(date_iso, hhmmss):
     """Kill Zone ICT déduite de l'heure d'ouverture (ET)."""
-    t = to_et_minutes(hhmmss)
+    t = to_et_minutes(date_iso, hhmmss)
     if 2 * 60 <= t < 5 * 60:        return "London"        # 02:00–05:00 ET
     if 8 * 60 + 30 <= t < 11 * 60:  return "NY AM"         # 08:30–11:00 ET
     if 10 * 60 <= t < 12 * 60:      return "London Close"  # 10:00–12:00 ET
@@ -169,7 +181,7 @@ def build_data(trades, annotations):
             "setup": setup, "notes": notes,
         }
         # Kill Zone : dérivée de l'heure ET, sauf override explicite dans l'annotation
-        obj["kz"] = a.get("kz") or kill_zone(t["open_time"])
+        obj["kz"] = a.get("kz") or kill_zone(t["date_iso"], t["open_time"])
         for k in ("setupType", "mood"):
             if a.get(k): obj[k] = a[k]
         if "processClean" in a: obj["processClean"] = a["processClean"]
