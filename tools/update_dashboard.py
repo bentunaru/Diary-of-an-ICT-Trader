@@ -20,6 +20,7 @@ Le script ne touche PAS au reste du dashboard (sessions, règles, etc.).
 """
 import csv, json, sys, os, glob, re
 from collections import deque, defaultdict
+from datetime import datetime, timedelta
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -48,18 +49,29 @@ def fr_date(iso):  # "2026-06-08" -> "08 juin"
     return f"{d} {MONTHS_FR[int(m)]}"
 
 
-# Le log Sierra est en UTC. ET (EDT en juin) = UTC - 4h.
-UTC_TO_ET_OFFSET = -4
+# Le log Sierra est en UTC. On convertit en ET (US Eastern) en tenant compte
+# de l'heure d'été (DST) : EDT = UTC-4 (2e dim. mars → 1er dim. nov), sinon EST = UTC-5.
+# Stdlib pur (pas de zoneinfo/tzdata) → portable et déterministe.
+def _nth_sunday(year, month, n):
+    d = datetime(year, month, 1)
+    first = d + timedelta(days=(6 - d.weekday()) % 7)   # 1er dimanche du mois
+    return first + timedelta(weeks=n - 1)
 
-def to_et_minutes(hhmmss):
-    """'07:28:57' UTC -> minutes depuis minuit en ET."""
-    h, m, s = map(int, hhmmss.split(":"))
-    et_h = (h + UTC_TO_ET_OFFSET) % 24
-    return et_h * 60 + m
+def _et_offset_hours(dt_utc):
+    """Offset ET (en heures) pour un datetime UTC naïf, selon les règles US DST."""
+    dst_start = _nth_sunday(dt_utc.year, 3, 2).replace(hour=7)   # 02:00 EST = 07:00 UTC
+    dst_end   = _nth_sunday(dt_utc.year, 11, 1).replace(hour=6)  # 02:00 EDT = 06:00 UTC
+    return -4 if dst_start <= dt_utc < dst_end else -5
 
-def kill_zone(hhmmss):
+def to_et_minutes(date_iso, hhmmss):
+    """date 'YYYY-MM-DD' + heure 'HH:MM:SS' UTC -> minutes depuis minuit en ET (DST-aware)."""
+    dt_utc = datetime.strptime(f"{date_iso} {hhmmss}", "%Y-%m-%d %H:%M:%S")
+    et = dt_utc + timedelta(hours=_et_offset_hours(dt_utc))
+    return et.hour * 60 + et.minute
+
+def kill_zone(date_iso, hhmmss):
     """Kill Zone ICT déduite de l'heure d'ouverture (ET)."""
-    t = to_et_minutes(hhmmss)
+    t = to_et_minutes(date_iso, hhmmss)
     if 2 * 60 <= t < 5 * 60:        return "London"        # 02:00–05:00 ET
     if 8 * 60 + 30 <= t < 11 * 60:  return "NY AM"         # 08:30–11:00 ET
     if 10 * 60 <= t < 12 * 60:      return "London Close"  # 10:00–12:00 ET
@@ -77,8 +89,17 @@ def parse_log(path):
 
 
 def reconstruct(fills):
-    """Reconstruit les trades flat→flat avec matching FIFO."""
+    """Reconstruit les trades flat→flat avec matching FIFO.
+
+    Retourne (trades, intraday) où `intraday` est la courbe de P/L cumulé RÉALISÉ
+    échantillonnée à chaque fill qui réalise du P/L (clôture/réduction). Beaucoup plus
+    fidèle que l'equity fin-de-journée pour détecter un franchissement DLL/MLL intraday.
+    Limite : l'excursion NON réalisée à l'intérieur d'un trade ouvert reste invisible
+    (le log ne contient pas les ticks) — c'est l'étape suivante (MAE via barres).
+    """
     trades = []
+    intraday = []
+    gcum = 0.0
     state = defaultdict(lambda: {"lots": deque(), "pos": 0, "open_time": None,
                                  "realized": 0.0, "dir": None, "entry_px": None,
                                  "maxq": 0, "fills": 0})
@@ -90,6 +111,7 @@ def reconstruct(fills):
         # Un fill peut à la fois fermer la position et en ouvrir une opposée (flip).
         # On le traite par tranches bornées au retour à plat, pour ne jamais
         # mélanger deux trades dans une même position reconstruite.
+        fill_realized = 0.0
         remaining = qty
         while remaining > 0:
             if st["pos"] == 0:
@@ -108,6 +130,7 @@ def reconstruct(fills):
                 m = min(q, lot_qty)
                 pl = (px - lot_px) * m * mult if lot_side == 1 else (lot_px - px) * m * mult
                 st["realized"] += pl
+                fill_realized += pl
                 q -= m
                 if m == lot_qty:
                     st["lots"].popleft()
@@ -128,7 +151,10 @@ def reconstruct(fills):
                     "pl": round(st["realized"], 2), "fills": st["fills"],
                 })
             remaining -= chunk
-    return trades
+        if fill_realized:
+            gcum += fill_realized
+            intraday.append({"date_iso": t[:10], "time": t[12:20], "cum": round(gcum)})
+    return trades, intraday
 
 
 def fmt_pl(v):
@@ -167,9 +193,11 @@ def build_data(trades, annotations):
             "plClass": "pos" if pos else "neg", "plNum": t["pl"],
             "result": "Win" if pos else "Perte",
             "setup": setup, "notes": notes,
+            # Champs exposés (quick win) : exploités par l'audit de discipline et l'onglet Prop Firm.
+            "contracts": t["maxq"], "openTime": t["open_time"], "closeTime": t["close_time"],
         }
         # Kill Zone : dérivée de l'heure ET, sauf override explicite dans l'annotation
-        obj["kz"] = a.get("kz") or kill_zone(t["open_time"])
+        obj["kz"] = a.get("kz") or kill_zone(t["date_iso"], t["open_time"])
         for k in ("setupType", "mood"):
             if a.get(k): obj[k] = a[k]
         if "processClean" in a: obj["processClean"] = a["processClean"]
@@ -211,8 +239,8 @@ def main():
     print(f"Export : {export}")
 
     rows, fills = parse_log(export)
-    trades = reconstruct(fills)
-    print(f"Fills : {len(fills)} · Trades reconstruits : {len(trades)}")
+    trades, intraday = reconstruct(fills)
+    print(f"Fills : {len(fills)} · Trades reconstruits : {len(trades)} · Points intraday : {len(intraday)}")
     if not trades:
         raise SystemExit("Aucun trade flat→flat reconstruit : le dashboard n'est pas modifié.")
 
@@ -234,12 +262,16 @@ def main():
     equity_js = ",\n".join(
         f'    {{ date: "{e["date"]}", cum: {e["cum"]} }}' for e in equity)
     trades_js = ",\n".join(js_render(o) for o in trade_objs)
+    intraday_js = ",\n".join(
+        f'    {{ date: "{fr_date(p["date_iso"])}", t: "{p["time"]}", cum: {p["cum"]} }}'
+        for p in intraday)
 
     with open(DASHBOARD, encoding="utf-8") as f:
         html = f.read()
 
     html = inject(html, "EQUITY", equity_js)
     html = inject(html, "TRADES", trades_js)
+    html = inject(html, "INTRADAY", intraday_js)
 
     # meta : fills + periodEnd + bestTrade
     html = re.sub(r"(fills:\s*)\d+", rf"\g<1>{len(fills)}", html, count=1)
