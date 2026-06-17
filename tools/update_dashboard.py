@@ -89,8 +89,17 @@ def parse_log(path):
 
 
 def reconstruct(fills):
-    """Reconstruit les trades flat→flat avec matching FIFO."""
+    """Reconstruit les trades flat→flat avec matching FIFO.
+
+    Retourne (trades, intraday) où `intraday` est la courbe de P/L cumulé RÉALISÉ
+    échantillonnée à chaque fill qui réalise du P/L (clôture/réduction). Beaucoup plus
+    fidèle que l'equity fin-de-journée pour détecter un franchissement DLL/MLL intraday.
+    Limite : l'excursion NON réalisée à l'intérieur d'un trade ouvert reste invisible
+    (le log ne contient pas les ticks) — c'est l'étape suivante (MAE via barres).
+    """
     trades = []
+    intraday = []
+    gcum = 0.0
     state = defaultdict(lambda: {"lots": deque(), "pos": 0, "open_time": None,
                                  "realized": 0.0, "dir": None, "entry_px": None,
                                  "maxq": 0, "fills": 0})
@@ -102,6 +111,7 @@ def reconstruct(fills):
         # Un fill peut à la fois fermer la position et en ouvrir une opposée (flip).
         # On le traite par tranches bornées au retour à plat, pour ne jamais
         # mélanger deux trades dans une même position reconstruite.
+        fill_realized = 0.0
         remaining = qty
         while remaining > 0:
             if st["pos"] == 0:
@@ -120,6 +130,7 @@ def reconstruct(fills):
                 m = min(q, lot_qty)
                 pl = (px - lot_px) * m * mult if lot_side == 1 else (lot_px - px) * m * mult
                 st["realized"] += pl
+                fill_realized += pl
                 q -= m
                 if m == lot_qty:
                     st["lots"].popleft()
@@ -140,7 +151,10 @@ def reconstruct(fills):
                     "pl": round(st["realized"], 2), "fills": st["fills"],
                 })
             remaining -= chunk
-    return trades
+        if fill_realized:
+            gcum += fill_realized
+            intraday.append({"date_iso": t[:10], "time": t[12:20], "cum": round(gcum)})
+    return trades, intraday
 
 
 def fmt_pl(v):
@@ -179,6 +193,8 @@ def build_data(trades, annotations):
             "plClass": "pos" if pos else "neg", "plNum": t["pl"],
             "result": "Win" if pos else "Perte",
             "setup": setup, "notes": notes,
+            # Champs exposés (quick win) : exploités par l'audit de discipline et l'onglet Prop Firm.
+            "contracts": t["maxq"], "openTime": t["open_time"], "closeTime": t["close_time"],
         }
         # Kill Zone : dérivée de l'heure ET, sauf override explicite dans l'annotation
         obj["kz"] = a.get("kz") or kill_zone(t["date_iso"], t["open_time"])
@@ -223,8 +239,8 @@ def main():
     print(f"Export : {export}")
 
     rows, fills = parse_log(export)
-    trades = reconstruct(fills)
-    print(f"Fills : {len(fills)} · Trades reconstruits : {len(trades)}")
+    trades, intraday = reconstruct(fills)
+    print(f"Fills : {len(fills)} · Trades reconstruits : {len(trades)} · Points intraday : {len(intraday)}")
     if not trades:
         raise SystemExit("Aucun trade flat→flat reconstruit : le dashboard n'est pas modifié.")
 
@@ -246,12 +262,16 @@ def main():
     equity_js = ",\n".join(
         f'    {{ date: "{e["date"]}", cum: {e["cum"]} }}' for e in equity)
     trades_js = ",\n".join(js_render(o) for o in trade_objs)
+    intraday_js = ",\n".join(
+        f'    {{ date: "{fr_date(p["date_iso"])}", t: "{p["time"]}", cum: {p["cum"]} }}'
+        for p in intraday)
 
     with open(DASHBOARD, encoding="utf-8") as f:
         html = f.read()
 
     html = inject(html, "EQUITY", equity_js)
     html = inject(html, "TRADES", trades_js)
+    html = inject(html, "INTRADAY", intraday_js)
 
     # meta : fills + periodEnd + bestTrade
     html = re.sub(r"(fills:\s*)\d+", rf"\g<1>{len(fills)}", html, count=1)
