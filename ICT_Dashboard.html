@@ -499,6 +499,16 @@
     .session-pl .s { display: none; }
   }
 
+  /* ---------- Heatmap Jour × Kill Zone ---------- */
+  .heatmap-wrap { overflow-x: auto; }
+  .heatmap { border-collapse: separate; border-spacing: 5px; font-size: 12px; }
+  .heatmap th { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; padding: 4px 6px; text-align: center; white-space: nowrap; }
+  .heatmap td.rowlbl { font-size: 12px; font-weight: 600; color: var(--muted); text-align: left; padding-right: 8px; white-space: nowrap; }
+  .hm-cell { min-width: 78px; border-radius: 8px; padding: 8px 6px; text-align: center; border: 1px solid var(--border); background: var(--bg3); }
+  .hm-cell .v { font-family: var(--mono); font-weight: 600; }
+  .hm-cell .n { font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .hm-cell.empty { opacity: 0.4; }
+
   /* ---------- Accessibilité : contenu réservé aux lecteurs d'écran ---------- */
   .sr-only {
     position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -741,7 +751,8 @@ const DATA = {
     { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,859.75", exit: "SL 30,885.00", rr: "—", pl: "−$5,050", plClass: "neg", plNum: -5050.0, result: "SL Hit", setup: "Re-entrée Short · sans confirmation (bougie non clôturée)", notes: "ERREUR GRAVE : re-entrée short avant la clôture de bougie / sans confirmation, juste après le stop de T1 et sans corriger l'erreur HRLR. Stop à 30,885.00 (−25.25 pts). 10 contrats. P/L réel Sierra.", kz: "London", setupType: "Re-entrée non confirmée", mood: "Revenge", processClean: false },
     { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,923.25", exit: "SL 30,944.50", rr: "—", pl: "−$4,250", plClass: "neg", plNum: -4250.0, result: "SL Hit", setup: "T3 · Short · PDH sweep → FVG bearish (3e short stoppé)", notes: "Short repris l'aprem (PDH pris → retrace → FVG bearish). Mais le prix est reparti à la hausse → stoppé à 30,944.50 (−21.25 pts). 3e short perdant consécutif. 10 contrats. P/L réel Sierra.", kz: "London", setupType: "FVG bearish", mood: "Impatient", processClean: false },
     { date: "16 juin", instr: "NQU26", dir: "Long", entry: "30,784.25", exit: "TP 30,872.00 / 30,882.50 ✅", rr: "—", pl: "+$17,970", plClass: "pos", plNum: 17970.0, result: "Win", setup: "T4 · Long · OB discount + prise de liquidité (plan matinal)", notes: "LE setup du plan matinal enfin pris : prise de liquidité sous le range → long depuis l'OB discount. Stop 30,736.75. Sorties 8c@30,872.00 (+14,040) + 2c@30,882.50 (+3,930). Meilleur trade du jour, efface les 3 shorts perdants. 10 contrats. P/L réel Sierra.", kz: "NY AM", setupType: "OB discount", mood: "Confiant", processClean: true },
-    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,882.50", exit: "30,881.25", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "T5 · Short scalp", notes: "Petit scalp short 6 contrats juste après la sortie du long, +$150. P/L réel Sierra.", kz: "NY AM", setupType: "Scalp", mood: "Neutre", processClean: true }
+    { date: "16 juin", instr: "NQU26", dir: "Short", entry: "30,882.50", exit: "30,881.25", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "T5 · Short scalp", notes: "Petit scalp short 6 contrats juste après la sortie du long, +$150. P/L réel Sierra.", kz: "NY AM", setupType: "Scalp", mood: "Neutre", processClean: true },
+    { date: "17 juin", instr: "NQU26", dir: "Long", entry: "30,522.50", exit: "TP 30,664.00 · SL 30,489.75 (live)", rr: "4.3:1", pl: "—", plClass: "", result: "Live", setup: "Long · Sweep SSL + Breaker · London KZ", notes: "Entrée long 10 contrats sur sweep de la sellside liquidity (~30,490) suivi d\u0027un Breaker. Stop structurel 30,489.75 (−32.75 pts · risque −$6,550). TP 30,664.00 (+141.5 pts · R:R 4.3:1). Pris dans les 25% du range (discount) = meilleure zone d\u0027entrée long. Le biais de fond reste bearish, mais on achète le discount pour viser le premium : TP 30,664.00 ≈ 75% du range. Plan : fermer le long au 75%, puis potentiellement reprendre un short AVEC confirmation (premium = zone de vente, aligné au biais bearish). Position ouverte. Jour FOMC : sortir/réduire avant 14:00.", kz: "London", setupType: "Sweep SSL + Breaker", mood: "Neutre", processClean: true }
     // </TRADES>
   ],
 
@@ -785,6 +796,27 @@ const DATA = {
           <figure style="margin:0"><img src="plans/2026-06-17/04-15m-fvg-refined.png" alt="15min FVG réaffiné" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15min · FVG réaffiné pour plus de précision : zone d'entrée short ~30,700–30,800.</figcaption></figure>
           <figure style="margin:0"><img src="plans/2026-06-17/05-15m-fvg-refined-plan.png" alt="15min plan final" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15min · Plan : retour dans le FVG → short → gap 50% → bas du range.</figcaption></figure>
           <figure style="margin:0"><img src="plans/2026-06-17/01-weekly-uptrend.png" alt="Weekly contexte" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · Contexte HTF : tendance haussière de fond, le short reste un trade de range intraday.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Long · Sweep SSL + Breaker · London KZ <span style="color:var(--muted);font-size:13px">· position ouverte</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Entrée Live · Long 10@30,522.50 · Sweep SSL + Breaker</h4>
+          Sweep de la <strong>sellside liquidity (~30,490)</strong> en London Kill Zone, suivi d\u0027un <strong>Breaker</strong> → entrée long. Stop structurel juste sous le sweep à 30,489.75, TP au-dessus (BSL) à 30,664.00.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,522.50</div><div class="s">Long 10c · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,489.75</div><div class="s num">−32.75 pts · −$6,550</div></div>
+          <div class="mini-stat"><div class="l">TP · 75% range</div><div class="v num acc">30,664.00</div><div class="s num">+141.5 pts · +$28,300</div></div>
+          <div class="mini-stat"><div class="l">R:R</div><div class="v num pos">4.3:1</div><div class="s">141.5 / 32.75</div></div>
+          <div class="mini-stat"><div class="l">Statut</div><div class="v acc">Live</div><div class="s">P/L Sierra à la clôture</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧭 Logique · long au discount (25%) pour viser le premium (75%)</h4>
+          Le biais de fond reste <strong>bearish</strong> — mais ça n\u0027interdit pas un long. Le prix est dans les <strong>25% du range (discount)</strong> = la meilleure zone pour acheter. J\u0027<strong>achète le discount</strong> (sweep SSL + Breaker, London KZ) et je vise le <strong>75% du range (~30,664, premium)</strong> pour fermer le long. Là-haut, dans la zone premium, je pourrai <strong>reprendre un short AVEC confirmation</strong> — ce qui <strong>réaligne parfaitement avec le biais bearish</strong> (vendre le premium). Ce n\u0027est donc pas contradictoire : on trade le range dans le sens du biais (acheter bas / discount, vendre haut / premium).<br/>
+          <strong>FOMC 14:00 :</strong> sortir / réduire avant la décision, ne pas porter 10 contrats nus dans le dot plot.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-17/06-t1-long-sweep-ssl-breaker.png" alt="T1 Long Sweep SSL + Breaker" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById(\u0027bt-lightbox-img\u0027).src=this.src;document.getElementById(\u0027bt-lightbox\u0027).classList.add(\u0027open\u0027)"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Long 10@30,522.50 · Sweep SSL (~30,490) + Breaker · Stop 30,489.75 · TP 30,664.00 · R:R 4.3:1.</figcaption></figure>
         </div>
       `
     },
@@ -2540,6 +2572,29 @@ if (perfEl) {
       return (b.totalPL||0) - (a.totalPL||0);
     })[0] || ws.setupPerf[0] || { setup: "—", wins: 0, trades: 0 };
 
+  // Heatmap Jour × Kill Zone (P&L net) — le KZ tient lieu de tranche horaire de session
+  const HM_DAYS = [{wd:1,lbl:"Mon"},{wd:2,lbl:"Tue"},{wd:3,lbl:"Wed"},{wd:4,lbl:"Thu"},{wd:5,lbl:"Fri"}];
+  const hmKZ = ["London","NY AM","London Close","Hors KZ"].filter(k => DATA.trades.some(t => t.kz === k));
+  const hmData = {}; let hmMax = 1;
+  DATA.trades.forEach(t => {
+    const d = dayNum(t.date); if (!d || !t.kz) return;
+    const key = new Date(2026,5,d).getDay() + "|" + t.kz;
+    if (!hmData[key]) hmData[key] = { pl: 0, n: 0 };
+    hmData[key].pl += (plOf(t) || 0); hmData[key].n++;
+  });
+  Object.values(hmData).forEach(c => { hmMax = Math.max(hmMax, Math.abs(c.pl)); });
+  const hmHasData = Object.keys(hmData).length > 0;
+  const hmRows = HM_DAYS.map(day => {
+    const cells = hmKZ.map(kz => {
+      const c = hmData[day.wd + "|" + kz];
+      if (!c) return `<td class="hm-cell empty"><div class="v">—</div></td>`;
+      const col = c.pl >= 0 ? "var(--green)" : "var(--red)";
+      const pct = Math.round(12 + 55 * Math.abs(c.pl) / hmMax);
+      return `<td class="hm-cell" style="background:color-mix(in srgb, ${col} ${pct}%, transparent);border-color:color-mix(in srgb, ${col} 40%, transparent)"><div class="v">${c.pl >= 0 ? "+" : "−"}$${Math.abs(Math.round(c.pl)).toLocaleString("en-US")}</div><div class="n">${c.n} trade${c.n > 1 ? "s" : ""}</div></td>`;
+    }).join("");
+    return `<tr><td class="rowlbl">${day.lbl}</td>${cells}</tr>`;
+  }).join("");
+
   perfEl.innerHTML = `
   <p class="view-intro">Performance décomposée par setup, Kill Zone, jour de semaine et état émotionnel — pour isoler ce qui marche du bruit, et mesurer la discipline de process trade après trade.</p>
   <div class="kpis" style="margin-bottom:18px;">
@@ -2552,6 +2607,12 @@ if (perfEl) {
   <div class="section">
     <h2>R-multiple distribution</h2>
     <div class="chart-wrap-sm" style="height:180px"><canvas id="rChart" role="img" aria-label="R-multiple distribution"></canvas></div>
+  </div>
+
+  <div class="section">
+    <h2>Expectancy evolution</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Expectancy moyenne par trade (en R) · cumulée depuis le début + moyenne glissante sur 10 trades. La ligne 0 sépare un edge positif d'un edge négatif.</p>
+    <div class="chart-wrap-sm" style="height:180px"><canvas id="expChart" role="img" aria-label="Expectancy evolution (rolling)"></canvas></div>
   </div>
 
   <div class="perf-grid">
@@ -2578,6 +2639,14 @@ if (perfEl) {
       <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">Emotional state → trade result correlation</p>
       ${moodRows}
     </div>
+  </div>
+
+  <div class="section">
+    <h2>P&amp;L heatmap · weekday × Kill Zone</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">P&L net par croisement jour de semaine / Kill Zone (le Kill Zone tient lieu de tranche horaire de session).</p>
+    ${hmHasData
+      ? `<div class="heatmap-wrap"><table class="heatmap"><thead><tr><th></th>${hmKZ.map(k => `<th>${k}</th>`).join("")}</tr></thead><tbody>${hmRows}</tbody></table></div>`
+      : `<div class="empty-state">Pas assez de données annotées pour la heatmap.</div>`}
   </div>
 
   <div class="section">
@@ -2881,6 +2950,31 @@ function buildCharts() {
         scales: { x: axis(), y: { beginAtZero: true, ticks: { color: muted, font: tickFont, precision: 0 }, grid: { color: grid }, border: { color: borderC } } } }
     }));
   }
+
+  // 6. Expectancy evolution (cumulée + glissante 10) en R
+  const c6 = document.getElementById("expChart");
+  if (c6 && equitySeries.length) {
+    const W = 10;
+    const cumExp  = equitySeries.map((cum, i) => (cum / (i + 1)) / oneR);
+    const rollExp = equitySeries.map((cum, i) => {
+      const lo = Math.max(0, i - W + 1);
+      const sum = cum - (lo > 0 ? equitySeries[lo - 1] : 0);
+      return (sum / (i - lo + 1)) / oneR;
+    });
+    chartInstances.push(new Chart(c6.getContext("2d"), {
+      type: "line",
+      data: { labels: tradeLabels, datasets: [
+        { label: "Cumulée", data: cumExp, borderColor: green, backgroundColor: greenBg, borderWidth: 2, pointRadius: 0, fill: { target: { value: 0 }, above: greenBg, below: redBg }, tension: 0.2 },
+        { label: "Glissante 10", data: rollExp, borderColor: muted, borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, tension: 0.2 }
+      ] },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: true, labels: { color: muted, font: tickFont, boxWidth: 12 } },
+          tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y >= 0 ? "+" : "−"}${Math.abs(ctx.parsed.y).toFixed(2)}R` } } },
+        scales: { x: axis({ ticks: { color: muted, font: tickFont, maxRotation: 0, autoSkip: true } }),
+          y: { ticks: { color: muted, font: tickFont, callback: v => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1) + "R" }, grid: { color: grid }, border: { color: borderC } } } }
+    }));
+  }
+
   window._chartsReady = true;
 }
 
@@ -2906,6 +3000,9 @@ buildCharts();
   if (document.getElementById("rChart")) {
     const rv = DATA.trades.map(rOf).filter(v => v !== null);
     set("rChart", `Distribution des R-multiples sur ${rv.length} trades clôturés : ${rv.filter(v => v < 0).length} perdants, ${rv.filter(v => v > 0).length} gagnants.`);
+  }
+  if (document.getElementById("expChart") && equitySeries.length) {
+    set("expChart", `Évolution de l'expectancy moyenne par trade en R : valeur cumulée finale ${(equitySeries[equitySeries.length-1]/equitySeries.length/oneR).toFixed(2)}R sur ${equitySeries.length} trades.`);
   }
 })();
 
