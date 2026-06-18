@@ -2236,16 +2236,16 @@ if (mmEl && mmCfg && propFirms.length) {
       if (cum <= Math.min(0, peak - mll)) { result = "blown"; bestDay = Math.max(bestDay, dayPL); blownAt = { date: t.date }; break; }   // MLL = mort
       if (cum >= target) {                                   // objectif atteint → on vérifie consistance ET plancher de jours
         const bd = bestDay = Math.max(bestDay, dayPL);
-        result = bd > target * consPct ? "target-inconsistent"
+        result = bd > cum * consPct ? "target-inconsistent"   // consistance = best day / profit TOTAL réel (≤ 50%), comme l'onglet conformité
                : daysSeen.size < minDays ? "target-too-fast"
                : "passed";
         passedAt = { date: t.date, bestDay: bd, days: daysSeen.size }; break;
       }
-      if (dll != null && (cum - dayOpen) <= -dll) {          // DLL = la journée s'arrête
+      if (dll != null && !pf.dllOptional && (cum - dayOpen) <= -dll) {   // DLL = la journée s'arrête (uniquement si l'option DLL est active)
         dayBlocked = true; if (!dllSeen[t.date]) { dllSeen[t.date] = 1; dllDays++; }
       }
     }
-    if (result !== "blown" && result !== "passed" && result !== "target-inconsistent") bestDay = Math.max(bestDay, dayPL);
+    if (result === "in-progress") bestDay = Math.max(bestDay, dayPL);
     const k = oneR ? R / oneR : 0;
     const lowSim = path.length ? Math.min(0, ...path.map(p => p.cum)) : 0;
     const highSim = path.length ? Math.max(0, ...path.map(p => p.cum)) : 0;
@@ -2387,7 +2387,7 @@ if (mmEl && mmCfg && propFirms.length) {
         <div class="kpi"><div class="label">P/L simulé final</div><div class="value num ${sim.cumFinal >= 0 ? "pos" : "neg"}">${fmtUsd(sim.cumFinal)}</div><div class="sub">sur ${sim.tradesUsed} trades · objectif ${fmtUsdAbs(sim.target)}</div></div>
         <div class="kpi"><div class="label">Plus-bas simulé</div><div class="value num ${sim.lowSim <= -sim.mll ? "neg" : ""}">${fmtUsd(sim.lowSim)}</div><div class="sub">MLL trailing −${fmtUsdAbs(sim.mll)}</div></div>
         <div class="kpi"><div class="label">Meilleure journée</div><div class="value num">${fmtUsd(sim.bestDay)}</div><div class="sub">plafond consistance ${fmtUsdAbs(sim.target * (pf.consistencyPct || 50) / 100)}</div></div>
-        <div class="kpi"><div class="label">Jours DLL touchés</div><div class="value num ${sim.dllDays ? "neg" : "pos"}">${sim.dllDays}</div><div class="sub">stop Topstep −${fmtUsdAbs(sim.dll)}</div></div>
+        <div class="kpi"><div class="label">Jours DLL touchés</div><div class="value num ${sim.dllDays ? "neg" : "pos"}">${pf.dllOptional ? "—" : sim.dllDays}</div><div class="sub">${pf.dllOptional ? "DLL (option) non activée" : "stop Topstep −" + fmtUsdAbs(sim.dll)}</div></div>
       </div>
 
       <div class="pf-progress"><div class="pf-progress-fill" style="width:${sim.tgtPct}%;background:${sim.result === "passed" ? "var(--green)" : sim.result === "blown" ? "var(--red)" : "var(--accent)"}"></div></div>
