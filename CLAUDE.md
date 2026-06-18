@@ -14,6 +14,7 @@ The language of the content (UI text, comments, commit messages, docs) is **Fren
 - `tools/update_dashboard.py` — regenerates the quantitative data (equity, trades, meta) from a Sierra Chart export. Stdlib only, no dependencies.
 - `tools/annotations.json` — manual ICT context per trade, keyed by trade-id.
 - `ICT_Knowledge.md` — the trader's methodology reference (setups, Kill Zones, range/Fib framework, top-down Weekly→4H→15m). Read this to annotate trades or understand domain terms; it is a living document, enriched as concepts are explained.
+- `topstep_rules_config.json` / `topstep_rules_reference.md` — the Topstep rulebook (verified 2026-06-17): MLL, profit targets, consistency, optional DLL, scaling, payouts per account size (50K/100K/150K) and type (TC/XFA/LFA). The `.json` is the source of truth; the `.md` documents the formulas. The dashboard's `meta.propFirms` (Combine 50/100/150K) must stay in sync with these — note the Combine DLL is **optional** (`dllOptional` in the dashboard) and winning days are a **funded-account payout** criterion, not a Combine pass condition.
 - `ict-arcade.html` — a standalone retro-arcade game ("Liquidity Hunter"), unrelated to the dashboard data pipeline.
 - `plans/`, `backtests/`, `logos/` — image assets. `.gitignore` blocks all `*.png`/`*.txt`/`*.pdf` except whitelisted icons and `plans/*.png`.
 
