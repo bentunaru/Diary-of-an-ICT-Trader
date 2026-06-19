@@ -436,7 +436,15 @@
   .bt-empty .bt-empty-icon { font-size: 48px; margin-bottom: 16px; }
   .bt-empty p { font-size: 14px; line-height: 1.7; }
   .bt-entry { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 24px; overflow: hidden; transition: transform .15s, box-shadow .15s, border-color .15s; }
-  .bt-entry-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .bt-entry-head { padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; cursor: pointer; list-style: none; user-select: none; }
+  .bt-entry-head::-webkit-details-marker { display: none; }
+  .bt-entry[open] > .bt-entry-head { border-bottom: 1px solid var(--border); }
+  .bt-entry-head:hover { background: var(--bg3); }
+  .bt-chevron { flex: 0 0 auto; color: var(--muted); font-size: 16px; line-height: 1; transition: transform .15s; }
+  .bt-entry[open] > .bt-entry-head .bt-chevron { transform: rotate(90deg); }
+  .bt-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
+  .bt-toggle { appearance: none; cursor: pointer; font-family: var(--sans); font-size: 12px; color: var(--muted); background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; transition: all .15s; }
+  .bt-toggle:hover { color: var(--text); border-color: var(--border-strong); }
   .bt-entry-date { font-size: 13px; font-weight: 600; color: var(--text); }
   .bt-entry-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
   .bt-tag { font-size: 11px; padding: 2px 8px; border-radius: 5px; font-weight: 500; background: var(--bg3); border: 1px solid var(--border); color: var(--muted); }
@@ -727,9 +735,9 @@
 const DATA = {
   meta: {
     periodStart: "17 juin 2026",
-    periodEnd: "18 juin 2026",
+    periodEnd: "19 juin 2026",
     account: "Topstep — Combine 50K",
-    fills: 13,                        // reset challenge Topstep 50K — repeuplé par tools/update_dashboard.py
+    fills: 17,                        // reset challenge Topstep 50K — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Risque max engagé", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -772,7 +780,8 @@ const DATA = {
   equity: [
     // <EQUITY>
     { date: "17 juin", cum: 968.5 },
-    { date: "18 juin", cum: 1445.5 }
+    { date: "18 juin", cum: 1445.5 },
+    { date: "19 juin", cum: 2045.5 }
     // </EQUITY>
   ],
 
@@ -790,13 +799,80 @@ const DATA = {
     { date: "17 juin", instr: "MNQU26", dir: "Long", entry: "30,471.25", exit: "TP 30,521.25 ✅", rr: "2:1", pl: "+$400", plClass: "pos", plNum: 400.0, result: "Win", setup: "T1 · Long 4 micros · TP 2:1", notes: "Premier trade de l'éval Topstep. Long 4 micros MNQ depuis 30,471.25, TP plein à 30,521.25 (+50 pts · 2:1). Risque $200 → +$400. RM respecté à la lettre. Réel Sierra (09:42–09:43 ET · NY AM).", kz: "NY AM", setupType: "Long range", mood: "Confiant", processClean: true },
     { date: "17 juin", instr: "MNQU26", dir: "Short", entry: "30,505.25", exit: "TP 30,387.75 ✅ (échelonné)", rr: ">2:1", pl: "+$568.50", plClass: "pos", plNum: 568.5, result: "Win", setup: "T2 · Short 4 micros · sortie échelonnée", notes: "Short 4 micros depuis 30,505.25 (stop 30,530.25, +25 pts) vers le support ~30,387. Sorties échelonnées : 1c@30,485.75 · 1c@30,433.00 · 1c@30,430.25 · 1c@30,387.75 (TP). +$568.50 — mieux que 2:1 grâce au runner. Réel Sierra (09:46–09:57 ET · NY AM).", kz: "NY AM", setupType: "Short range", mood: "Confiant", processClean: true },
     { date: "18 juin", instr: "MNQU26", dir: "Long", entry: "30,347.75", exit: "Sortie 30,333.25 (mèche)", rr: "—", pl: "−$116", plClass: "neg", plNum: -116.0, result: "Perte", setup: "Long · rebond FVG + MSS + Breaker · OTE", notes: "Entrée sur retracement (le prix n'est pas revenu jusqu'au limite initial 30,304). Long 4 micros @ 30,347.75. Le partiel prévu à 30,400 (100% Fib/TDO) N'A PAS été rempli : le prix n'est pas monté jusque-là, la position est sortie sur la mèche à 30,333.25 (−14.5 pts × 4 = −$116). Petite perte gérée (sortie avant le stop 30,322.75). Réel Sierra (export).", kz: "London", setupType: "FVG + MSS + Breaker", mood: "Neutre", processClean: true },
-    { date: "18 juin", instr: "MNQU26", dir: "Long", entry: "30,344.70", exit: "4c@30,395.50 + 1c@30,438.00 ✅", rr: "—", pl: "+$593", plClass: "pos", plNum: 593.0, result: "Win", setup: "Ré-entrée Long · bracket 5 micros (4 fixes 2:1 + runner)", notes: "Re-entrée avec le NOUVEAU bracket 5 micros (4 fixes au TP 2:1 + 1 runner). Avg 30,344.70 (1c@30,341.50 + 4c@30,345.50). Stop 30,320.50. Target 1 : 4c sortis à 30,395.50 (+50 pts). Runner : 1c sorti à 30,438.00 (vers le high Asie, +~93 pts). BE auto après le Target 1. +$593 — le bracket a fonctionné exactement comme prévu, premier test grandeur nature réussi. Réel Sierra (export).", kz: "London", setupType: "Bracket 5 micros · FVG+MSS+Breaker", mood: "Confiant", processClean: true }
+    { date: "18 juin", instr: "MNQU26", dir: "Long", entry: "30,344.70", exit: "4c@30,395.50 + 1c@30,438.00 ✅", rr: "—", pl: "+$593", plClass: "pos", plNum: 593.0, result: "Win", setup: "Ré-entrée Long · bracket 5 micros (4 fixes 2:1 + runner)", notes: "Re-entrée avec le NOUVEAU bracket 5 micros (4 fixes au TP 2:1 + 1 runner). Avg 30,344.70 (1c@30,341.50 + 4c@30,345.50). Stop 30,320.50. Target 1 : 4c sortis à 30,395.50 (+50 pts). Runner : 1c sorti à 30,438.00 (vers le high Asie, +~93 pts). BE auto après le Target 1. +$593 — le bracket a fonctionné exactement comme prévu, premier test grandeur nature réussi. Réel Sierra (export).", kz: "London", setupType: "Bracket 5 micros · FVG+MSS+Breaker", mood: "Confiant", processClean: true },
+    { date: "19 juin", instr: "MNQU26", dir: "Long", entry: "30,495.00", exit: "TP1 30,545 (4c) + TP2 30,595 (1c) ✅", rr: ">2:1", pl: "+$600", plClass: "pos", plNum: 600.0, result: "Win", setup: "Long · Sweep low + low Asie · discount (sous TDO) · bracket 5 micros", notes: "Long 5 micros sur sweep d'un low en 15min (+ low de l'Asie pris), prix SOUS le TDO (discount) → setup de retournement haussier. Bracket 5 micros : stop 30,470 (−25 pts · −$250), TP1 4c @ 30,545 (+50 pts · +$400), runner 1c @ 30,595 (+100 pts). Entrée un peu tardive (attente London KZ — dans les règles, pas une erreur). TP1 4c @ 30,545 (+$400) + TP2 runner 1c @ 30,595 (+$200) = +$600. Le sweep de low a donné le retournement haussier, bracket déroulé en plein. Réel Sierra (export).", kz: "London", setupType: "Sweep low (reversal)", mood: "Confiant", processClean: true }
     // </TRADES>
   ],
 
-  bestTrade: { value: "+$593.00", sub: "MNQ · 18 juin · bracket 5 micros (4 fixes + runner)" },
+  bestTrade: { value: "+$600.00", sub: "MNQ · 19 juin · sweep low → bracket 5 micros" },
 
   sessions: [
+    { date: "19 juin 2026", status: "closed", statusLabel: "Jour 3 · clôturée ✅", pl: "+$600", plSub: "1 trade · Win · éval Topstep 50K",
+      html: `
+        <h3>Cadre multi-timeframe · 19 juin · NQU26 <span style="color:var(--muted);font-size:13px">· vendredi · Jour 3</span></h3>
+        <div class="callout callout--accent">
+          <h4>🧭 Vendredi · pas de news · biais pas encore clair (léger penchant baissier)</h4>
+          Vendredi sans catalyseur. <strong>Pas de biais clair pour le moment</strong>, léger penchant baissier (« je pense qu'on va descendre »). Sur le <strong>4H</strong>, le prix est à <strong>50% du range tracé</strong> (zone d'équilibre), et il y a un <strong>gros FVG</strong>. Journée d'observation — on verra comment le marché évolue.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--accent"><h4>4H · 50% du range</h4><p>Prix au milieu du range tracé sur le 4H — pas de bord. Gros FVG présent à surveiller.</p></div>
+          <div class="panel panel--accent"><h4>Biais</h4><p>Pas encore tranché. Léger penchant baissier, à confirmer selon la structure et les Kill Zones.</p></div>
+          <div class="panel panel--accent"><h4>Contexte</h4><p>Vendredi, pas de news. Observation + backtest possible dans la journée.</p></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/03-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/04-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/05-15m.png" alt="15 minutes" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 minutes</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Entrée · Long 5 micros @ 30,495.00 <span style="color:var(--muted);font-size:13px">· position ouverte</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Long 5 MNQ · sweep low + low Asie · discount (sous TDO)</h4>
+          Sweep d'un low en 15min (+ <strong>low de l'Asie</strong> pris), prix <strong>sous le TDO</strong> = discount → setup de retournement haussier. Bracket 5 micros standard.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,495.00</div><div class="s">Long 5 MNQ · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,470.00</div><div class="s num">−25 pts · −$250</div></div>
+          <div class="mini-stat"><div class="l">TP1 · 4c</div><div class="v num acc">30,545.00</div><div class="s num">+50 pts · +$400</div></div>
+          <div class="mini-stat"><div class="l">Runner · 1c</div><div class="v num pos">30,595.00</div><div class="s num">+100 pts</div></div>
+          <div class="mini-stat"><div class="l">Statut</div><div class="v acc">Live</div><div class="s">P/L Sierra à la clôture</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🕐 Note · entrée un peu tardive (attente London KZ)</h4>
+          Entrée un peu tard car attente de la <strong>London Kill Zone</strong> — <strong>ce n'est pas une erreur</strong>, c'est dans mes règles. Réflexion : quand un setup valide est là, le prendre <strong>même hors Kill Zone</strong>. À garder en tête pour affiner la règle KZ.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/06-entry-long-sweep-low.png" alt="Entrée long sweep low" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Long 5 micros @ 30,495 · stop 30,470 · TP1 30,545 · runner 30,595.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/07-15m-sweep-low-asia.png" alt="15min sweep low Asie" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15min · NQ / ES · sweep de low + low de l'Asie pris, prix sous le TDO (discount).</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Management · TP1 atteint → runner + BE <span style="color:var(--muted);font-size:13px">· en cours</span></h3>
+        <div class="callout callout--green">
+          <h4>✅ TP1 atteint · 4c @ 30,545 · +$400 verrouillés · runner vers 30,595 · BE</h4>
+          Premier TP touché : les <strong>4 contrats fixes sont sortis à 30,545</strong> (+50 pts · <strong>+$400</strong>). Le <strong>runner (1c)</strong> court vers 30,595, stop déjà à <strong>BE</strong> → trade sans risque. Le sweep de low a bien donné le retournement haussier attendu.
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/08-tp1-hit-runner-be.png" alt="TP1 atteint runner BE" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · TP1 atteint (4c @ 30,545, +$400) · runner 1c vers 30,595 · stop à BE.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Bilan Jour 3 · 19 juin · Net +$600 (réel Sierra)</h3>
+        <div class="callout callout--green">
+          <h4>✅ Jour 3 · éval Topstep 50K · 1 trade · Win · +$600</h4>
+          Long sur sweep de low (+ low Asie, sous le TDO) → bracket 5 micros déroulé EN PLEIN : TP1 4c @ 30,545 (+$400) + TP2 runner 1c @ 30,595 (+$200). Un seul trade, propre, sans risque après le TP1. Balance éval : <strong>$52,045.50</strong>.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Net Jour 3</div><div class="v num pos">+$600</div><div class="s">1 Win / 0 Perte</div></div>
+          <div class="mini-stat"><div class="l">Objectif +$3,000</div><div class="v num acc">68%</div><div class="s">reste +$954.50</div></div>
+          <div class="mini-stat"><div class="l">Balance</div><div class="v num pos">$52,045.50</div><div class="s">cumul +$2,045.50</div></div>
+          <div class="mini-stat"><div class="l">Discipline</div><div class="v pos">Bracket fixe ✅</div><div class="s">3 jours verts</div></div>
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/09-tp2-final-tp.png" alt="TP2 final atteint" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · TP2 atteint (runner @ 30,595) — long complet déroulé, +$600.</figcaption></figure>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:14px">Note compte : Sim resetté (bascule SIM2), export reparti de 0. Balance d'éval Topstep (cumulative) mise à jour : $51,445.50 + $600 = <strong>$52,045.50</strong>.</p>
+      ` },
     { date: "18 juin 2026", status: "closed", statusLabel: "Jour 2 · clôturée ✅", pl: "+$477", plSub: "2 trades · 1W / 1L · éval Topstep 50K",
       html: `
         <h3>Cadre multi-timeframe · 18 juin · NQU26 <span style="color:var(--muted);font-size:13px">· post-FOMC · Jour 2</span></h3>
@@ -1068,6 +1144,56 @@ const DATA = {
         { src: "plans/2026-06-18/15-backtest-1h-bullish-ob.png", caption: "1H · NQ (gauche) / ES (droite) · le prix rebondit sur un OB bullish → contexte HTF haussier, à contre-sens du short." },
         { src: "plans/2026-06-18/16-backtest-1h-ob-zones.png", caption: "1H · NQ / ES · zones d'OB bullish marquées — c'est le rebond sur cet OB qui contredit le short." },
         { src: "plans/2026-06-18/17-frame-1h-range-bisi-bsl.png", caption: "1H · cadre du jour : range défini sur le 1H + BISI FVG (haussier) qui pourrait porter le prix jusqu'au BSL (objectif, aligné sur la déviation 1 std de l'Asie)." }
+      ]
+    },
+    {
+      date: "18 juin 2026",
+      instrument: "NQU26",
+      timeframe: "1min / 1H",
+      setup: "Long · OB 1H (HTF-aligné)",
+      result: "valid",
+      title: "Long sur l'OB 1H bullish → cible le BSL (HTF-aligné)",
+      comment: "Backtest n°2 (non pris, objectif du jour déjà atteint). Cette fois le trade est DANS le sens du HTF : long depuis l'OB bullish 1H — celui-là même qui invalidait le short précédent. Entry 30,436.50 · Stop 30,385.75 (structurel sous l'OB 1H, −50.75 pts) · Target 1 30,500.50 (+64 pts, 4c) · runner vers le BSL au-dessus (aligné 1 std dev Asie). Bracket 5 micros.",
+      lessons: [
+        { type: "pos", text: "HTF-aligné : long depuis l'OB bullish 1H, dans le sens du biais (vers le BSL). C'est le pendant CORRECT du short précédent, qui lui allait à contre-courant du HTF. Même contexte, le bon côté du marché." },
+        { type: "neutral", text: "Stop structurel large (−50.75 pts sous l'OB) → R/R modeste sur la TP1 (~1.26), mais le runner vers le BSL ouvre un R/R bien supérieur. La force du trade est dans le runner HTF, pas la TP1." }
+      ],
+      images: [
+        { src: "plans/2026-06-18/18-backtest-long-ob1h.png", caption: "1min · Long 5 micros depuis l'OB 1H · entry 30,436.50 · stop 30,385.75 · TP1 30,500.50 (4c) · runner vers le BSL." }
+      ]
+    },
+    {
+      date: "18 juin 2026",
+      instrument: "NQU26",
+      timeframe: "1H",
+      setup: "Long · sens HTF · BISI FVG",
+      result: "valid",
+      title: "Long (même direction HTF) → BISI FVG · TP final atteint ✅",
+      comment: "Backtest n°3, toujours en LONG (sens du HTF haussier). Bracket 5 micros standard : entry 30,489.00 · stop 30,464.00 (−25 pts) · TP1 4c @ 30,539.00 (+50 pts, 2:1) · runner 1c @ 30,589.00 (+100 pts). Les DEUX TP ont été atteints : TP1 (4c @ 30,539, +50 pts) puis le TP final / runner (1c @ 30,589, +100 pts). Le long complet a payé — résultat backtest +$600 (4×50 pts + 1×100 pts). Confirme pleinement le biais haussier HTF, jusqu'au BISI / BSL.",
+      lessons: [
+        { type: "pos", text: "Le long dans le sens du HTF a fonctionné de bout en bout : TP1 (4 fixes @ 30,539) PUIS TP final (runner @ 30,589) = +$600. Le prix est allé chercher le BISI FVG / BSL comme anticipé — lecture HTF haussière validée à 100%." },
+        { type: "pos", text: "Bracket 5 micros standard (stop 25 pts, TP1 2:1 + runner) du BON côté du marché = R/R propre. Combo gagnant : suivre le HTF + bracket fixe. Sur 3 backtests, le pattern se dessine — le long HTF paie, le short contre-HTF non." }
+      ],
+      images: [
+        { src: "plans/2026-06-18/19-backtest-long-bisi-progress.png", caption: "1H · Long 5 micros @ 30,489.00 (stop 30,464 · TP1 30,539 · TP2 30,589) en progression vers le BISI FVG (~30,700)." },
+        { src: "plans/2026-06-18/20-backtest-long-bisi-tp1.png", caption: "1H · Premier TP atteint — le long monte vers le BISI / BSL." },
+        { src: "plans/2026-06-18/21-backtest-long-bisi-final-tp.png", caption: "1H · TP final atteint (runner @ 30,589) — le long complet a payé jusqu'au BISI / BSL. Résultat backtest +$600." }
+      ]
+    },
+    {
+      date: "19 juin 2026",
+      instrument: "NQU26 / ESU26",
+      timeframe: "15min",
+      setup: "Plan NY AM · Discount PDA + SMT haussier",
+      result: "neutral",
+      title: "Thèse NY AM · retour en discount sur PDA → liquidité → haussier (SMT ES/NQ)",
+      comment: "Analyse 15min (thèse, pas un trade pris). Range tracé sur le 15min : on est actuellement en PREMIUM. SMT haussier ES/NQ : l'ES a fait un hard low (lower low), pas le NQ → divergence bullish (label SSL + SMT au low). Thèse pour la session NY AM : retour en DISCOUNT sur un PDA pour aller prendre la liquidité — la SSL au low du range (confirmé, cohérent avec le label SSL + SMT) — puis reprise haussière.",
+      lessons: [
+        { type: "pos", text: "SMT ES/NQ haussier (ES hard low, NQ non) = signal de retournement bullish. Combiné à un PDA en discount, donne un plan d'achat clair pour la NY AM." },
+        { type: "neutral", text: "Séquence ICT : premium maintenant → retour discount (PDA) pour prendre la SSL → puis haussier. Acheter le discount APRÈS la prise de liquidité, pas le premium." }
+      ],
+      images: [
+        { src: "plans/2026-06-19/10-backtest-smt-premium-discount.png", caption: "15min · NQ / ES · range tracé, prix en premium · SMT haussier (ES hard low, NQ non) · SSL + SMT au low (cible liquidité)." }
       ]
     }
   ],
@@ -1863,7 +1989,19 @@ if (btEl) {
   } else {
     const validCount = DATA.backtests.filter(b => b.result === "valid").length;
     const resultLabel = { valid: "Valid setup", invalid: "Invalid setup", neutral: "Neutral / Mixed" };
-    const entries = DATA.backtests.map(bt => {
+    // Tri du plus récent au plus ancien (dates FR libres, ex. "18 juin 2026", "Semaine du 17 juin 2026")
+    const FR_MONTHS = { janvier:0, "février":1, fevrier:1, mars:2, avril:3, mai:4, juin:5, juillet:6, "août":7, aout:7, septembre:8, octobre:9, novembre:10, "décembre":11, decembre:11 };
+    const parseFrDate = s => {
+      const m = String(s || "").match(/(\d{1,2})\s+([a-zà-ÿ]+)\s+(\d{4})/i);
+      if (!m) return 0;
+      return new Date(+m[3], FR_MONTHS[m[2].toLowerCase()] ?? 0, +m[1]).getTime();
+    };
+    // Jours récents en haut ; au sein d'un même jour, on conserve l'ordre de lecture (n°1 → n°2 → n°3)
+    const ordered = DATA.backtests
+      .map((bt, i) => ({ bt, i }))
+      .sort((a, b) => (parseFrDate(b.bt.date) - parseFrDate(a.bt.date)) || (a.i - b.i))
+      .map(o => o.bt);
+    const entries = ordered.map((bt, idx) => {
       const imgs = (bt.images || []).map(img => `
         <div class="bt-img-wrap">
           <img src="${img.src}" alt="${img.caption||''}" data-caption="${img.caption||''}"
@@ -1880,17 +2018,27 @@ if (btEl) {
         bt.result     ? `<span class="bt-tag ${bt.result}">${resultLabel[bt.result]||bt.result}</span>` : '',
       ].filter(Boolean).join('');
       return `
-      <div class="bt-entry">
-        <div class="bt-entry-head"><div class="bt-entry-date">${bt.date}</div><div class="bt-entry-meta">${tags}</div></div>
+      <details class="bt-entry"${idx === 0 ? " open" : ""}>
+        <summary class="bt-entry-head"><span class="bt-chevron">›</span><div class="bt-entry-date">${bt.date}</div><div class="bt-entry-meta">${tags}</div></summary>
         <div class="bt-body">
           ${bt.title ? `<div class="bt-title">${bt.title}</div>` : ''}
           ${bt.comment ? `<div class="bt-comment ${bt.result||''}">${bt.comment}</div>` : ''}
           ${lessons ? `<div class="bt-lessons">${lessons}</div>` : ''}
           ${imgs ? `<div class="bt-gallery">${imgs}</div>` : ''}
         </div>
-      </div>`;
+      </details>`;
     }).join('');
-    btEl.innerHTML = `<p class="view-intro">${DATA.backtests.length} backtest${DATA.backtests.length>1?"s":""} documenté${DATA.backtests.length>1?"s":""} · <strong>${validCount} setup${validCount>1?"s":""} validé${validCount>1?"s":""}</strong>. Captures cliquables (lightbox).</p>${entries}`;
+    btEl.innerHTML = `<p class="view-intro">${DATA.backtests.length} backtest${DATA.backtests.length>1?"s":""} documenté${DATA.backtests.length>1?"s":""} · <strong>${validCount} setup${validCount>1?"s":""} validé${validCount>1?"s":""}</strong>. Du plus récent au plus ancien · captures cliquables (lightbox).</p>
+      <div class="bt-toolbar"><button type="button" class="bt-toggle" id="bt-toggle">Tout déplier</button></div>${entries}`;
+    const btToggle = document.getElementById("bt-toggle");
+    if (btToggle) {
+      btToggle.addEventListener("click", () => {
+        const all = btEl.querySelectorAll("details.bt-entry");
+        const anyClosed = [...all].some(d => !d.open);
+        all.forEach(d => d.open = anyClosed);
+        btToggle.textContent = anyClosed ? "Tout replier" : "Tout déplier";
+      });
+    }
   }
 }
 
