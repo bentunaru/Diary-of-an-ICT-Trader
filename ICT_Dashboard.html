@@ -757,7 +757,23 @@ const DATA = {
         consistencyPct: 50, minWinDays: 5, winDayThreshold: 150, maxContracts: 10, minDaysToPass: 2, flatByCT: "15:10" },
       { id: "ts150", firm: "Topstep", plan: "Combine 150K", ddModel: "trailing-eod",
         accountSize: 150000, profitTarget: 9000, mll: 4500, dailyLossLimit: 3000, dllOptional: true,
-        consistencyPct: 50, minWinDays: 5, winDayThreshold: 150, maxContracts: 15, minDaysToPass: 2, flatByCT: "15:10" }
+        consistencyPct: 50, minWinDays: 5, winDayThreshold: 150, maxContracts: 15, minDaysToPass: 2, flatByCT: "15:10" },
+      // SwissFirmUp (vérifié 2026-06-24, swissfirmup.com/reglements) : qualification 2 étapes, futures, split 90 %.
+      // Drawdown EOD qui traile sur le SOLDE DE CLÔTURE (pas l'intraday) → modèle trailing-eod, plus fidèle ici que pour Topstep.
+      // Aucune Daily Loss Limit (dailyLossLimit: null). Consistance 50 % de l'OBJECTIF initial (consistencyBasis "target", pas le profit total).
+      // Aucun minimum de jours (minDaysToPass: 1), qualif. plafonnée à 30 jours. flatByCT 16:00 CT = clôture de séance (pas d'overnight) — à confirmer.
+      { id: "sf50",  firm: "SwissFirmUp", plan: "Qualification 50K",  ddModel: "trailing-eod",
+        accountSize: 50000,  profitTarget: 3000, mll: 2000, dailyLossLimit: null,
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 150, maxContracts: 10, minDaysToPass: 1, flatByCT: "16:00" },
+      { id: "sf100", firm: "SwissFirmUp", plan: "Qualification 100K", ddModel: "trailing-eod",
+        accountSize: 100000, profitTarget: 5000, mll: 2500, dailyLossLimit: null,
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 200, maxContracts: 15, minDaysToPass: 1, flatByCT: "16:00" },
+      { id: "sf200", firm: "SwissFirmUp", plan: "Qualification 200K", ddModel: "trailing-eod",
+        accountSize: 200000, profitTarget: 7000, mll: 3000, dailyLossLimit: null,
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 250, maxContracts: 20, minDaysToPass: 1, flatByCT: "16:00" },
+      { id: "sf300", firm: "SwissFirmUp", plan: "Qualification 300K", ddModel: "trailing-eod",
+        accountSize: 300000, profitTarget: 9000, mll: 3500, dailyLossLimit: null,
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 300, maxContracts: 30, minDaysToPass: 1, flatByCT: "16:00" }
     ],
     // Money management — profil CONSERVATEUR. Tout est dérivé de propFirms ci-dessus : aucun seuil en dur.
     mm: {
@@ -2163,7 +2179,9 @@ if (propEl && propFirms.length) {
 
     const consActive = pf.consistencyPct != null;
     const bestDay = Math.max(0, ...pfDaily);
-    const consPct = cumPl > 0 ? bestDay / cumPl : 0;
+    // Base de la consistance : profit TOTAL réalisé (Topstep) ou OBJECTIF initial (SwissFirmUp · consistencyBasis "target").
+    const consDenom = pf.consistencyBasis === "target" ? (pf.profitTarget || 0) : cumPl;
+    const consPct = consDenom > 0 ? bestDay / consDenom : 0;
     const consPass = !consActive || !tgtReached || consPct <= pf.consistencyPct / 100;
 
     const winActive = pf.minWinDays != null;
@@ -2238,7 +2256,7 @@ if (propEl && propFirms.length) {
         ${!r.dllActive ? st(false) : (r.dllBreached && pf.dllOptional) ? `<span class="pf-status warn">Dépassée (option)</span>` : st(true, !r.dllBreached, "Respecté", "Franchi")}
       </div>
       <div class="pf-rule">
-        <div class="pf-name">Règle de consistance ${r.consActive ? "(≤ " + pf.consistencyPct + "% / jour)" : ""}<span class="sub">${r.consActive ? "Meilleure journée = " + Math.round(r.consPct * 100) + "% du profit total" + (r.tgtReached ? "" : " · vérifiée à l'atteinte de l'objectif") : "Non applicable sur ce plan"}</span></div>
+        <div class="pf-name">Règle de consistance ${r.consActive ? "(≤ " + pf.consistencyPct + "% " + (pf.consistencyBasis === "target" ? "de l'objectif" : "du profit") + " / jour)" : ""}<span class="sub">${r.consActive ? "Meilleure journée = " + Math.round(r.consPct * 100) + "% " + (pf.consistencyBasis === "target" ? "de l'objectif initial" : "du profit total") + (r.tgtReached ? "" : " · vérifiée à l'atteinte de l'objectif") : "Non applicable sur ce plan"}</span></div>
         <div class="pf-val">${r.consActive ? fmtUsd(r.bestDay) : "—"}</div>
         ${st(r.consActive, r.consPass, "OK", "Dépassé")}
       </div>
@@ -2292,7 +2310,10 @@ if (mmEl && mmCfg && propFirms.length) {
 
   // Garde-fous dérivés d'un compte
   function mmParams(pf) {
-    const dailyStop = Math.round(Math.min(pf.dailyLossLimit * mmCfg.dailyStopPctOfDLL, pf.mll / mmCfg.minBufferDays));
+    // Stop quotidien perso : min(part de la DLL, MLL ÷ jours-tampon). Sans DLL (SwissFirmUp), on dérive du seul MLL.
+    const dailyStop = pf.dailyLossLimit != null
+      ? Math.round(Math.min(pf.dailyLossLimit * mmCfg.dailyStopPctOfDLL, pf.mll / mmCfg.minBufferDays))
+      : Math.round(pf.mll / mmCfg.minBufferDays);
     const riskPerTrade = Math.round(dailyStop / mmCfg.riskTradesPerDay);
     const bufferDays = Math.floor(pf.mll / dailyStop);
     const dailyGainCap = Math.round(pf.profitTarget * mmCfg.dailyGainPctOfTarget);
@@ -2384,7 +2405,8 @@ if (mmEl && mmCfg && propFirms.length) {
       if (cum <= Math.min(0, peak - mll)) { result = "blown"; bestDay = Math.max(bestDay, dayPL); blownAt = { date: t.date }; break; }   // MLL = mort
       if (cum >= target) {                                   // objectif atteint → on vérifie consistance ET plancher de jours
         const bd = bestDay = Math.max(bestDay, dayPL);
-        result = bd > cum * consPct ? "target-inconsistent"   // consistance = best day / profit TOTAL réel (≤ 50%), comme l'onglet conformité
+        const consDenom = pf.consistencyBasis === "target" ? target : cum;   // base : objectif (SwissFirmUp) ou profit total réel (Topstep)
+        result = bd > consDenom * consPct ? "target-inconsistent"
                : daysSeen.size < minDays ? "target-too-fast"
                : "passed";
         passedAt = { date: t.date, bestDay: bd, days: daysSeen.size }; break;
@@ -2405,6 +2427,13 @@ if (mmEl && mmCfg && propFirms.length) {
   function renderMM() {
     const pf = curPf();
     const par = mmParams(pf);
+    // Libellés généralisés par firme (pf.firm) + descripteurs dépendant du modèle de drawdown / présence de DLL.
+    const firm = pf.firm;
+    const hasDll = pf.dailyLossLimit != null;
+    const ddPeak = pf.ddModel === "static" ? "ton plancher fixe"
+                 : pf.ddModel === "trailing-intraday" ? "ton pic d'equity intraday (non-réalisé inclus)"
+                 : "ton solde de clôture le plus haut (EOD)";
+    const consWord = pf.consistencyBasis === "target" ? "de l'objectif" : "du profit total";
     const options = mmAccts.map(p => `<option value="${p.id}"${p.id === mmSel ? " selected" : ""}>${p.firm} · ${p.plan}</option>`).join("");
 
     // Table de référence : stop (points) × instrument → contrats (risque $)
@@ -2441,13 +2470,13 @@ if (mmEl && mmCfg && propFirms.length) {
     const simVerdict = {
       "blown":               { cls: "bad",  dot: "red",    txt: `Compte grillé${sim.blownAt ? " le " + sim.blownAt.date : ""} — MLL touché avant l'objectif` },
       "passed":              { cls: "ok",   dot: "green",  txt: `Challenge validé${sim.passedAt ? " le " + sim.passedAt.date : ""} — objectif atteint, consistance OK` },
-      "target-inconsistent": { cls: "warn", dot: "accent", txt: `Objectif atteint mais best-day ${fmtUsdAbs(sim.passedAt ? sim.passedAt.bestDay : sim.bestDay)} > 50% — validation bloquée (consistance)` },
-      "target-too-fast":     { cls: "warn", dot: "accent", txt: `Objectif atteint${sim.passedAt ? " le " + sim.passedAt.date : ""} mais en ${sim.passedAt ? sim.passedAt.days : "<2"} jour(s) — Topstep exige ${pf.minDaysToPass || 2} jours minimum` },
+      "target-inconsistent": { cls: "warn", dot: "accent", txt: `Objectif atteint mais best-day ${fmtUsdAbs(sim.passedAt ? sim.passedAt.bestDay : sim.bestDay)} > ${pf.consistencyPct || 50}% ${consWord} — validation bloquée (consistance)` },
+      "target-too-fast":     { cls: "warn", dot: "accent", txt: `Objectif atteint${sim.passedAt ? " le " + sim.passedAt.date : ""} mais en ${sim.passedAt ? sim.passedAt.days : "<2"} jour(s) — ${firm} exige ${pf.minDaysToPass || 2} jours minimum` },
       "in-progress":         { cls: "warn", dot: "accent", txt: `Ni grillé ni validé sur la période — ${fmtUsd(sim.cumFinal)} / ${fmtUsdAbs(sim.target)}` },
     }[sim.result];
 
     mmEl.innerHTML = `
-    <p class="view-intro">Money management <strong>${mmCfg.profile}</strong> pour les comptes Topstep — pensé pour <em>ne jamais</em> franchir une règle, en challenge comme en live. Ennemi n°1 : le <strong>trailing drawdown</strong>, qui suit ton pic d'equity <em>intraday</em> (non-réalisé inclus) et ne redescend jamais. Tous les chiffres ci-dessous sont dérivés des seuils Topstep (<code>meta.propFirms</code>) et du profil (<code>meta.mm</code>) — édite-les là, pas ici.</p>
+    <p class="view-intro">Money management <strong>${mmCfg.profile}</strong> pour les comptes ${firm} — pensé pour <em>ne jamais</em> franchir une règle, en challenge comme en live. Ennemi n°1 : le <strong>trailing drawdown</strong>, qui suit ${ddPeak} et ne redescend jamais. Tous les chiffres ci-dessous sont dérivés des seuils ${firm} (<code>meta.propFirms</code>) et du profil (<code>meta.mm</code>) — édite-les là, pas ici.</p>
 
     <div class="pf-head">
       <label class="pf-select-lbl" for="mm-select">Compte</label>
@@ -2456,17 +2485,17 @@ if (mmEl && mmCfg && propFirms.length) {
 
     <div class="kpis" style="margin-bottom:18px;">
       <div class="kpi"><div class="label">Risque par trade</div><div class="value num">${fmtUsdAbs(par.riskPerTrade)}</div><div class="sub">fixe — traduit en contrats</div></div>
-      <div class="kpi"><div class="label">Stop quotidien perso</div><div class="value num">${fmtUsdAbs(par.dailyStop)}</div><div class="sub">DLL Topstep${pf.dllOptional ? " (option)" : ""} : ${fmtUsdAbs(pf.dailyLossLimit)}</div></div>
-      <div class="kpi"><div class="label">Contrats max Topstep</div><div class="value num">${pf.maxContracts}<span style="font-size:13px;color:var(--muted)"> / ${pf.maxContracts * 10} µ</span></div><div class="sub">plafond dur — jamais dépasser</div></div>
+      <div class="kpi"><div class="label">Stop quotidien perso</div><div class="value num">${fmtUsdAbs(par.dailyStop)}</div><div class="sub">${hasDll ? "DLL " + firm + (pf.dllOptional ? " (option)" : "") + " : " + fmtUsdAbs(pf.dailyLossLimit) : "pas de DLL — dérivé du MLL ÷ " + mmCfg.minBufferDays}</div></div>
+      <div class="kpi"><div class="label">Contrats max ${firm}</div><div class="value num">${pf.maxContracts}<span style="font-size:13px;color:var(--muted)"> / ${pf.maxContracts * 10} µ</span></div><div class="sub">plafond dur — jamais dépasser</div></div>
       <div class="kpi"><div class="label">Marge avant blow-up</div><div class="value num pos">${par.bufferDays} j</div><div class="sub">journées rouges pleines · MLL ${fmtUsdAbs(pf.mll)}</div></div>
     </div>
 
     <div class="section">
       <h2>Garde-fous dérivés — ${pf.plan}</h2>
       <div class="pf-rule">
-        <div class="pf-name">Stop quotidien perso<span class="sub">Tu coupes la plateforme à −${fmtUsdAbs(par.dailyStop)} (DLL Topstep${pf.dllOptional ? " optionnelle" : ""} : −${fmtUsdAbs(pf.dailyLossLimit)}). Aucune exception, aucun revenge trade.</span></div>
+        <div class="pf-name">Stop quotidien perso<span class="sub">Tu coupes la plateforme à −${fmtUsdAbs(par.dailyStop)} ${hasDll ? "(DLL " + firm + (pf.dllOptional ? " optionnelle" : "") + " : −" + fmtUsdAbs(pf.dailyLossLimit) + ")" : "(pas de DLL chez " + firm + " — dérivé du MLL ÷ " + mmCfg.minBufferDays + " jours)"}. Aucune exception, aucun revenge trade.</span></div>
         <div class="pf-val">${fmtUsdAbs(par.dailyStop)}</div>
-        <span class="pf-status ok">${Math.round(par.dailyStop / pf.dailyLossLimit * 100)} % du DLL</span>
+        <span class="pf-status ok">${hasDll ? Math.round(par.dailyStop / pf.dailyLossLimit * 100) + " % du DLL" : "MLL ÷ " + mmCfg.minBufferDays}</span>
       </div>
       <div class="pf-rule">
         <div class="pf-name">Risque par trade<span class="sub">Stop quotidien ÷ ${mmCfg.riskTradesPerDay} → max ${mmCfg.riskTradesPerDay} trades perdants/jour. Risque fixe, jamais augmenté après une perte.</span></div>
@@ -2474,7 +2503,7 @@ if (mmEl && mmCfg && propFirms.length) {
         <span class="pf-status ok">fixe</span>
       </div>
       <div class="pf-rule">
-        <div class="pf-name">Plafond de gain / jour<span class="sub">Reste sous le best-day max ${fmtUsdAbs(par.bestDayMax)} (règle de consistance ${pf.consistencyPct || 50} %). Plafond atteint → réduis ou arrête.</span></div>
+        <div class="pf-name">Plafond de gain / jour<span class="sub">Reste sous le best-day max ${fmtUsdAbs(par.bestDayMax)} (règle de consistance ${pf.consistencyPct || 50} % ${consWord}). Plafond atteint → réduis ou arrête.</span></div>
         <div class="pf-val">${fmtUsdAbs(par.dailyGainCap)}</div>
         <span class="pf-status ok">${Math.round(mmCfg.dailyGainPctOfTarget * 100)} % de l'objectif</span>
       </div>
@@ -2492,7 +2521,7 @@ if (mmEl && mmCfg && propFirms.length) {
 
     <div class="section">
       <h2>Calculateur de taille de position</h2>
-      <p class="pf-note" style="margin-top:0">Risque par trade <strong>${fmtUsdAbs(par.riskPerTrade)}</strong> ÷ (stop en points × $/pt) → contrats, plafonnés à la limite Topstep.</p>
+      <p class="pf-note" style="margin-top:0">Risque par trade <strong>${fmtUsdAbs(par.riskPerTrade)}</strong> ÷ (stop en points × $/pt) → contrats, plafonnés à la limite ${firm}.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px">
         <div><label class="pf-select-lbl" for="mm-instr">Instrument</label><br><select id="mm-instr" class="pf-select">${instrOpts}</select></div>
         <div><label class="pf-select-lbl" for="mm-stop">Distance de stop (points)</label><br><input id="mm-stop" type="number" min="0.25" step="0.25" value="${mmStop}" class="pf-select" style="width:140px"></div>
@@ -2506,7 +2535,7 @@ if (mmEl && mmCfg && propFirms.length) {
         <thead><tr><th style="text-align:left">Stop</th>${head}</tr></thead>
         <tbody>${rows}</tbody>
       </table></div>
-      <p class="pf-note">Cellule = nb de contrats au risque ${fmtUsdAbs(par.riskPerTrade)} ; entre parenthèses = risque réel en $. « — » = stop trop large pour 1 contrat à ce risque (réduis le stop ou passe en micro). « ⤒ » = plafonné à la limite Topstep.</p>
+      <p class="pf-note">Cellule = nb de contrats au risque ${fmtUsdAbs(par.riskPerTrade)} ; entre parenthèses = risque réel en $. « — » = stop trop large pour 1 contrat à ce risque (réduis le stop ou passe en micro). « ⤒ » = plafonné à la limite ${firm}.</p>
     </div>
 
     <div class="section">
@@ -2522,12 +2551,12 @@ if (mmEl && mmCfg && propFirms.length) {
         <thead><tr><th style="text-align:left">Date</th><th>Sens</th><th class="r">Contrats</th><th class="r">P/L</th><th style="text-align:left">Violation</th></tr></thead>
         <tbody>${audRowsHtml}</tbody>
       </table></div>${aud.rows.length > AUD_MAX ? `<p class="pf-note">+ ${aud.rows.length - AUD_MAX} autres trades en infraction non affichés.</p>` : ""}` : `<div class="pf-verdict ok"><span class="idot green"></span>Aucune infraction au plan sur la période.</div>`}
-      <p class="pf-note">⚠ Évalué contre l'equity réelle Sim1 (sizing libre, bien au-delà d'un compte Topstep). L'écart est volontairement brutal : il mesure la distance entre ton trading actuel et le plan ${pf.plan}. « Perte ×N budget » = de combien le risque/trade autorisé a été dépassé.</p>
+      <p class="pf-note">⚠ Évalué contre l'equity réelle Sim1 (sizing libre, bien au-delà d'un compte ${firm}). L'écart est volontairement brutal : il mesure la distance entre ton trading actuel et le plan ${pf.plan}. « Perte ×N budget » = de combien le risque/trade autorisé a été dépassé.</p>
     </div>
 
     <div class="section">
       <h2>Simulation challenge — au sizing du plan</h2>
-      <p class="view-intro" style="margin-top:0">« Et si j'avais pris <strong>les mêmes setups</strong> mais au sizing ${mmCfg.profile} ? » On rejoue tes trades <strong>R-normalisés</strong> (1R = ${fmtUsdAbs(sim.R)} = risque/trade du plan ; tes R-multiples réels sont préservés) dans un moteur Topstep complet : MLL trailing → blow-up, DLL → journée stoppée, objectif + consistance → validé. Échelle ≈ <strong>${(sim.k).toFixed(2)}×</strong> ta taille réelle (1R réel ≈ ${fmtUsdAbs(sim.oneR)} de perte moyenne).</p>
+      <p class="view-intro" style="margin-top:0">« Et si j'avais pris <strong>les mêmes setups</strong> mais au sizing ${mmCfg.profile} ? » On rejoue tes trades <strong>R-normalisés</strong> (1R = ${fmtUsdAbs(sim.R)} = risque/trade du plan ; tes R-multiples réels sont préservés) dans un moteur de challenge complet : MLL trailing → blow-up${hasDll ? ", DLL → journée stoppée" : ""}, objectif + consistance → validé. Échelle ≈ <strong>${(sim.k).toFixed(2)}×</strong> ta taille réelle (1R réel ≈ ${fmtUsdAbs(sim.oneR)} de perte moyenne).</p>
 
       <div class="pf-verdict ${simVerdict.cls}"><span class="idot ${simVerdict.dot}"></span>${simVerdict.txt}</div>
 
@@ -2535,24 +2564,24 @@ if (mmEl && mmCfg && propFirms.length) {
         <div class="kpi"><div class="label">P/L simulé final</div><div class="value num ${sim.cumFinal >= 0 ? "pos" : "neg"}">${fmtUsd(sim.cumFinal)}</div><div class="sub">sur ${sim.tradesUsed} trades · objectif ${fmtUsdAbs(sim.target)}</div></div>
         <div class="kpi"><div class="label">Plus-bas simulé</div><div class="value num ${sim.lowSim <= -sim.mll ? "neg" : ""}">${fmtUsd(sim.lowSim)}</div><div class="sub">MLL trailing −${fmtUsdAbs(sim.mll)}</div></div>
         <div class="kpi"><div class="label">Meilleure journée</div><div class="value num">${fmtUsd(sim.bestDay)}</div><div class="sub">plafond consistance ${fmtUsdAbs(sim.target * (pf.consistencyPct || 50) / 100)}</div></div>
-        <div class="kpi"><div class="label">Jours DLL touchés</div><div class="value num ${sim.dllDays ? "neg" : "pos"}">${pf.dllOptional ? "—" : sim.dllDays}</div><div class="sub">${pf.dllOptional ? "DLL (option) non activée" : "stop Topstep −" + fmtUsdAbs(sim.dll)}</div></div>
+        <div class="kpi"><div class="label">Jours DLL touchés</div><div class="value num ${sim.dllDays ? "neg" : "pos"}">${!hasDll || pf.dllOptional ? "—" : sim.dllDays}</div><div class="sub">${!hasDll ? "pas de DLL sur ce plan" : pf.dllOptional ? "DLL (option) non activée" : "stop " + firm + " −" + fmtUsdAbs(sim.dll)}</div></div>
       </div>
 
       <div class="pf-progress"><div class="pf-progress-fill" style="width:${sim.tgtPct}%;background:${sim.result === "passed" ? "var(--green)" : sim.result === "blown" ? "var(--red)" : "var(--accent)"}"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)"><span>${fmtUsd(sim.cumFinal)}</span><span>cible ${fmtUsdAbs(sim.target)}</span></div>
 
-      <p class="pf-note">Hypothèse : R-normalisation uniforme (taille telle qu'une perte type = ${fmtUsdAbs(sim.R)}). Ça isole <strong>l'effet sizing</strong> à edge constant — si le verdict reste « grillé », le problème n'est pas que la taille : tu tiens à travers de trop grosses excursions (à corriger via partiels / stop au BE). Re-teste sur 100K / 150K via le sélecteur en haut.</p>
+      <p class="pf-note">Hypothèse : R-normalisation uniforme (taille telle qu'une perte type = ${fmtUsdAbs(sim.R)}). Ça isole <strong>l'effet sizing</strong> à edge constant — si le verdict reste « grillé », le problème n'est pas que la taille : tu tiens à travers de trop grosses excursions (à corriger via partiels / stop au BE). Re-teste sur les autres comptes via le sélecteur en haut.</p>
     </div>
 
     <div class="section">
       <h2>Plan en 2 phases</h2>
       <div class="pf-rule">
-        <div class="pf-name">Phase 1 — Challenge (Combine)<span class="sub">Atteindre ${fmtUsdAbs(pf.profitTarget)} SANS jamais toucher le MLL trailing (${fmtUsdAbs(pf.mll)}), best day &lt; ${fmtUsdAbs(par.bestDayMax)}${pf.dllOptional ? " (DLL " + fmtUsdAbs(pf.dailyLossLimit) + " seulement si option achetée)" : " ni DLL " + fmtUsdAbs(pf.dailyLossLimit)}. Sizing conservateur, survie &gt; vitesse. Min. ${pf.minDaysToPass || 2} jours de trading (plancher Topstep), objectif étalé.</span></div>
+        <div class="pf-name">Phase 1 — Challenge · ${pf.plan}<span class="sub">Atteindre ${fmtUsdAbs(pf.profitTarget)} SANS jamais toucher le MLL trailing (${fmtUsdAbs(pf.mll)}), best day &lt; ${fmtUsdAbs(par.bestDayMax)}${!hasDll ? " (pas de DLL)" : pf.dllOptional ? " (DLL " + fmtUsdAbs(pf.dailyLossLimit) + " seulement si option achetée)" : " ni DLL " + fmtUsdAbs(pf.dailyLossLimit)}. Sizing conservateur, survie &gt; vitesse. ${(pf.minDaysToPass || 2) > 1 ? "Min. " + pf.minDaysToPass + " jours de trading (plancher " + firm + "), objectif étalé." : "Objectif étalé sur plusieurs jours (pas de minimum imposé)."}</span></div>
         <div class="pf-val">survie</div>
         <span class="pf-status ok">objectif</span>
       </div>
       <div class="pf-rule">
-        <div class="pf-name">Phase 2 — Compte financé / Live<span class="sub">MLL trailing s'applique toujours. Payout : ≥ ${pf.minWinDays} jours gagnants ≥ ${fmtUsdAbs(pf.winDayThreshold)} net (chemin standard) ou consistance ≤ 40 % du profit total. Garde le même sizing — un compte live perdu = un challenge à repayer.</span></div>
+        <div class="pf-name">Phase 2 — Compte financé / Live<span class="sub">MLL trailing s'applique toujours. Payout : ${pf.minWinDays != null ? "≥ " + pf.minWinDays + " jours gagnants ≥ " + fmtUsdAbs(pf.winDayThreshold) + " net (chemin standard) ou consistance ≤ 40 % du profit total" : "éligible dès qu'une journée fait ≥ " + fmtUsdAbs(pf.winDayThreshold) + " net (pas de minimum de jours gagnants ni de consistance sur le financé)"}. Garde le même sizing — un compte live perdu = un challenge à repayer.</span></div>
         <div class="pf-val">protéger</div>
         <span class="pf-status ok">payout</span>
       </div>
@@ -2561,12 +2590,12 @@ if (mmEl && mmCfg && propFirms.length) {
 
     <div class="section">
       <h2>Règles d'or</h2>
-      <div class="pf-rule"><div class="pf-name">1. Le trailing drawdown est l'ennemi n°1<span class="sub">Il grave ton pic intraday (non-réalisé inclus). Sécurise : partiels, stop au break-even dès +1R. Un gros gain non encaissé qui repart = drawdown perdu à jamais.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">1. Le trailing drawdown est l'ennemi n°1<span class="sub">Il grave ${ddPeak} et ne redescend jamais. Sécurise : partiels, stop au break-even dès +1R. Un gros gain non encaissé qui repart = drawdown perdu à jamais.</span></div></div>
       <div class="pf-rule"><div class="pf-name">2. Stop quotidien perso STRICT<span class="sub">−${fmtUsdAbs(par.dailyStop)} atteint → tu fermes la plateforme. Terminé pour la journée. Zéro revenge trade.</span></div></div>
       <div class="pf-rule"><div class="pf-name">3. ${mmCfg.riskTradesPerDay} trades perdants max / jour<span class="sub">Risque fixe ${fmtUsdAbs(par.riskPerTrade)}, jamais augmenté après une perte (no martingale, no moyenne à la baisse).</span></div></div>
       <div class="pf-rule"><div class="pf-name">4. Taille = calcul, jamais feeling<span class="sub">Contrats dérivés du risque fixe ÷ distance de stop (calculateur ci-dessus). Pas de stop, pas de trade.</span></div></div>
       <div class="pf-rule"><div class="pf-name">5. Plafond de gain / jour ≤ ${fmtUsdAbs(par.dailyGainCap)}<span class="sub">Un méga-jour casse la règle de consistance et peut bloquer la validation / le payout. Plafond atteint → réduis ou arrête.</span></div></div>
-      <div class="pf-rule"><div class="pf-name">6. Flat avant ${pf.flatByCT} CT<span class="sub">Clôture Topstep — jamais de position overnight, jamais dans la fenêtre interdite.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">6. Flat avant ${pf.flatByCT} CT<span class="sub">Clôture ${firm} — jamais de position overnight, jamais dans la fenêtre interdite.</span></div></div>
       <div class="pf-rule"><div class="pf-name">7. Une seule idée à la fois<span class="sub">Pas de cumul de corrélés : NQ + ES en même temps = le même risque directionnel compté deux fois.</span></div></div>
     </div>`;
 
@@ -2608,7 +2637,7 @@ if (mmEl && mmCfg && propFirms.length) {
         <div class="kpi"><div class="label">Stop</div><div class="value num">${stop} pts</div><div class="sub">${fmtUsdAbs(stop * c.inst.perPt)} / contrat</div></div>
         <div class="kpi"><div class="label">Si TP à 2R</div><div class="value num pos">+${fmtUsdAbs(c.risk * 2)}</div><div class="sub">sous le plafond/jour ${fmtUsdAbs(c.par.dailyGainCap)}</div></div>
       </div>
-      ${c.capped ? `<p class="pf-note">⤒ Plafonné à la limite Topstep (${c.cap}). Le risque réel est donc &lt; ton risque cible — c'est conservateur, ok.</p>` : ``}`;
+      ${c.capped ? `<p class="pf-note">⤒ Plafonné à la limite ${pf.firm} (${c.cap}). Le risque réel est donc &lt; ton risque cible — c'est conservateur, ok.</p>` : ``}`;
   }
 
   renderMM();
