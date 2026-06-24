@@ -594,6 +594,7 @@
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="errors">Errors</button>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="prop">Prop Firm</button>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="mm">Money Mgmt</button>
+    <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="challenges">Challenges</button>
     <span class="tab-sep" aria-hidden="true"></span>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="sessions">Sessions</button>
     <button type="button" class="tab" role="tab" aria-selected="false" tabindex="-1" data-view="backtest">Backtest</button>
@@ -682,6 +683,11 @@
   <!-- ============ MONEY MANAGEMENT ============ -->
   <section id="view-mm" class="view" role="tabpanel" aria-label="Money Management">
     <div id="mm-content"></div>
+  </section>
+
+  <!-- ============ CHALLENGES ============ -->
+  <section id="view-challenges" class="view" role="tabpanel" aria-label="Challenges">
+    <div id="challenges-content"></div>
   </section>
 
   <!-- ============ PERFORMANCE ============ -->
@@ -775,6 +781,19 @@ const DATA = {
       { id: "sf300", firm: "SwissFirmUp", plan: "Qualification 300K", ddModel: "trailing-eod",
         accountSize: 300000, profitTarget: 9000, mll: 3500, dailyLossLimit: null,
         consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 300, maxContracts: 30, minDaysToPass: 1, flatByCT: "17:00", flatTz: "ET" }
+    ],
+    // Tentatives de challenge — historique versionné. Ordre CHRONOLOGIQUE.
+    //   • propFirmId → entrée de propFirms (seuils/MLL/objectif). startDate/endDate = labels de jour (comme trades[].date).
+    //   • status: "passed" | "failed" | "active" (≤ 1 active). La tentative active n'a pas d'endDate (= null) et prend
+    //     tous les trades après la dernière fermée → les futurs trades s'y rattachent automatiquement.
+    //   • Pour clôturer : passe status à "passed"/"failed", fixe endDate, et ajoute la tentative suivante en "active".
+    challenges: [
+      { id: "c1", propFirmId: "ts50", firm: "Topstep", plan: "Combine 50K",
+        startDate: "17 juin", endDate: "24 juin", status: "passed",
+        note: "Combine validée le 24 juin : objectif $3 000 atteint (cum $3 089), consistance OK." },
+      { id: "c2", propFirmId: "sf50", firm: "SwissFirmUp", plan: "Qualification 50K",
+        startDate: "—", endDate: null, status: "active",
+        note: "Challenge en cours, ouvert après la Combine TopStep réussie. Aucun trade encore." }
     ],
     // Money management — profil CONSERVATEUR. Tout est dérivé de propFirms ci-dessus : aucun seuil en dur.
     mm: {
@@ -1755,6 +1774,74 @@ const DATA = {
 };
 
 /* =====================================================================
+   TENTATIVES DE CHALLENGE — découpage du journal par tentative.
+   DATA.meta.challenges (ordonné, versionné) définit chaque tentative
+   (un slice contigu de trades, relié à un compte propFirms). On rebase
+   DATA.trades / DATA.equity sur la tentative ACTIVE (ou celle choisie via
+   le sélecteur de l'onglet Challenges) AVANT tout calcul de stats → tout
+   le quantitatif (overview, KPIs, drawdown, perf, conformité, MM) reflète
+   automatiquement la tentative scoppée, remise à zéro. Les tableaux complets
+   restent dans ALL_TRADES / ALL_EQUITY pour l'historique.
+   ===================================================================== */
+const ALL_TRADES = DATA.trades;
+const ALL_EQUITY = DATA.equity;
+const CHALLENGES = Array.isArray(DATA.meta.challenges) ? DATA.meta.challenges : [];
+
+/* Découpe ALL_TRADES / ALL_EQUITY en segments contigus, un par tentative.
+   Curseur en avant : chaque tentative fermée consomme le bloc de jours jusqu'à
+   son endDate inclus ; la tentative ouverte (sans endDate) prend tout le reste. */
+function buildAttemptSlices(allTrades, allEquity, challenges) {
+  const slices = [];
+  let tCur = 0, eCur = 0;
+  const consumeTo = (arr, cur, endDate) => {           // index exclusif après le bloc endDate
+    if (!endDate || endDate === "—" || endDate === "en cours") return arr.length;
+    let last = -1;
+    for (let i = cur; i < arr.length; i++) {
+      if (arr[i].date === endDate) last = i;
+      else if (last !== -1) break;                     // on a quitté le bloc du endDate
+    }
+    return last !== -1 ? last + 1 : cur;               // endDate absent → slice vide
+  };
+  challenges.forEach(ch => {
+    const tEnd = consumeTo(allTrades, tCur, ch.endDate);
+    const eEnd = consumeTo(allEquity, eCur, ch.endDate);
+    const baseCum = eCur > 0 ? allEquity[eCur - 1].cum : 0;   // cum juste avant la tentative
+    slices.push({ ch, tradeStart: tCur, tradeEnd: tEnd, eqStart: eCur, eqEnd: eEnd, baseCum });
+    tCur = tEnd; eCur = eEnd;
+  });
+  return slices;
+}
+
+const ATTEMPT_SLICES = CHALLENGES.length ? buildAttemptSlices(ALL_TRADES, ALL_EQUITY, CHALLENGES) : [];
+let SCOPED_ATTEMPT = null;
+if (ATTEMPT_SLICES.length) {
+  let scopedId; try { scopedId = localStorage.getItem("ict-attempt"); } catch (e) {}
+  SCOPED_ATTEMPT = ATTEMPT_SLICES.find(s => s.ch.id === scopedId)
+                || ATTEMPT_SLICES.find(s => s.ch.status === "active")
+                || ATTEMPT_SLICES[ATTEMPT_SLICES.length - 1];
+
+  // Rescope DATA sur la tentative choisie (equity rebasée à 0).
+  DATA.trades = ALL_TRADES.slice(SCOPED_ATTEMPT.tradeStart, SCOPED_ATTEMPT.tradeEnd);
+  DATA.equity = ALL_EQUITY.slice(SCOPED_ATTEMPT.eqStart, SCOPED_ATTEMPT.eqEnd)
+                          .map(p => ({ date: p.date, cum: p.cum - SCOPED_ATTEMPT.baseCum }));
+  if (DATA.equity.length === 0) DATA.equity = [{ date: "—", cum: 0 }];   // tentative vide → seed 0 (évite le crash eq[-1].cum)
+
+  // Seuils/labels dérivés de la tentative scoppée.
+  const spf = DATA.meta.propFirms.find(p => p.id === SCOPED_ATTEMPT.ch.propFirmId);
+  if (spf) DATA.meta.maxDrawdownLimit = -spf.mll;                        // jauge DD = MLL de la firme active
+  DATA.meta.periodStart = (SCOPED_ATTEMPT.ch.startDate && SCOPED_ATTEMPT.ch.startDate !== "—")
+                          ? SCOPED_ATTEMPT.ch.startDate
+                          : (DATA.trades[0] ? DATA.trades[0].date : "—");
+  DATA.meta.periodEnd = SCOPED_ATTEMPT.ch.endDate || "en cours";
+
+  // Sessions = journal qualitatif quotidien → filtrées aux jours de la tentative scoppée
+  // (date session "19 juin 2026" vs jour trade "19 juin" : on retire l'année avant comparaison).
+  const ALL_SESSIONS = Array.isArray(DATA.sessions) ? DATA.sessions : [];
+  const scopedDays = new Set(DATA.trades.map(t => t.date));
+  DATA.sessions = ALL_SESSIONS.filter(s => scopedDays.has((s.date || "").replace(/\s+\d{4}$/, "")));
+}
+
+/* =====================================================================
    RENDU — tout est calculé depuis DATA, aucun chiffre dupliqué.
    ===================================================================== */
 const fmtUsd    = n => (n < 0 ? "−$" : "+$") + Math.abs(Math.round(n)).toLocaleString("en-US");
@@ -1904,7 +1991,7 @@ document.getElementById("overview-top").innerHTML = `
   </div>`;
 
 /* --- KPI scorecard (ordre = priorité pro, §6.1) --- */
-const ddPctNow = Math.min(100, Math.round(100 * maxDrawdown / Math.abs(maxDrawdownLimit)));
+const ddPctNow = Math.min(100, Math.round(100 * maxDrawdown / (Math.abs(maxDrawdownLimit) || 1)));
 document.getElementById("kpis").innerHTML = `
   <div class="kpi"><div class="label">Expectancy <span class="info">i<span class="tip">Gain moyen attendu par trade : winRate·avgWin − (1−winRate)·avgLoss. En R = expectancy / 1R.</span></span></div><div class="value num ${expectancy >= 0 ? "pos" : "neg"}">${fmtUsd(expectancy)}</div><div class="sub">${rExpectancy >= 0 ? "+" : "−"}${Math.abs(rExpectancy).toFixed(2)}R · per trade</div></div>
   <div class="kpi"><div class="label">Profit Factor <span class="info">i<span class="tip">Total des gains / total des pertes. &gt; 1 = profitable.</span></span></div><div class="value num ${profitFactor >= 1.5 ? "pos" : profitFactor >= 1 ? "acc" : "neg"}">${profitFactor.toFixed(2)}×</div><div class="sub">${fmtUsdAbs(totalWins)} / ${fmtUsdAbs(totalLosses)}</div></div>
@@ -2673,7 +2760,8 @@ const propFirms = DATA.meta.propFirms || (DATA.meta.propFirm ? [DATA.meta.propFi
 if (propEl && propFirms.length) {
   propFirms.forEach((p, i) => { if (!p.id) p.id = "acct" + i; });
   let propSel; try { propSel = localStorage.getItem("ict-prop"); } catch (e) {}
-  if (!propFirms.some(p => p.id === propSel)) propSel = propFirms[0].id;
+  // Défaut = firme de la tentative scoppée (sinon 1re firme). Le sélecteur reste libre pour comparer.
+  if (!propFirms.some(p => p.id === propSel)) propSel = (SCOPED_ATTEMPT && SCOPED_ATTEMPT.ch.propFirmId) || propFirms[0].id;
 
   const pfDaily = eq.map((p, i) => i === 0 ? p.cum : p.cum - eq[i-1].cum);
 
@@ -2822,6 +2910,84 @@ if (propEl && propFirms.length) {
 }
 
 /* =====================================================================
+   CHALLENGES · historique des tentatives (réussies / ratées / en cours).
+   Lit ALL_TRADES + ATTEMPT_SLICES (jamais les slices rescoppées). Le sélecteur
+   change la tentative ACTIVE de tout le dashboard (localStorage + reload).
+   ===================================================================== */
+const challEl = document.getElementById("challenges-content");
+if (challEl && ATTEMPT_SLICES.length) {
+  const badge = st => st === "passed" ? `<span class="pf-status ok">✅ Réussi</span>`
+              : st === "failed" ? `<span class="pf-status bad">❌ Raté</span>`
+              : `<span class="pf-status warn">🟡 En cours</span>`;
+
+  const statsOf = slice => {
+    const trades = ALL_TRADES.slice(slice.tradeStart, slice.tradeEnd);
+    const pls = trades.map(plOf).filter(v => v !== null);
+    const net = pls.reduce((a, b) => a + b, 0);
+    const w = pls.filter(v => v > 0).length, l = pls.filter(v => v < 0).length;
+    const wr = (w + l) ? Math.round(100 * w / (w + l)) : 0;
+    const pf = propFirms.find(p => p.id === slice.ch.propFirmId);
+    const tgtPct = pf && pf.profitTarget ? Math.max(0, Math.min(100, Math.round(100 * net / pf.profitTarget))) : null;
+    return { n: trades.length, net, w, l, wr, pf, tgtPct };
+  };
+
+  const passed = CHALLENGES.filter(c => c.status === "passed").length;
+  const failed = CHALLENGES.filter(c => c.status === "failed").length;
+  const active = CHALLENGES.filter(c => c.status === "active").length;
+
+  const options = ATTEMPT_SLICES.map(s =>
+    `<option value="${s.ch.id}"${s.ch.id === SCOPED_ATTEMPT.ch.id ? " selected" : ""}>${s.ch.firm} · ${s.ch.plan}${s.ch.status === "active" ? " (en cours)" : s.ch.status === "passed" ? " (réussi)" : " (raté)"}</option>`
+  ).join("");
+
+  // Cartes : tentative la plus récente en premier.
+  const cards = ATTEMPT_SLICES.slice().reverse().map(s => {
+    const r = statsOf(s);
+    const scoped = s.ch.id === SCOPED_ATTEMPT.ch.id;
+    const period = (s.ch.startDate && s.ch.startDate !== "—" ? s.ch.startDate : "—") + " → " + (s.ch.endDate || "en cours");
+    const tgt = r.pf ? fmtUsdAbs(r.pf.profitTarget) : "—";
+    return `
+    <div class="section" style="${scoped ? "border-left:3px solid var(--accent);padding-left:14px;" : ""}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <h2 style="margin:0">${s.ch.firm} · ${s.ch.plan}</h2>
+        ${badge(s.ch.status)}${scoped ? `<span class="pf-status na">affichée</span>` : ""}
+        <span style="margin-left:auto;font-size:12px;color:var(--muted)">${period}</span>
+      </div>
+      <div class="kpis" style="margin-bottom:10px">
+        <div class="kpi"><div class="label">P/L net</div><div class="value num ${r.net >= 0 ? "pos" : "neg"}">${fmtUsd(r.net)}</div><div class="sub">objectif ${tgt}</div></div>
+        <div class="kpi"><div class="label">Trades</div><div class="value num">${r.n}</div><div class="sub">${r.w}W / ${r.l}L</div></div>
+        <div class="kpi"><div class="label">Win rate</div><div class="value num">${r.n ? r.wr + "%" : "—"}</div><div class="sub">${r.n ? "sur clôturés" : "aucun trade"}</div></div>
+        <div class="kpi"><div class="label">Objectif</div><div class="value num ${r.tgtPct === 100 ? "pos" : "acc"}">${r.tgtPct != null ? r.tgtPct + "%" : "—"}</div><div class="sub">${r.pf ? r.pf.firm : ""}</div></div>
+      </div>
+      ${r.tgtPct != null ? `<div class="pf-progress"><div class="pf-progress-fill" style="width:${r.tgtPct}%;background:${s.ch.status === "passed" ? "var(--green)" : s.ch.status === "failed" ? "var(--red)" : "var(--accent)"}"></div></div>` : ""}
+      ${s.ch.note ? `<p class="pf-note" style="margin-bottom:0">${s.ch.note}</p>` : ""}
+    </div>`;
+  }).join("");
+
+  challEl.innerHTML = `
+    <p class="view-intro">Chaque <strong>tentative de challenge</strong> est un segment du journal relié à un compte prop firm. Quand tu réussis ou rates un challenge, on le clôture : tout le dashboard (overview, conformité, MM…) repart à <strong>zéro</strong> sur la tentative suivante. Cet onglet garde l'historique complet.</p>
+
+    <div class="pf-verdict ${active ? "warn" : "ok"}"><span class="idot ${active ? "accent" : "green"}"></span>${passed} réussi${passed > 1 ? "s" : ""} · ${failed} raté${failed > 1 ? "s" : ""} · ${active} en cours</div>
+
+    <div class="pf-head" style="margin-top:14px">
+      <label class="pf-select-lbl" for="chall-select">Tentative affichée par le dashboard</label>
+      <select id="chall-select" class="pf-select" aria-label="Choix de la tentative affichée">${options}</select>
+    </div>
+    <p class="pf-note" style="margin-top:6px">Changer ici recharge le dashboard et rebase toutes les stats sur la tentative choisie.</p>
+
+    ${cards}`;
+
+  const sel = document.getElementById("chall-select");
+  if (sel) sel.addEventListener("change", () => {
+    try {
+      localStorage.setItem("ict-attempt", sel.value);
+      localStorage.removeItem("ict-prop");      // re-défaut sur la firme de la nouvelle tentative
+      localStorage.removeItem("ict-mm-acct");
+    } catch (e) {}
+    location.reload();
+  });
+}
+
+/* =====================================================================
    MONEY MANAGEMENT · plan de sizing conservateur (Topstep 50/100/150K)
    Tout est dérivé de meta.propFirms + meta.mm — aucune règle codée en dur.
    ===================================================================== */
@@ -2835,7 +3001,7 @@ if (mmEl && mmCfg && propFirms.length) {
     mmInstr = localStorage.getItem("ict-mm-instr");
     mmStop  = localStorage.getItem("ict-mm-stop");
   } catch (e) {}
-  if (!mmAccts.some(p => p.id === mmSel)) mmSel = mmAccts[0].id;
+  if (!mmAccts.some(p => p.id === mmSel)) mmSel = (SCOPED_ATTEMPT && SCOPED_ATTEMPT.ch.propFirmId) || mmAccts[0].id;
   if (!mmCfg.instruments.some(i => i.sym === mmInstr)) mmInstr = mmCfg.instruments[0].sym;
   if (!(parseFloat(mmStop) > 0)) mmStop = "15";
 
