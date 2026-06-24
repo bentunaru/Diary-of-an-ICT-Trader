@@ -761,19 +761,20 @@ const DATA = {
       // SwissFirmUp (vérifié 2026-06-24, swissfirmup.com/reglements) : qualification 2 étapes, futures, split 90 %.
       // Drawdown EOD qui traile sur le SOLDE DE CLÔTURE (pas l'intraday) → modèle trailing-eod, plus fidèle ici que pour Topstep.
       // Aucune Daily Loss Limit (dailyLossLimit: null). Consistance 50 % de l'OBJECTIF initial (consistencyBasis "target", pas le profit total).
-      // Aucun minimum de jours (minDaysToPass: 1), qualif. plafonnée à 30 jours. flatByCT 16:00 CT = clôture de séance (pas d'overnight) — à confirmer.
+      // Aucun minimum de jours (minDaysToPass: 1), qualif. plafonnée à 30 jours.
+      // Flat avant 17:00 ET = clôture CME des indices (= 16:00 CT ; pause maintenance 17:00–18:00 ET) — pas d'overnight. flatTz "ET" car Benjamin raisonne en heure de New York.
       { id: "sf50",  firm: "SwissFirmUp", plan: "Qualification 50K",  ddModel: "trailing-eod",
         accountSize: 50000,  profitTarget: 3000, mll: 2000, dailyLossLimit: null,
-        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 150, maxContracts: 10, minDaysToPass: 1, flatByCT: "16:00" },
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 150, maxContracts: 10, minDaysToPass: 1, flatByCT: "17:00", flatTz: "ET" },
       { id: "sf100", firm: "SwissFirmUp", plan: "Qualification 100K", ddModel: "trailing-eod",
         accountSize: 100000, profitTarget: 5000, mll: 2500, dailyLossLimit: null,
-        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 200, maxContracts: 15, minDaysToPass: 1, flatByCT: "16:00" },
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 200, maxContracts: 15, minDaysToPass: 1, flatByCT: "17:00", flatTz: "ET" },
       { id: "sf200", firm: "SwissFirmUp", plan: "Qualification 200K", ddModel: "trailing-eod",
         accountSize: 200000, profitTarget: 7000, mll: 3000, dailyLossLimit: null,
-        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 250, maxContracts: 20, minDaysToPass: 1, flatByCT: "16:00" },
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 250, maxContracts: 20, minDaysToPass: 1, flatByCT: "17:00", flatTz: "ET" },
       { id: "sf300", firm: "SwissFirmUp", plan: "Qualification 300K", ddModel: "trailing-eod",
         accountSize: 300000, profitTarget: 9000, mll: 3500, dailyLossLimit: null,
-        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 300, maxContracts: 30, minDaysToPass: 1, flatByCT: "16:00" }
+        consistencyPct: 50, consistencyBasis: "target", minWinDays: null, winDayThreshold: 300, maxContracts: 30, minDaysToPass: 1, flatByCT: "17:00", flatTz: "ET" }
     ],
     // Money management — profil CONSERVATEUR. Tout est dérivé de propFirms ci-dessus : aucun seuil en dur.
     mm: {
@@ -2271,7 +2272,7 @@ if (propEl && propFirms.length) {
         ${r.contractsKnown ? st(true, r.contractsPass, "Respecté", "Dépassé") : `<span class="pf-status na">à régénérer</span>`}
       </div>
       <div class="pf-rule">
-        <div class="pf-name">Flat à la clôture (${pf.flatByCT} CT)<span class="sub">Horaires de sortie vs fenêtre interdite</span></div>
+        <div class="pf-name">Flat à la clôture (${pf.flatByCT} ${pf.flatTz || "CT"})<span class="sub">Horaires de sortie vs fenêtre interdite</span></div>
         <div class="pf-val">—</div>
         <span class="pf-status na">V2 (intraday)</span>
       </div>
@@ -2595,7 +2596,7 @@ if (mmEl && mmCfg && propFirms.length) {
       <div class="pf-rule"><div class="pf-name">3. ${mmCfg.riskTradesPerDay} trades perdants max / jour<span class="sub">Risque fixe ${fmtUsdAbs(par.riskPerTrade)}, jamais augmenté après une perte (no martingale, no moyenne à la baisse).</span></div></div>
       <div class="pf-rule"><div class="pf-name">4. Taille = calcul, jamais feeling<span class="sub">Contrats dérivés du risque fixe ÷ distance de stop (calculateur ci-dessus). Pas de stop, pas de trade.</span></div></div>
       <div class="pf-rule"><div class="pf-name">5. Plafond de gain / jour ≤ ${fmtUsdAbs(par.dailyGainCap)}<span class="sub">Un méga-jour casse la règle de consistance et peut bloquer la validation / le payout. Plafond atteint → réduis ou arrête.</span></div></div>
-      <div class="pf-rule"><div class="pf-name">6. Flat avant ${pf.flatByCT} CT<span class="sub">Clôture ${firm} — jamais de position overnight, jamais dans la fenêtre interdite.</span></div></div>
+      <div class="pf-rule"><div class="pf-name">6. Flat avant ${pf.flatByCT} ${pf.flatTz || "CT"}<span class="sub">Clôture ${firm} — jamais de position overnight, jamais dans la fenêtre interdite.</span></div></div>
       <div class="pf-rule"><div class="pf-name">7. Une seule idée à la fois<span class="sub">Pas de cumul de corrélés : NQ + ES en même temps = le même risque directionnel compté deux fois.</span></div></div>
     </div>`;
 
