@@ -319,6 +319,8 @@
   .session-status { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
   .session-status--live   { color: var(--accent); background: var(--accent-bg); }
   .session-status--closed { color: var(--muted); background: var(--bg3); }
+  .session-attempt { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); }
+  .session-attempt--scoped { color: var(--accent); background: var(--accent-bg); border-color: transparent; }
   .session-pl { font-size: 14px; font-weight: 600; }
   .session-pl .s { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 8px; }
   .session-body { padding: 4px 18px 18px; border-top: 1px solid var(--border); }
@@ -792,8 +794,8 @@ const DATA = {
         startDate: "17 juin", endDate: "24 juin", status: "passed",
         note: "Combine validée le 24 juin : objectif $3 000 atteint (cum $3 089), consistance OK." },
       { id: "c2", propFirmId: "sf300", firm: "SwissFirmUp", plan: "Qualification 300K",
-        startDate: "—", endDate: null, status: "active",
-        note: "Challenge en cours, ouvert après la Combine TopStep réussie. Aucun trade encore." }
+        startDate: "25 juin", endDate: null, status: "active",
+        note: "Challenge en cours, ouvert après la Combine TopStep réussie. Sizing : 7 micros MNQU (5+2 vs Topstep)." }
     ],
     // Money management — profil CONSERVATEUR. Tout est dérivé de propFirms ci-dessus : aucun seuil en dur.
     mm: {
@@ -855,7 +857,40 @@ const DATA = {
   bestTrade: { value: "+$675.50", sub: "MNQ · 22 juin · Long bracket 5 micros · runner sous PDH" },
 
   sessions: [
-    { date: "24 juin 2026", status: "live", statusLabel: "Jour 6 · en cours", pl: null, plSub: "Pré-marché · biais baissier aligné algo",
+    { date: "25 juin 2026", status: "live", statusLabel: "Jour 1 SF · en cours", pl: null, plSub: "Pré-marché · SwissFirmUp 300K · bullish prudent",
+      html: `
+        <h3>Analyse Pré-Marché · 25 juin · NQU26 <span style="color:var(--muted);font-size:13px">· jeudi · SwissFirmUp 300K (Jour 1)</span></h3>
+        <div class="callout callout--accent">
+          <h4>🆕 Nouveau challenge · SwissFirmUp 300K · MM ajusté à 7 micros</h4>
+          La Combine TopStep est validée → nouveau challenge <strong>SwissFirmUp 300K</strong> (objectif $9 000, MLL $3 500, trailing EOD). Money management adapté : <strong>7 micros MNQU</strong> (+2 vs les 5 de TopStep). Le compte et le suivi multi-challenge sont déjà dans le dashboard (onglet Prop Firm).
+        </div>
+        <div class="callout callout--green mt">
+          <h4>🟢 Biais bullish — MAIS prudence : le 4H Trinity reste bearish</h4>
+          Très beau mouvement de <strong>retournement</strong> (V-reversal). Mon biais reste <strong>bullish</strong> pour l'instant. ATTENTION : sur Trinity, le <strong>4H est toujours bearish</strong> → selon ma règle « désaccord HTF/exécution », c'est un <strong>trade dégradé / contre-tendance</strong> : plus petit, plus court, on ne vise que la liquidité proche. Rester prudent.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">≈ 30,037</div><div class="s">après le reversal</div></div>
+          <div class="mini-stat"><div class="l">FVG bullish 4H</div><div class="v num acc">≈ 29,920–29,945</div><div class="s">déjà rebondi</div></div>
+          <div class="mini-stat"><div class="l">Target (high 5m)</div><div class="v num pos">≈ 30,160</div><div class="s">draw proche</div></div>
+          <div class="mini-stat"><div class="l">DOL</div><div class="v num neg">trait rouge</div><div class="s">draw on liquidity</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🎯 Plan</h4>
+          <strong>Seul niveau exploitable</strong> — le FVG bullish 4H (≈ 29,920–29,945) où le prix a déjà rebondi. <strong>Cible</strong> : le high du 5 min (≈ 30,160). <strong>DOL</strong> = le trait rouge.<br>
+          <strong>Prudence</strong> — 4H bearish = contre-tendance, donc taille réduite, cible proche, pas d'ambition longue. Confirmation 5 min avant toute entrée. <strong>Sizing 7 micros : 6 fixes au TP1 (2:1 · +$600) + 1 runner, SL 25 pts (−$350)</strong>.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-25/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/03-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/04-15m.png" alt="15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/05-5m.png" alt="5 min · target" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · FVG bullish rebondi → cible high ≈ 30,160</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/06-trinity-daily-4h.png" alt="Trinity · 4H bearish" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · Daily/4H — le 4H reste bearish (contre le biais LTF)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/07-trinity-1h-5m.png" alt="Trinity · 1H/5min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · 1H + 5 min</figcaption></figure>
+        </div>
+      `
+    },
+    { date: "24 juin 2026", status: "closed", statusLabel: "Jour 6 · Combine validée 🏆", pl: "+$400", plSub: "TP1 long = Combine TopStep passée · suite en backtest",
       html: `
         <h3>Analyse Pré-Marché · 24 juin · NQU26 <span style="color:var(--muted);font-size:13px">· mercredi · Jour 6</span></h3>
         <div class="callout callout--green">
@@ -1441,7 +1476,8 @@ const DATA = {
     { label: "Pas d'ordre limite le week-end", critical: true, text: "Ne JAMAIS laisser un ordre limite ouvert pendant le week-end. Le gap et le repricing du dimanche soir / lundi peuvent emmener le prix bien au-delà du plan : le 22 juin, le marché a retracé jusqu'à ≈ 30,470 — sous la limite prévue (30,603) ET sous le SL structurel (30,537.75). Une limite week-end aurait été remplie puis stoppée pour une perte pleine, alors même que le biais Long restait juste. Leçon : préparer le plan le week-end, mais n'exécuter qu'en séance, après confirmation 5 min en Kill Zone. Le plan autorise, la séance confirme." },
     { label: "Cette semaine : cadre 1H, exécution 5 min — PAS de 1 min", critical: true, text: "Discipline de la semaine (22 juin →) : le cadre se lit en 1H, l'exécution se fait en 5 min. NE PAS regarder le 1 min. Le 1 min a induit l'erreur du 22 juin (short d'instinct sur le high de l'Asia = piège de bruit, −$55). Le 1 min crée des micro-signaux contre le biais qui poussent à flipper. En restant sur le 5 min, le bruit disparaît et seules les vraies structures alignées avec le 1H déclenchent une entrée. Deux timeframes, pas trois." },
     { label: "Protéger le gain du runner sur cassure de structure", critical: true, text: "Le runner (1 micro) se gère en DISCRÉTIONNAIRE — distinct des 4 contrats fixes qui restent sur le bracket dur (SL/TP jamais déplacés). Principe : ne pas laisser un runner déjà bien en profit revenir au break-even. Si une structure baissière se forme CONTRE le long alors qu'on est nettement en gain (22 juin : runner à ≈ +$275, « plus de $200 »), on sort et on encaisse. Le BE auto est un PLANCHER de protection, pas une cible. Validé le 22 juin : après la sortie sous le PDH, le prix a cassé la structure et chuté jusqu'à ≈ 30,450 — bien sous le BE 30,643.50. Tenir jusqu'au BE aurait rendu tout le gain du runner." },
-    { label: "TP à temps — ne pas s'éterniser dans un trade", critical: false, text: "La cible peut mettre des heures à se réaliser : le 22 juin, le PDH n'a été pris qu'à ~14h alors que le trade aurait couru depuis ~9h30 (≈ 4h+ d'attente passive). Rester aussi longtemps = exposition au retournement + charge mentale, pour un gain souvent déjà acquis plus tôt. Préférer encaisser sur cassure de structure / cible intermédiaire atteinte plutôt qu'attendre passivement le TP final. Complète la gestion discrétionnaire du runner : on prend le profit à temps." }
+    { label: "TP à temps — ne pas s'éterniser dans un trade", critical: false, text: "La cible peut mettre des heures à se réaliser : le 22 juin, le PDH n'a été pris qu'à ~14h alors que le trade aurait couru depuis ~9h30 (≈ 4h+ d'attente passive). Rester aussi longtemps = exposition au retournement + charge mentale, pour un gain souvent déjà acquis plus tôt. Préférer encaisser sur cassure de structure / cible intermédiaire atteinte plutôt qu'attendre passivement le TP final. Complète la gestion discrétionnaire du runner : on prend le profit à temps." },
+    { label: "Money management SwissFirmUp 300K (7 micros)", critical: true, text: "Nouveau compte SwissFirmUp 300K (à partir du 25 juin) → sizing porté à 7 micros MNQU (+2 vs les 5 de Topstep). BRACKET : 6 micros fixes au TP1 (2:1, +50 pts = +$600) + 1 runner. SL 25 pts = 7 × 25 × $2 = −$350 de risque par trade. RM FIXE : SL et TP jamais déplacés une fois posés (seule exception : gestion discrétionnaire du runner sur cassure de structure). Objectif $9 000, MLL $3 500 (trailing EOD, verrouille au solde de départ). Le reste de la discipline ne change pas : suivre le biais de l'algo, stop après 2 SL, pas de 1 min." }
   ],
 
   /* ---- Concepts ICT (glossaire vivant) ---- */
@@ -1834,11 +1870,38 @@ if (ATTEMPT_SLICES.length) {
                           : (DATA.trades[0] ? DATA.trades[0].date : "—");
   DATA.meta.periodEnd = SCOPED_ATTEMPT.ch.endDate || "en cours";
 
-  // Sessions = journal qualitatif quotidien → filtrées aux jours de la tentative scoppée
-  // (date session "19 juin 2026" vs jour trade "19 juin" : on retire l'année avant comparaison).
+  // Sessions = journal qualitatif quotidien → JAMAIS filtré. Un journal garde tout son
+  // historique : on affiche TOUTES les sessions en permanence, et on étiquette chacune par
+  // sa tentative (badge). Seul le quantitatif (overview, equity, conformité, MM) est rebasé
+  // par tentative. Le rattachement reprend les mêmes bornes que le découpage des trades :
+  // consommation chronologique des jours de session jusqu'au endDate de chaque tentative.
+  // (date session "19 juin 2026" vs endDate "19 juin" : on retire l'année avant comparaison.)
   const ALL_SESSIONS = Array.isArray(DATA.sessions) ? DATA.sessions : [];
-  const scopedDays = new Set(DATA.trades.map(t => t.date));
-  DATA.sessions = ALL_SESSIONS.filter(s => scopedDays.has((s.date || "").replace(/\s+\d{4}$/, "")));
+  const sessDay = sx => (sx.date || "").replace(/\s+\d{4}$/, "");
+  const chronoIdx  = ALL_SESSIONS.map((_, i) => i).reverse();          // index originaux, ancien→récent
+  const chronoDays = chronoIdx.map(i => sessDay(ALL_SESSIONS[i]));
+  let sCur = 0;
+  for (const ch of CHALLENGES) {
+    let sEnd;
+    if (!ch.endDate || ch.endDate === "—" || ch.endDate === "en cours") {
+      sEnd = chronoDays.length;
+    } else {
+      let last = -1;
+      for (let i = sCur; i < chronoDays.length; i++) {
+        if (chronoDays[i] === ch.endDate) last = i;
+        else if (last !== -1) break;
+      }
+      sEnd = last !== -1 ? last + 1 : sCur;
+    }
+    for (let i = sCur; i < sEnd; i++) {
+      ALL_SESSIONS[chronoIdx[i]]._attempt = {
+        id: ch.id, firm: ch.firm, plan: ch.plan, status: ch.status,
+        scoped: !!(SCOPED_ATTEMPT && ch.id === SCOPED_ATTEMPT.ch.id)
+      };
+    }
+    sCur = sEnd;
+  }
+  DATA.sessions = ALL_SESSIONS;   // journal complet, toutes tentatives confondues
 }
 
 /* =====================================================================
@@ -2244,6 +2307,7 @@ document.getElementById("sessions").innerHTML = DATA.sessions.map((s, i) => `
       <div class="session-id">
         <span class="session-date">${s.date}</span>
         <span class="session-status session-status--${s.status === "live" ? "live" : "closed"}">${s.statusLabel}</span>
+        ${s._attempt ? `<span class="session-attempt${s._attempt.scoped ? " session-attempt--scoped" : ""}" title="Tentative : ${s._attempt.firm} · ${s._attempt.plan}">${s._attempt.firm}</span>` : ""}
       </div>
       <div class="session-pl num ${s.pl ? (s.pl.startsWith('+') ? "pos" : "neg") : ""}">${s.pl ?? "—"}<span class="s">${s.plSub}</span></div>
     </summary>
