@@ -27,18 +27,23 @@ ROOT = os.path.dirname(HERE)
 DASHBOARD = os.path.join(ROOT, "ICT_Dashboard.html")
 ANNOTATIONS = os.path.join(HERE, "annotations.json")
 
-MULT = {"NQ": 20.0, "ES": 50.0}
+# Multiplicateurs par point. Micros (MNQ/MES) = 1/10e des minis. Détection MNQ/MES avant NQ/ES.
+MULT = {"MNQ": 2.0, "MES": 5.0, "NQ": 20.0, "ES": 50.0}
 MONTHS_FR = {1:"janvier",2:"février",3:"mars",4:"avril",5:"mai",6:"juin",
              7:"juillet",8:"août",9:"septembre",10:"octobre",11:"novembre",12:"décembre"}
 
 
 def sym_short(s):
+    if "MNQ" in s: return "MNQ"
+    if "MES" in s: return "MES"
     if "NQ" in s: return "NQ"
     if "ES" in s: return "ES"
     return "?"
 
 
 def instr_full(s):
+    if "MNQ" in s: return "MNQU26"
+    if "MES" in s: return "MESU26"
     if "NQ" in s: return "NQM26"
     if "ES" in s: return "ESM26"
     return s
