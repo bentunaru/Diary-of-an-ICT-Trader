@@ -20,7 +20,8 @@ Le script ne touche PAS au reste du dashboard (sessions, règles, etc.).
 """
 import csv, json, sys, os, glob, re
 from collections import deque, defaultdict
-from datetime import datetime, timedelta
+
+from trade_validation import validate_trades, ValidationError, classify_kz, RULES
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -54,33 +55,8 @@ def fr_date(iso):  # "2026-06-08" -> "08 juin"
     return f"{d} {MONTHS_FR[int(m)]}"
 
 
-# Le log Sierra est en UTC. On convertit en ET (US Eastern) en tenant compte
-# de l'heure d'été (DST) : EDT = UTC-4 (2e dim. mars → 1er dim. nov), sinon EST = UTC-5.
-# Stdlib pur (pas de zoneinfo/tzdata) → portable et déterministe.
-def _nth_sunday(year, month, n):
-    d = datetime(year, month, 1)
-    first = d + timedelta(days=(6 - d.weekday()) % 7)   # 1er dimanche du mois
-    return first + timedelta(weeks=n - 1)
-
-def _et_offset_hours(dt_utc):
-    """Offset ET (en heures) pour un datetime UTC naïf, selon les règles US DST."""
-    dst_start = _nth_sunday(dt_utc.year, 3, 2).replace(hour=7)   # 02:00 EST = 07:00 UTC
-    dst_end   = _nth_sunday(dt_utc.year, 11, 1).replace(hour=6)  # 02:00 EDT = 06:00 UTC
-    return -4 if dst_start <= dt_utc < dst_end else -5
-
-def to_et_minutes(date_iso, hhmmss):
-    """date 'YYYY-MM-DD' + heure 'HH:MM:SS' UTC -> minutes depuis minuit en ET (DST-aware)."""
-    dt_utc = datetime.strptime(f"{date_iso} {hhmmss}", "%Y-%m-%d %H:%M:%S")
-    et = dt_utc + timedelta(hours=_et_offset_hours(dt_utc))
-    return et.hour * 60 + et.minute
-
-def kill_zone(date_iso, hhmmss):
-    """Kill Zone ICT déduite de l'heure d'ouverture (ET)."""
-    t = to_et_minutes(date_iso, hhmmss)
-    if 2 * 60 <= t < 5 * 60:        return "London"        # 02:00–05:00 ET
-    if 8 * 60 + 30 <= t < 11 * 60:  return "NY AM"         # 08:30–11:00 ET
-    if 10 * 60 <= t < 12 * 60:      return "London Close"  # 10:00–12:00 ET
-    return "Hors KZ"
+# La classification Kill Zone (UTC→ET compris) vit dans trade_validation.py
+# (KZ_WINDOWS + classify_kz) — source unique, pas de duplication ici.
 
 
 def parse_log(path):
@@ -201,8 +177,8 @@ def build_data(trades, annotations):
             # Champs exposés (quick win) : exploités par l'audit de discipline et l'onglet Prop Firm.
             "contracts": t["maxq"], "openTime": t["open_time"], "closeTime": t["close_time"],
         }
-        # Kill Zone : dérivée de l'heure ET, sauf override explicite dans l'annotation
-        obj["kz"] = a.get("kz") or kill_zone(t["date_iso"], t["open_time"])
+        # Kill Zone : source unique = classify_kz (KZ_WINDOWS de trade_validation)
+        obj["kz"] = classify_kz(t["open_time"])
         for k in ("setupType", "mood"):
             if a.get(k): obj[k] = a[k]
         if "processClean" in a: obj["processClean"] = a["processClean"]
@@ -219,10 +195,37 @@ def js_render(obj, indent=6):
             parts.append(f"{k}: {'true' if v else 'false'}")
         elif isinstance(v, (int, float)):
             parts.append(f"{k}: {v}")
+        elif isinstance(v, list):  # violations: [...] (trade_validation)
+            parts.append(f"{k}: {json.dumps(v, ensure_ascii=False)}")
         else:
             s = str(v).replace("\\", "\\\\").replace('"', '\\"')
             parts.append(f'{k}: "{s}"')
     return "    { " + ", ".join(parts) + " }"
+
+
+def compute_daily_stop(html):
+    """Stop quotidien dérivé du dashboard : min(40 % × DLL si DLL, MLL ÷ minBufferDays).
+
+    Lit mm (dailyStopPctOfDLL, minBufferDays) et le challenge actif → son entrée
+    propFirms (mll, dailyLossLimit). Retourne un montant négatif ;
+    fallback RULES["DAILY_STOP"] (avec warning) si le parsing échoue.
+    """
+    try:
+        pct = float(re.search(r"dailyStopPctOfDLL:\s*([\d.]+)", html).group(1))
+        buf = int(re.search(r"minBufferDays:\s*(\d+)", html).group(1))
+        firm_id = re.search(r'propFirmId:\s*"([^"]+)"[^}]*?status:\s*"active"',
+                            html, re.S).group(1)
+        entry = re.search(
+            rf'id:\s*"{re.escape(firm_id)}"[^}}]*?mll:\s*([\d.]+)[^}}]*?dailyLossLimit:\s*(null|[\d.]+)',
+            html, re.S)
+        mll, dll = float(entry.group(1)), entry.group(2)
+        candidates = [mll / buf]
+        if dll != "null":
+            candidates.append(pct * float(dll))
+        return -min(candidates)
+    except (AttributeError, ValueError, ZeroDivisionError):
+        print(f"⚠️  Stop quotidien introuvable dans le dashboard — fallback {RULES['DAILY_STOP']:+.0f}$")
+        return RULES["DAILY_STOP"]
 
 
 def inject(html, marker, content):
@@ -256,6 +259,20 @@ def main():
         print(f"Annotations chargées : {len(annotations)}")
 
     equity, best, trade_objs = build_data(trades, annotations)
+
+    with open(DASHBOARD, encoding="utf-8") as f:
+        html = f.read()
+
+    # Validation obligatoire (setups taggés + règles du plan de risque).
+    # Échec ⇒ sortie AVANT toute écriture : le dashboard n'est pas régénéré.
+    daily_stop = compute_daily_stop(html)
+    print(f"Stop quotidien dérivé : {daily_stop:+.0f}$")
+    try:
+        trade_objs = validate_trades(trade_objs, annotations,
+                                     rules=dict(RULES, DAILY_STOP=daily_stop))
+    except ValidationError as e:
+        sys.exit(f"❌ {e}")
+
     total = sum(t["pl"] for t in trades)
     wins = sum(1 for t in trades if t["pl"] > 0)
     losses = sum(1 for t in trades if t["pl"] < 0)
@@ -270,9 +287,6 @@ def main():
     intraday_js = ",\n".join(
         f'    {{ date: "{fr_date(p["date_iso"])}", t: "{p["time"]}", cum: {p["cum"]} }}'
         for p in intraday)
-
-    with open(DASHBOARD, encoding="utf-8") as f:
-        html = f.read()
 
     html = inject(html, "EQUITY", equity_js)
     html = inject(html, "TRADES", trades_js)

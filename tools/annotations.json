@@ -1,5 +1,5 @@
 {
-  "_comment": "Annotations ICT par trade-id (date_HH:MM:SS UTC). Fusionnées dans le dashboard par update_dashboard.py. La Kill Zone est dérivée automatiquement de l'heure ET sauf si 'kz' est précisé ici. Champs possibles: setupType, mood, processClean, setup, notes, rr, kz.",
+  "_comment": "Annotations ICT par trade-id (date_HH:MM:SS UTC). Fusionnées dans le dashboard par update_dashboard.py. La Kill Zone est dérivée exclusivement de l'openTime via classify_kz (trade_validation.py) — le champ 'kz' n'est plus pris en compte. Champs possibles: setupType, mood, processClean, setup, notes, rr. Le bloc 'trades' (clés date|openTime) porte setup/grade pour la validation.",
 
   "2026-06-03_14:15:33": {
     "setupType": "OB 15min", "mood": "Confiant", "processClean": true,
@@ -65,5 +65,30 @@
     "setupType": "OB 15min", "mood": "Neutre", "processClean": true,
     "setup": "Long OB 15min → Displacement 1min → FVG 1min · London KZ · stop structurel",
     "notes": "Process parfait. OB 15min retracé, displacement, FVG, entrée, stop sous OB. TP High Asie / FIB 0.875. Efface les pertes T1+T2 → journée nette +8,180. Meilleur exemple de la semaine."
+  },
+
+  "trades": {
+    "29 juin|05:26:00": { "setup": "", "grade": "" },
+    "29 juin|05:36:00": { "setup": "", "grade": "" },
+    "29 juin|05:40:09": { "setup": "", "grade": "" },
+    "29 juin|07:10:06": { "setup": "", "grade": "" },
+    "29 juin|07:11:41": { "setup": "", "grade": "" },
+    "29 juin|07:13:38": { "setup": "", "grade": "" },
+    "29 juin|07:23:27": { "setup": "", "grade": "" },
+    "29 juin|07:25:12": { "setup": "", "grade": "" },
+    "30 juin|05:42:18": { "setup": "", "grade": "" },
+    "30 juin|06:41:01": { "setup": "", "grade": "" },
+    "30 juin|08:11:28": { "setup": "", "grade": "" },
+    "30 juin|11:27:19": { "setup": "", "grade": "" },
+    "01 juillet|03:18:52": { "setup": "", "grade": "" },
+    "01 juillet|03:47:19": { "setup": "", "grade": "" },
+    "01 juillet|03:50:09": { "setup": "", "grade": "" },
+    "01 juillet|05:51:51": { "setup": "", "grade": "" },
+    "01 juillet|05:52:33": { "setup": "", "grade": "" },
+    "01 juillet|06:07:25": { "setup": "", "grade": "" },
+    "01 juillet|06:54:50": { "setup": "", "grade": "" },
+    "01 juillet|07:15:19": { "setup": "", "grade": "" },
+    "01 juillet|07:27:15": { "setup": "", "grade": "" },
+    "01 juillet|08:46:25": { "setup": "", "grade": "" }
   }
 }
