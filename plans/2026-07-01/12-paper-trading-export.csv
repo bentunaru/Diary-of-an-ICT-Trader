@@ -1,0 +1,44 @@
+Time,Text
+2026-07-01 16:16:40,Order 3244035445 for symbol CME_MINI:NQU2026 has been executed at price 30253.75 for 1 units
+2026-07-01 16:16:40,Order 3244036380 successfully cancelled
+2026-07-01 16:12:01,Order 3244036380 modification confirmed
+2026-07-01 16:12:01,Order 3244035445 modification confirmed
+2026-07-01 16:12:01,Modify position for symbol CME_MINI:NQU2026 with SL 30253.00 and TP 30369.00
+2026-07-01 16:11:14,Order 3244036380 modification confirmed
+2026-07-01 16:11:14,Order 3244035445 modification confirmed
+2026-07-01 16:11:14,Modify position for symbol CME_MINI:NQU2026 with SL 30244.00 and TP 30369.00
+2026-07-01 16:08:04,Order 3244036380 modification confirmed
+2026-07-01 16:08:04,Order 3244035445 modification confirmed
+2026-07-01 16:08:04,Modify position for symbol CME_MINI:NQU2026 with SL 30230.00 and TP 30369.00
+2026-07-01 16:04:47,Order 3244036380 modification confirmed
+2026-07-01 16:04:47,Order 3244035445 modification confirmed
+2026-07-01 16:04:47,Modify position for symbol CME_MINI:NQU2026 with SL 30215.00 and TP 30369.00
+2026-07-01 16:03:55,Order 3244036380 modification confirmed
+2026-07-01 16:03:55,Order 3244035445 modification confirmed
+2026-07-01 16:03:55,Modify position for symbol CME_MINI:NQU2026 with SL 30187.50 and TP 30369.00
+2026-07-01 15:59:47,Order 3244036380 modification confirmed
+2026-07-01 15:59:47,Order 3244035445 modification confirmed
+2026-07-01 15:59:47,Modify position for symbol CME_MINI:NQU2026 with SL 30187.50 and TP 30372.50
+2026-07-01 15:59:42,Order 3244213534 for symbol CME_MINI:NQU2026 has been executed at price 30267.75 for 1 units
+2026-07-01 15:59:42,Order 3244213534 successfully placed
+2026-07-01 15:59:42,Call to place market order to sell 1 units of symbol CME_MINI:NQU2026 
+2026-07-01 15:51:34,Order 3244036380 modification confirmed
+2026-07-01 15:51:34,Order 3244035445 modification confirmed
+2026-07-01 15:51:34,Modify position for symbol CME_MINI:NQU2026 with SL 30157.25 and TP 30372.50
+2026-07-01 15:51:26,Order 3244142845 for symbol CME_MINI:NQU2026 has been executed at price 30234.00 for 1 units
+2026-07-01 15:51:26,Order 3244142845 successfully placed
+2026-07-01 15:51:26,Call to place market order to sell 1 units of symbol CME_MINI:NQU2026 
+2026-07-01 15:47:50,Order 3244036380 modification confirmed
+2026-07-01 15:47:50,Order 3244035445 modification confirmed
+2026-07-01 15:47:50,Modify position for symbol CME_MINI:NQU2026 with SL 30111.00 and TP 30372.50
+2026-07-01 15:47:32,Failed to execute order 3244099787; reason: insufficient funds
+2026-07-01 15:47:32,Order 3244099787 successfully placed
+2026-07-01 15:47:32,Call to place market order to buy 1 units of symbol CME_MINI:NQU2026 
+2026-07-01 15:41:50,Order 3244036380 successfully placed
+2026-07-01 15:41:50,Order 3244035445 modification confirmed
+2026-07-01 15:41:50,Modify position for symbol CME_MINI:NQU2026 with SL 30085.25 and TP 30372.50
+2026-07-01 15:41:45,Order 3244035445 successfully placed
+2026-07-01 15:41:45,Modify position for symbol CME_MINI:NQU2026 with SL 30085.25
+2026-07-01 15:41:35,Order 3244033483 for symbol CME_MINI:NQU2026 has been executed at price 30176.00 for 3 units
+2026-07-01 15:41:35,Order 3244033483 successfully placed
+2026-07-01 15:41:35,Call to place market order to buy 3 units of symbol CME_MINI:NQU2026 

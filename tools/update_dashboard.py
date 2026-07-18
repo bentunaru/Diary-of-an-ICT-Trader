@@ -28,6 +28,10 @@ ROOT = os.path.dirname(HERE)
 DASHBOARD = os.path.join(ROOT, "ICT_Dashboard.html")
 ANNOTATIONS = os.path.join(HERE, "annotations.json")
 
+# Journal remis à zéro le 18 juillet 2026 (tag journal-v1-pre-reset) : les fills
+# antérieurs à cette date sont IGNORÉS — un ancien export ne repeuple pas le journal.
+JOURNAL_START = "2026-07-18"
+
 # Multiplicateurs par point. Micros (MNQ/MES) = 1/10e des minis. Détection MNQ/MES avant NQ/ES.
 MULT = {"MNQ": 2.0, "MES": 5.0, "NQ": 20.0, "ES": 50.0}
 MONTHS_FR = {1:"janvier",2:"février",3:"mars",4:"avril",5:"mai",6:"juin",
@@ -247,10 +251,16 @@ def main():
     print(f"Export : {export}")
 
     rows, fills = parse_log(export)
+    skipped = len(fills)
+    fills = [f for f in fills if f["DateTime"][:10] >= JOURNAL_START]
+    skipped -= len(fills)
+    if skipped:
+        print(f"Fills antérieurs au {JOURNAL_START} ignorés : {skipped} (reset du journal)")
     trades, intraday = reconstruct(fills)
     print(f"Fills : {len(fills)} · Trades reconstruits : {len(trades)} · Points intraday : {len(intraday)}")
     if not trades:
-        raise SystemExit("Aucun trade flat→flat reconstruit : le dashboard n'est pas modifié.")
+        print("Aucun trade flat→flat reconstruit : le dashboard n'est pas modifié.")
+        return
 
     annotations = {}
     if os.path.exists(ANNOTATIONS):

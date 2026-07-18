@@ -12,7 +12,7 @@
     "https://help.topstep.com/en/articles/10657969-live-funded-account-parameters",
     "https://help.topstep.com/en/articles/8284206-when-and-what-products-can-i-trade"
   ],
-  "last_verified": "2026-06-17",
+  "last_verified": "2026-07-01",
   "currency": "USD",
   "timezone": "America/Chicago",
   "tz_abbrev": "CT",
@@ -112,7 +112,7 @@
     "applies_to": ["trading_combine_via_max_position", "express_funded_account"],
     "applies_to_lfa": false,
     "lfa_replacement": "Dynamic Live Risk Expansion",
-    "micro_to_mini_ratio": "10:1 (TopstepX). 1:1 sur plateformes tierces type Tradovate.",
+    "micro_to_mini_ratio": "10:1, sans exception. ProjectX (moteur tiers pour NinjaTrader/Tradovate) a coupe le support des prop firms tierces le 28 fevrier 2026 -> TopstepX est la seule plateforme restante pour tout compte Topstep (plus d'ancien compte non-TopstepX). Le ratio 1:1 legacy sur plateformes tierces ne s'applique donc plus.",
     "key_rule": "Le nombre max de contrats n'augmente PAS en cours de session. Nouveau palier applique a la session suivante (rebill 17:00 CT).",
     "error_tolerance_seconds": 10,
     "max_contracts_by_size": { "50K": 5, "100K": 10, "150K": 15 },

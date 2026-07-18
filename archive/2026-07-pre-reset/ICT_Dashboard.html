@@ -742,10 +742,10 @@
    ===================================================================== */
 const DATA = {
   meta: {
-    periodStart: "18 juillet 2026",
-    periodEnd: "18 juillet 2026",
+    periodStart: "17 juin 2026",
+    periodEnd: "01 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 0,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 100,                        // reset challenge Topstep 50K — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Risque max engagé", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -794,8 +794,8 @@ const DATA = {
         startDate: "17 juin", endDate: "24 juin", status: "passed",
         note: "Combine validée le 24 juin : objectif $3 000 atteint (cum $3 089), consistance OK." },
       { id: "c2", propFirmId: "sf300", firm: "SwissFirmUp", plan: "Qualification 300K",
-        startDate: "25 juin", endDate: "18 juillet", status: "failed",
-        note: "Ouvert après la Combine TopStep réussie · sizing 7 micros MNQU (5+2). Clôturé « failed » le 18 juillet lors de la remise à zéro du journal — historique archivé (tag journal-v1-pre-reset · archive/2026-07-pre-reset/)." }
+        startDate: "25 juin", endDate: null, status: "active",
+        note: "Challenge en cours, ouvert après la Combine TopStep réussie. Sizing : 7 micros MNQU (5+2 vs Topstep)." }
     ],
     // Money management — profil CONSERVATEUR. Tout est dérivé de propFirms ci-dessus : aucun seuil en dur.
     mm: {
@@ -817,7 +817,9 @@ const DATA = {
   /* P/L cumulé RÉEL — généré depuis TradeActivityLogExport par tools/update_dashboard.py */
   equity: [
     // <EQUITY>
-
+    { date: "29 juin", cum: 429 },
+    { date: "30 juin", cum: -1346 },
+    { date: "01 juillet", cum: 1294 }
     // </EQUITY>
   ],
 
@@ -825,20 +827,952 @@ const DATA = {
      Vide ⇒ le dashboard reconstruit la courbe au trade depuis trades[] (fallback). */
   intraday: [
     // <INTRADAY>
-
+    { date: "29 juin", t: "05:34:34", cum: -303 },
+    { date: "29 juin", t: "05:34:34", cum: -354 },
+    { date: "29 juin", t: "05:38:46", cum: -384 },
+    { date: "29 juin", t: "05:38:46", cum: -388 },
+    { date: "29 juin", t: "05:51:26", cum: 212 },
+    { date: "29 juin", t: "06:32:36", cum: 396 },
+    { date: "29 juin", t: "07:11:27", cum: 94 },
+    { date: "29 juin", t: "07:11:27", cum: 43 },
+    { date: "29 juin", t: "07:13:34", cum: -125 },
+    { date: "29 juin", t: "07:13:34", cum: -153 },
+    { date: "29 juin", t: "07:23:20", cum: -69 },
+    { date: "29 juin", t: "07:25:11", cum: -321 },
+    { date: "29 juin", t: "07:47:24", cum: 279 },
+    { date: "29 juin", t: "08:05:36", cum: 429 },
+    { date: "30 juin", t: "06:33:03", cum: -42 },
+    { date: "30 juin", t: "06:33:03", cum: -120 },
+    { date: "30 juin", t: "07:45:24", cum: -402 },
+    { date: "30 juin", t: "07:45:24", cum: -450 },
+    { date: "30 juin", t: "08:36:52", cum: -1080 },
+    { date: "30 juin", t: "08:36:52", cum: -1184 },
+    { date: "30 juin", t: "12:02:38", cum: -1322 },
+    { date: "30 juin", t: "12:02:38", cum: -1346 },
+    { date: "01 juillet", t: "03:47:17", cum: -1657 },
+    { date: "01 juillet", t: "03:48:44", cum: -1678 },
+    { date: "01 juillet", t: "04:02:12", cum: -1984 },
+    { date: "01 juillet", t: "04:02:12", cum: -2035 },
+    { date: "01 juillet", t: "04:02:12", cum: -2341 },
+    { date: "01 juillet", t: "04:02:12", cum: -2392 },
+    { date: "01 juillet", t: "05:51:52", cum: -2472 },
+    { date: "01 juillet", t: "06:07:19", cum: -3512 },
+    { date: "01 juillet", t: "06:21:04", cum: -2612 },
+    { date: "01 juillet", t: "06:24:39", cum: -1252 },
+    { date: "01 juillet", t: "06:26:08", cum: 568 },
+    { date: "01 juillet", t: "07:01:40", cum: 250 },
+    { date: "01 juillet", t: "07:01:40", cum: 197 },
+    { date: "01 juillet", t: "07:25:23", cum: -2 },
+    { date: "01 juillet", t: "08:28:50", cum: -308 },
+    { date: "01 juillet", t: "08:28:50", cum: -360 },
+    { date: "01 juillet", t: "08:29:08", cum: -632 },
+    { date: "01 juillet", t: "08:29:08", cum: -678 },
+    { date: "01 juillet", t: "10:52:06", cum: -78 },
+    { date: "01 juillet", t: "10:52:06", cum: 522 },
+    { date: "01 juillet", t: "11:00:21", cum: 1310 },
+    { date: "01 juillet", t: "12:02:20", cum: 1304 },
+    { date: "01 juillet", t: "12:02:20", cum: 1299 },
+    { date: "01 juillet", t: "12:02:20", cum: 1294 }
     // </INTRADAY>
   ],
 
   /* Trades RÉELS (cycles flat→flat) — généré depuis TradeActivityLogExport · annotations ICT via tools/annotations.json */
   trades: [
     // <TRADES>
-
+    { date: "29 juin", instr: "MNQU26", dir: "Short", entry: "29,551.25", exit: "29,576.50", rr: "—", pl: "−$354", plClass: "neg", plNum: -353.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 05:26:00→05:34:34 · P/L réel Sierra.", contracts: 7, openTime: "05:26:00", closeTime: "05:34:34", kz: "Hors KZ" },
+    { date: "29 juin", instr: "MNQU26", dir: "Short", entry: "29,570.50", exit: "29,573.00", rr: "—", pl: "−$35", plClass: "neg", plNum: -35.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 05:36:00→05:38:46 · P/L réel Sierra.", contracts: 7, openTime: "05:36:00", closeTime: "05:38:46", kz: "Hors KZ" },
+    { date: "29 juin", instr: "MNQU26", dir: "Long", entry: "29,579.75", exit: "29,672.25", rr: "—", pl: "+$785", plClass: "pos", plNum: 785.0, result: "Win", setup: "—", notes: "7 contrat(s) max · 4 fills · 05:40:09→06:32:36 · P/L réel Sierra.", contracts: 7, openTime: "05:40:09", closeTime: "06:32:36", kz: "Hors KZ" },
+    { date: "29 juin", instr: "MNQU26", dir: "Long", entry: "29,614.00", exit: "29,588.75", rr: "—", pl: "−$354", plClass: "neg", plNum: -353.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 07:10:06→07:11:27 · P/L réel Sierra.", contracts: 7, openTime: "07:10:06", closeTime: "07:11:27", kz: "London" },
+    { date: "29 juin", instr: "MNQU26", dir: "Short", entry: "29,587.75", exit: "29,601.75", rr: "—", pl: "−$196", plClass: "neg", plNum: -196.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 07:11:41→07:13:34 · P/L réel Sierra.", contracts: 7, openTime: "07:11:41", closeTime: "07:13:34", kz: "London" },
+    { date: "29 juin", instr: "MNQU26", dir: "Long", entry: "29,599.25", exit: "29,621.00", rr: "—", pl: "+$84", plClass: "pos", plNum: 84.0, result: "Win", setup: "—", notes: "14 contrat(s) max · 5 fills · 07:13:38→07:23:20 · P/L réel Sierra.", contracts: 14, openTime: "07:13:38", closeTime: "07:23:20", kz: "London" },
+    { date: "29 juin", instr: "MNQU26", dir: "Short", entry: "29,621.75", exit: "29,639.75", rr: "—", pl: "−$252", plClass: "neg", plNum: -252.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 3 fills · 07:23:27→07:25:11 · P/L réel Sierra.", contracts: 7, openTime: "07:23:27", closeTime: "07:25:11", kz: "London" },
+    { date: "29 juin", instr: "MNQU26", dir: "Long", entry: "29,638.50", exit: "29,713.50", rr: "—", pl: "+$750", plClass: "pos", plNum: 750.0, result: "Win", setup: "—", notes: "7 contrat(s) max · 4 fills · 07:25:12→08:05:36 · P/L réel Sierra.", contracts: 7, openTime: "07:25:12", closeTime: "08:05:36", kz: "London" },
+    { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,155.50", exit: "30,116.25", rr: "—", pl: "−$550", plClass: "neg", plNum: -549.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 05:42:18→06:33:03 · P/L réel Sierra.", contracts: 7, openTime: "05:42:18", closeTime: "06:33:03", kz: "Hors KZ" },
+    { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,113.50", exit: "30,090.00", rr: "—", pl: "−$329", plClass: "neg", plNum: -329.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 06:41:01→07:45:24 · P/L réel Sierra.", contracts: 7, openTime: "06:41:01", closeTime: "07:45:24", kz: "London" },
+    { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,118.75", exit: "30,066.25", rr: "—", pl: "−$735", plClass: "neg", plNum: -735.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 08:11:28→08:36:52 · P/L réel Sierra.", contracts: 7, openTime: "08:11:28", closeTime: "08:36:52", kz: "London" },
+    { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,122.75", exit: "30,111.25", rr: "—", pl: "−$161", plClass: "neg", plNum: -161.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 11:27:19→12:02:38 · P/L réel Sierra.", contracts: 7, openTime: "11:27:19", closeTime: "12:02:38", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Short", entry: "30,445.00", exit: "30,467.25", rr: "—", pl: "−$312", plClass: "neg", plNum: -311.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 3 fills · 03:18:52→03:47:17 · P/L réel Sierra.", contracts: 7, openTime: "03:18:52", closeTime: "03:47:17", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,466.75", exit: "30,465.25", rr: "—", pl: "−$21", plClass: "neg", plNum: -21.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 3 fills · 03:47:19→03:48:44 · P/L réel Sierra.", contracts: 7, openTime: "03:47:19", closeTime: "03:48:44", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,469.00", exit: "30,443.50", rr: "—", pl: "−$714", plClass: "neg", plNum: -714.0, result: "Perte", setup: "—", notes: "14 contrat(s) max · 8 fills · 03:50:09→04:02:12 · P/L réel Sierra.", contracts: 14, openTime: "03:50:09", closeTime: "04:02:12", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,440.75", exit: "30,438.75", rr: "—", pl: "−$80", plClass: "neg", plNum: -80.0, result: "Perte", setup: "—", notes: "20 contrat(s) max · 2 fills · 05:51:51→05:51:52 · P/L réel Sierra.", contracts: 20, openTime: "05:51:51", closeTime: "05:51:52", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,433.50", exit: "30,413.50", rr: "—", pl: "−$1,040", plClass: "neg", plNum: -1040.0, result: "Perte", setup: "—", notes: "40 contrat(s) max · 3 fills · 05:52:33→06:07:19 · P/L réel Sierra.", contracts: 40, openTime: "05:52:33", closeTime: "06:07:19", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Short", entry: "30,413.50", exit: "30,368.00", rr: "—", pl: "+$4,080", plClass: "pos", plNum: 4080.0, result: "Win", setup: "—", notes: "60 contrat(s) max · 6 fills · 06:07:25→06:26:08 · P/L réel Sierra.", contracts: 60, openTime: "06:07:25", closeTime: "06:26:08", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,397.75", exit: "30,371.25", rr: "—", pl: "−$371", plClass: "neg", plNum: -371.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 06:54:50→07:01:40 · P/L réel Sierra.", contracts: 7, openTime: "06:54:50", closeTime: "07:01:40", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Short", entry: "30,332.00", exit: "30,346.25", rr: "—", pl: "−$200", plClass: "neg", plNum: -199.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 3 fills · 07:15:19→07:25:23 · P/L réel Sierra.", contracts: 7, openTime: "07:15:19", closeTime: "07:25:23", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,353.75", exit: "30,326.25", rr: "—", pl: "−$676", plClass: "neg", plNum: -675.5, result: "Perte", setup: "—", notes: "14 contrat(s) max · 8 fills · 07:27:15→08:29:08 · P/L réel Sierra.", contracts: 14, openTime: "07:27:15", closeTime: "08:29:08", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,352.25", exit: "30,351.50", rr: "—", pl: "+$1,972", plClass: "pos", plNum: 1971.5, result: "Win", setup: "—", notes: "21 contrat(s) max · 12 fills · 08:46:25→12:02:20 · P/L réel Sierra.", contracts: 21, openTime: "08:46:25", closeTime: "12:02:20", kz: "London" }
     // </TRADES>
   ],
 
-  bestTrade: { value: "—", sub: "—" },
+  bestTrade: { value: "+$4,080", sub: "MNQ · 01 juillet · réel Sierra" },
 
-  sessions: [],
+  sessions: [
+    { date: "1er juillet 2026", status: "live", statusLabel: "Jour 5 SF · en cours", pl: null, plSub: "T1–T10 · net +$2,639.50",
+      html: `
+        <h3>Analyse Pré-Marché · 1er juillet · NQU26 <span style="color:var(--muted);font-size:13px">· mercredi · SwissFirmUp 300K (Jour 5)</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Biais bullish maintenu · structure intacte sur tous les timeframes</h4>
+          Le biais ne change pas : toujours <strong>haussier</strong>. Weekly et Daily confirment la structure de fond (rally soutenu depuis le creux d'avril ≈ 23,600 jusqu'à ≈ 31,200 récemment). Sur 4H et 1H, le marché consolide sous le high récent (≈ 30,600 des 29-30 juin) après le rebond depuis le swing low ≈ 29,200–29,300 (25 juin). Prix actuel ≈ <strong>30,463.50</strong>.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">30,463.50</div><div class="s">consolidation</div></div>
+          <div class="mini-stat"><div class="l">Structure (QUOI)</div><div class="v num pos">Haussière</div><div class="s">HH/HL sur 4H et 1H</div></div>
+          <div class="mini-stat"><div class="l">Vers où (cible)</div><div class="v num acc">≈ 30,600 → 31,000+</div><div class="s">high récent · BSL</div></div>
+          <div class="mini-stat"><div class="l">Invalidation (SSL)</div><div class="v num neg">≈ 29,200–29,300</div><div class="s">swing low 25 juin</div></div>
+        </div>
+        <div class="callout callout--red mt">
+          <h4>📅 News à haut risque aujourd'hui — prudence</h4>
+          <strong>Mercredi 1er juillet</strong> : ADP Non-Farm (8:15 ET) · <strong>Fed Chairman Warsh Speaks (9:00 ET, fort impact)</strong> · ISM Manufacturing PMI + Prices (10:00 ET). Demain <strong>NFP (8:30 ET, très fort impact)</strong>, vendredi Bank Holiday US. <strong>Pas d'ordre limite ouvert avant ces annonces</strong>, taille réduite autour de 9h et 10h ET.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-07-01/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · structure haussière de fond (triangle de lecture OÙ/QUOI/VERS OÙ)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily · rally depuis ≈ 23,600 (avril) vers ≈ 31,200</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/03-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H · swing low ≈ 29,200–29,300 (25 juin) → swing high ≈ 30,600 (29-30 juin)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/04-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H · consolidation sous le high, prix ≈ 30,463.50</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧭 Plan</h4>
+          Long dans le sens du biais uniquement. Deux scénarios : <strong>continuation</strong> — cassure displacement du high ≈ 30,600 → draw vers 31,000 puis le high weekly ≈ 31,200 ; <strong>retracement</strong> — retour vers une zone de discount (≈ 30,000 psychologique ou OB/FVG plus proche) avant la reprise, entrée avec confirmation LTF uniquement. Pas d'entrée avant la London KZ (2h–5h ET), pas d'anticipation de sweep non confirmé. Sizing 7 micros, RM fixe, stop après 2 SL. Vigilance ADP 8:15 / Fed Warsh 9:00 / ISM 10:00 ET.
+        </div>
+
+        <div class="callout mt" style="border-left-color:#d9534f">
+          <h4>⚠️ Session Asia (hors KZ) · 5 trades avant Londres · −$2,167</h4>
+          Entre 23h18 ET (30 juin) et 2h07 ET, cinq trades pris en dehors de toute Kill Zone. Séquence : short 7 stoppé (T1), scratch long (T2), puis trois tentatives longues dans le sens du biais journalier qui se sont toutes fait vendre — avec une taille qui grossit à chaque reprise (7 → 14 → 20 → 40). Aucune de ces cinq entrées n'était en London KZ.
+        </div>
+        <table class="trade-table" style="width:100%;border-collapse:collapse;margin-top:10px;font-size:13px">
+          <thead><tr style="text-align:left;color:var(--muted)"><th style="padding:6px 8px">#</th><th>Sens</th><th>Entrée</th><th>Sortie</th><th>Taille</th><th style="text-align:right">P/L</th><th>Heure ET</th></tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T1</td><td>Short</td><td class="num">30,445.00</td><td class="num">30,467.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$312</td><td class="num">23:18–23:47</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T2</td><td>Long</td><td class="num">30,466.75</td><td class="num">30,465.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$21</td><td class="num">23:47–23:48</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T3</td><td>Long</td><td class="num">30,469.00</td><td class="num">30,443.50</td><td class="num">14</td><td class="num neg" style="text-align:right">−$714</td><td class="num">23:50–00:02</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T4</td><td>Long</td><td class="num">30,440.75</td><td class="num">30,438.75</td><td class="num">20</td><td class="num neg" style="text-align:right">−$80</td><td class="num">01:51–01:51</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T5</td><td>Long</td><td class="num">30,433.50</td><td class="num">30,413.50</td><td class="num">40</td><td class="num neg" style="text-align:right">−$1,040</td><td class="num">01:52–02:07</td></tr>
+            <tr style="border-top:2px solid var(--border);font-weight:600"><td style="padding:6px 8px" colspan="5">Sous-total hors KZ</td><td class="num neg" style="text-align:right">−$2,167</td><td></td></tr>
+          </tbody>
+        </table>
+        <figure style="margin:14px 0 0"><img src="plans/2026-07-01/05-t1-short-init.png" alt="T1 · short initial" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · T1 en cours (−7 @ 30,445.00), avant le stop à 30,467.25 · hors Kill Zone.</figcaption></figure>
+
+        <h3>T6 · Win ✅ · Short 60 @ 30,413.50 → 30,368.00</h3>
+        <div class="callout callout--green">
+          <h4>✅ Shift + displacement + retour FVG (SIBI) · draw vers le low de l'Asia</h4>
+          Sur le 15 min : <strong>shift</strong> de structure, <strong>displacement</strong> baissier franc, puis <strong>retour dans le FVG (SIBI)</strong> avant la continuation. Cible : le <strong>low de la session Asia</strong>. Entrée en <strong>London KZ (2h07 ET)</strong> — la seule des 6 entrées du jour prise dans la fenêtre. Scale-out en 3 legs de 20 : 30,391.00 / 30,379.50 / 30,368.00.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num neg">30,413.50</div><div class="s">2h07 ET · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Sortie (3 legs)</div><div class="v num pos">30,391 / 30,380 / 30,368</div><div class="s">2h21 → 2h26 ET</div></div>
+          <div class="mini-stat"><div class="l">Taille</div><div class="v num acc">60 contrats</div><div class="s">⚠️ voir erreur ci-dessous</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$4,080</div><div class="s">meilleur trade du challenge</div></div>
+          <div class="mini-stat"><div class="l">Net jour</div><div class="v num pos">+$1,913.50</div><div class="s">après −$2,167 du matin</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-07-01/06-orders-staging.png" alt="Gestion des ordres" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · gestion des ordres pendant la séquence, avant l'entrée finale à 60.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/07-orders-tp-legs.png" alt="TP en 3 legs" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · TP en échelle 30,391 / 30,379.75 / 30,368 sur le short 60.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/08-tv-displacement-fvg.png" alt="Displacement + FVG" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">TradingView 1 min · shift, displacement et retour dans le FVG avant la continuation baissière.</figcaption></figure>
+        </div>
+
+        <div class="callout mt" style="border-left-color:#d9534f">
+          <h4>⚠️ Money management · sizing de rattrapage 7→60 · règle du jour : 7 micros, point final</h4>
+          Confirmé : sur Topstep, <strong>TopstepX est désormais l'unique plateforme</strong> (ProjectX a coupé le support des plateformes tierces le 28 février 2026, plus aucun compte legacy Tradovate/NinjaTrader) — le ratio <strong>10:1 (5 mini = 50 micros) s'applique donc sans exception</strong>. Par analogie, le « Max positions : 30 » de SwissFirmUp 300K est très probablement le même type d'équivalent mini (≈300 micros), ce qui aurait mis le short de 60 largement dans les clous — mais non confirmé directement par SwissFirmUp.
+          <br><br><strong>Décision prise plutôt que d'attendre la confirmation</strong> : retour au money management standard de <strong>7 micros</strong> sur SwissFirmUp, quel que soit le cap exact. Le point n'était pas vraiment le nombre 30 vs 60 — c'est que la taille a grossi à chaque trade perdant de la session Asia (7 → 7 → 14 → 20 → 40 → 60), décidée sous le coup du moment plutôt que planifiée. Si le trade était parti dans l'autre sens, 20 points contre 60 contrats = −$2,400, la quasi-totalité de la marge restante avant le plancher MLL. Rester sur 7 micros retire ce risque de la table, indépendamment de toute zone grise réglementaire.
+        </div>
+
+        <div class="callout callout--accent mt">
+          <h4>🔄 Reprise · T7–T10 (London KZ) · net +$725.50</h4>
+          Quatre trades après le short 60. Taille proche du standard sur T7/T8 (7), plus élevée sur T9/T10 (14 et 21) — à garder à l'œil vu la décision de rester sur 7 micros.
+        </div>
+        <table class="trade-table" style="width:100%;border-collapse:collapse;margin-top:10px;font-size:13px">
+          <thead><tr style="text-align:left;color:var(--muted)"><th style="padding:6px 8px">#</th><th>Sens</th><th>Entrée</th><th>Sortie</th><th>Taille</th><th style="text-align:right">P/L</th><th>Heure ET</th></tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T7</td><td>Long</td><td class="num">30,397.75</td><td class="num">30,371.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$371</td><td class="num">2:54–3:01</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T8</td><td>Short</td><td class="num">30,332.00</td><td class="num">30,346.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$200</td><td class="num">3:15–3:25</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T9</td><td>Long</td><td class="num">30,353.75</td><td class="num">30,326.25</td><td class="num">14</td><td class="num neg" style="text-align:right">−$676</td><td class="num">3:27–4:29</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T10</td><td>Long</td><td class="num">30,352.25</td><td class="num">30,351.50</td><td class="num">21</td><td class="num pos" style="text-align:right">+$1,972</td><td class="num">4:46–8:02</td></tr>
+            <tr style="border-top:2px solid var(--border);font-weight:600"><td style="padding:6px 8px" colspan="5">Net T7–T10</td><td class="num pos" style="text-align:right">+$725.50</td><td></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">T9 (8 fills) et T10 (12 fills) sont des trades multi-legs : entrée/sortie affichées = premier/dernier fill, P/L réel = somme FIFO des fills Sierra.</p>
+
+        <div class="callout callout--green mt">
+          <h4>✅ Net jour (T1–T10) : +$2,639.50</h4>
+          Malgré −$2,167 hors KZ le matin et trois pertes supplémentaires (T7/T8/T9), la journée reste largement positive grâce à T6 (+$4,080) et T10 (+$1,972).
+        </div>
+      `
+    },
+    { date: "30 juin 2026", status: "closed", statusLabel: "Jour 4 SF · clôturée ✗", pl: "−$1,774.50", plSub: "Mauvaise journée · 4 longs, 4 SL · biais bon mais entrées chassées · compte NON invalidé",
+      html: `
+        <h3>Analyse Pré-Marché · 30 juin · NQU26 <span style="color:var(--muted);font-size:13px">· mardi · SwissFirmUp 300K (Jour 4)</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Biais bullish maintenu · accumulation avant l'expansion</h4>
+          Mon biais ne change pas : toujours <strong>haussier</strong>. Weekly + 4H avec projection Fib (déviations). On est dans la <strong>zone d'accumulation rouge ≈ 30,000–30,200</strong> (prix ≈ 30,131.75). Plan : aller prendre le <strong>high du range</strong> dans lequel je travaille. Un <strong>retracement</strong> est possible avant, mais au niveau des <strong>déviations on est pile sur les equal highs du 4H</strong> — la cible et la structure s'alignent.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">30,131.75</div><div class="s">dans l'accumulation</div></div>
+          <div class="mini-stat"><div class="l">Zone accumulation</div><div class="v num acc">≈ 30,000–30,200</div><div class="s">rouge</div></div>
+          <div class="mini-stat"><div class="l">Cible</div><div class="v num pos">High du range</div><div class="s">EQH 4H · déviations</div></div>
+          <div class="mini-stat"><div class="l">Support / discount</div><div class="v num">≈ 29,200–29,400</div><div class="s">si retracement</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📅 News du jour · prudence modérée</h4>
+          Mardi 30 : <strong>CB Consumer Confidence + JOLTS à 10:00</strong> (impact moyen). Le gros reste à venir : Fed (Warsh) + ISM mercredi, <strong>NFP jeudi 8:30</strong>. Aujourd'hui : trader possible, mais pas d'ordre limite ouvert sur les news de 10:00.
+        </div>
+        <div class="grid-2 mt">
+          <figure style="margin:0"><img src="plans/2026-06-30/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · structure haussière (swings 3 bougies)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-30/02-4h-fib.png" alt="4H · projection Fib" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H · projection Fib · accumulation rouge ≈ 30,000–30,200 · déviations = EQH 4H</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧭 Plan</h4>
+          Long dans le sens du biais, vers le high du range (EQH 4H / déviations). Si retracement, chercher l'entrée en discount (≈ 29,200–29,400 ou un FVG plus proche) avec confirmation 5 min. <strong>Rappels (après hier)</strong> : uniquement en Kill Zone, dans le sens du biais, pas d'anticipation de sweep non confirmé. Sizing 7 micros (6+1), RM fixe, stop après 2 SL.
+        </div>
+        <div class="callout callout--green mt">
+          <h4>✅ Confirmation SMT (15 min) · biais haussier validé</h4>
+          Le mouvement a démarré avec le <strong>NQ qui prend la liquidité (SSL ≈ 29,936.25 ✅)</strong>, tandis que l'<strong>ES diverge (SMT ≈ 7,481.75)</strong> — l'ES ne fait pas le même bas. <strong>Divergence SMT haussière</strong> = le NQ purge la SSL, l'ES tient → retournement/continuation haussier. Repères : TDO NQ ≈ 30,190.50 / 30,095.50, TDO ES ≈ 7,501.50. <strong>Draw au-dessus</strong> : BSL NQ ≈ <strong>30,263.75</strong> → PDH → PWH (ES ≈ 7,600). Ça valide le biais bullish et donne la cible immédiate (la BSL).
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-30/03-smt-nq-es-15m.png" alt="SMT NQ/ES · 15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min · NQ (gauche) / ES (droite) · NQ prend la SSL 29,936.25, ES diverge (SMT 7,481.75) → SMT haussier · draw vers BSL 30,263.75 → PDH → PWH.</figcaption></figure>
+        <div class="callout callout--green mt">
+          <h4>🎯 Trigger d'entrée · SMT 1 min confirmé</h4>
+          Descente en LTF (1 min) : l'<strong>ES sweep + SMT à 7,503.75</strong> (purge sous le TDO 7,501.50 / PDH, puis rejet), tandis que le NQ ne casse pas son bas → <strong>divergence SMT haussière en 1 min</strong>. C'est l'alignement HTF (15 min) ↔ LTF (1 min) : le 15 min donne le biais, le <strong>1 min donne le timing d'entrée</strong>. ✅ Confirme l'entrée long. Cible inchangée : BSL NQ 30,263.75.
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-30/04-smt-1min-trigger.png" alt="SMT 1 min · trigger d'entrée NQ/ES" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · ES sweep + SMT 7,503.75 sous le TDO 7,501.50, NQ tient → SMT haussier LTF, trigger d'entrée.</figcaption></figure>
+
+        <div class="callout mt" style="border-left-color:#e0a82e">
+          <h4>📉 T1 · Long stoppé par un sweep</h4>
+          Première entrée long (7 micros MNQU) avec SL initial à <strong>30,066.75</strong>. Le marché est venu <strong>sweeper la liquidité sous l'entrée</strong> avant de repartir → je me fais sortir sur la mèche. Classique : le stop évident sous le swing se fait chasser. <em>Perte sèche, mais la lecture restait bonne.</em>
+        </div>
+        <figure style="margin:10px 0 0"><img src="plans/2026-06-30/05-entry-orders-initial.png" alt="Ordres initiaux · 1 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · setup initial · SL 30,066.75 sous le swing · TP en échelle 30,141.75 / 30,166.75.</figcaption></figure>
+
+        <div class="callout callout--green mt">
+          <h4>🟢 T2 · Re-entrée sur l'OB 1 min</h4>
+          Après le sweep, re-entrée <strong>long sur l'Order Block 1 min</strong> (zone ≈ 30,100–30,108) : <strong>7 micros MNQU @ 30,113.50</strong>, SL sous l'OB, TP en échelle vers la BSL 30,263.75. Idée juste, mais l'expansion n'est pas venue : stoppé à 30,090.00.
+        </div>
+        <figure style="margin:10px 0 0"><img src="plans/2026-06-30/06-ob-reentry-live.png" alt="Re-entrée OB 1 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · re-entrée long sur l'OB (boîte grise) · +7 @ 30,113.50.</figcaption></figure>
+
+        <div class="callout mt" style="border-left-color:#d9534f">
+          <h4>✗ Bilan du jour · 4 longs, 4 SL · −$1,774.50</h4>
+          Journée difficile : <strong>4 entrées long, 4 stops</strong>. Le biais haussier était bon (SMT 15 min + 1 min, accumulation), mais le marché est resté coincé dans l'accumulation 30,000–30,200 et a chassé chaque entrée sans jamais lancer l'expansion vers la BSL. Pas d'erreur de lecture grossière — plutôt un timing trop tôt dans la range et des stops sous des zones évidentes. <em>Taille : 7 micros MNQU ($2/pt).</em>
+        </div>
+        <table class="trade-table" style="width:100%;border-collapse:collapse;margin-top:10px;font-size:13px">
+          <thead><tr style="text-align:left;color:var(--muted)"><th style="padding:6px 8px">#</th><th>Sens</th><th>Entrée</th><th>Sortie (SL)</th><th>Δ pts</th><th style="text-align:right">P/L</th></tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T1</td><td>Long 7</td><td class="num">30,155.50</td><td class="num">30,116.25</td><td class="num">−39.25</td><td class="num neg" style="text-align:right">−$549.50</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T2</td><td>Long 7 · OB</td><td class="num">30,113.50</td><td class="num">30,090.00</td><td class="num">−23.50</td><td class="num neg" style="text-align:right">−$329.00</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T3</td><td>Long 7</td><td class="num">30,118.75</td><td class="num">30,066.25</td><td class="num">−52.50</td><td class="num neg" style="text-align:right">−$735.00</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T4</td><td>Long 7</td><td class="num">30,122.75</td><td class="num">30,111.25</td><td class="num">−11.50</td><td class="num neg" style="text-align:right">−$161.00</td></tr>
+            <tr style="border-top:2px solid var(--border);font-weight:600"><td style="padding:6px 8px" colspan="5">Net jour</td><td class="num neg" style="text-align:right">−$1,774.50</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout--green mt">
+          <h4>🛡️ Compte SF300 · NON invalidé</h4>
+          Cumul challenge depuis le 25 juin : Jour 1 <strong>+$459</strong> · Jour 2 <strong>flat</strong> · Jour 3 <strong>+$429</strong> · Jour 4 <strong>−$1,774.50</strong> → <strong>cumul ≈ −$887</strong> · solde ≈ <strong>$299,113</strong>. Le plancher MLL trailing ($3,500) suit le plus-haut EOD ($300,888) → <strong>plancher ≈ $297,388</strong>. Marge restante avant invalidation : <strong>≈ $1,725</strong>. ✅ Compte toujours valide. Objectif $9,000 → il reste ≈ $9,900 depuis le solde actuel.
+        </div>
+      `
+    },
+    { date: "29 juin 2026", status: "closed", statusLabel: "Jour 3 SF · clôturée ✅", pl: "+$429", plSub: "2 shorts erreur (−$388.50) + long aligné (+$785) + suite session London (+$32.50) · net +$429",
+      html: `
+        <h3>Analyse Pré-Marché · 29 juin · NQU26 <span style="color:var(--muted);font-size:13px">· lundi · SwissFirmUp 300K (Jour 3)</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Biais bullish · lecture par la structure (swings 3 bougies, sans Trinity)</h4>
+          Mon biais reste <strong>bullish</strong>. Aujourd'hui je ne regarde PAS Trinity : je me fie uniquement à la <strong>structure de marché ICT</strong> — swing highs / swing lows type « 3 bougies » tracés sur les graphiques, pour une vue nette des ranges et des cassures. Prix actuel ≈ <strong>29,544</strong>.
+        </div>
+        <div class="callout callout--red mt">
+          <h4>📅 Semaine très chargée en news — prudence et gestion du risque</h4>
+          <strong>Mar 30</strong> : CB Consumer Confidence + JOLTS (10:00).<br>
+          <strong>Mer 1er juil</strong> : ADP Non-Farm (8:15) · <strong>Fed Chairman Warsh Speaks (9:00, fort impact)</strong> · ISM Manufacturing PMI + Prices (10:00).<br>
+          <strong>Jeu 2 juil</strong> : <strong>NFP / Non-Farm Employment Change + Average Hourly Earnings + Unemployment Rate (8:30, très fort impact)</strong> · Unemployment Claims.<br>
+          <strong>Ven 3 juil</strong> : Bank Holiday US (marché fermé / demi-séance).<br>
+          → Volatilité forte attendue mer/jeu. <strong>Pas d'ordre limite ouvert avant les news</strong>, taille réduite autour des annonces, et flat avant le bank holiday vendredi.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">≈ 29,544</div><div class="s">29,544.75</div></div>
+          <div class="mini-stat"><div class="l">Biais</div><div class="v num pos">Long</div><div class="s">structure 3 bougies</div></div>
+          <div class="mini-stat"><div class="l">Outil du jour</div><div class="v">Swings ICT</div><div class="s">sans Trinity</div></div>
+          <div class="mini-stat"><div class="l">Risque news</div><div class="v num neg">Élevé</div><div class="s">NFP jeudi</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-29/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · swings 3 bougies</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-29/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-29/03-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-29/04-1h-swings.png" alt="1H · swings" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H · structure 3 bougies (ranges & cassures)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-29/05-15m.png" alt="15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-29/06-5m.png" alt="5 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · exécution</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧭 Plan</h4>
+          Chercher des longs dans le sens de la structure, sur cassure d'un swing + retour (la grille 3 bougies = STH/STL · ITH/ITL). Confirmation 5 min. <strong>Lundi avant une semaine de news</strong> : taille normale possible aujourd'hui (peu de news lundi), mais resserrer dès mardi. Sizing 7 micros (6+1), RM fixe, stop après 2 SL.
+        </div>
+
+        <h3 style="margin-top:26px">Setup planifié · Long sur FVG 5 min → déviation FVG 1H</h3>
+        <div class="callout callout--green">
+          <h4>🟢 Entrée FVG 5 min · cible = déviation -1.25 du FVG 1H</h4>
+          Entrée sur le <strong>FVG 5 min ≈ 29,425–29,475</strong> (zone d'achat en discount). <strong>Cible : 29,722.25</strong> = la déviation <strong>-1.25 du FVG 1H</strong>. Prix actuel ≈ 29,502.50. Long aligné avec le biais bullish et la structure 3 bougies. R:R large (≈ +270 pts vers la cible vs stop sous le FVG).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Entrée · FVG 5m</div><div class="v num pos">≈ 29,425–29,475</div><div class="s">discount</div></div>
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">29,502.50</div><div class="s">au-dessus du FVG</div></div>
+          <div class="mini-stat"><div class="l">Cible</div><div class="v num acc">29,722.25</div><div class="s">déviation -1.25 FVG 1H</div></div>
+          <div class="mini-stat"><div class="l">Sens</div><div class="v num pos">Long</div><div class="s">aligné structure</div></div>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-29/07-setup-target-fvg.png" alt="Setup long · FVG → target 29,722.25" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · FVG d'entrée (≈ 29,425–29,500) → cible 29,722.25 (déviation -1.25 FVG 1H).</figcaption></figure>
+        <div class="callout callout--red mt">
+          <h4>❌ Erreur · 2 shorts contre le biais + hors KZ (1:30 AM)</h4>
+          Au lieu d'attendre le long, j'ai pris <strong>DEUX SHORTS</strong> en anticipant un sweep du low de l'Asie : −$353.50 puis −$35 = <strong>−$388.50</strong>. Double faute : (1) trades <strong>CONTRE mon biais bullish</strong>, sur une anticipation non confirmée ; (2) entrées <strong>HORS Kill Zone, à 1:30 AM</strong> (heure des runs piège).
+        </div>
+        <div class="callout callout--green mt">
+          <h4>🟢 Récupération · le long aligné a payé (+$785) → jour +$396.50</h4>
+          Une fois recalé sur le biais : Long 7 micros @ 29,579.75 · TP1 6c @ 29,629.75 + runner 1c @ 29,672.25 = <strong>+$785</strong>. Le trade aligné a rattrapé les 2 shorts erronés → journée nette <strong>+$396.50</strong>. Comme le 23 juin : les trades contre-biais perdent, l'aligné paie.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">2 shorts (erreur)</div><div class="v num neg">−$388.50</div><div class="s">contre-biais · hors KZ</div></div>
+          <div class="mini-stat"><div class="l">Long aligné</div><div class="v num pos">+$785</div><div class="s">TP1 6c + runner</div></div>
+          <div class="mini-stat"><div class="l">Net jour</div><div class="v num pos">+$396.50</div><div class="s">Source : Sierra</div></div>
+          <div class="mini-stat"><div class="l">Challenge SF 300K</div><div class="v num pos">+$855.50</div><div class="s">obj. $9 000 · ~9,5%</div></div>
+        </div>
+      `
+    },
+    { date: "26 juin 2026", status: "closed", statusLabel: "Jour 2 SF · clôturée ·  flat", pl: "—", plSub: "Aucun trade pris · backtest uniquement · prudence vendredi",
+      html: `
+        <h3>Analyse Pré-Marché · 26 juin · NQU26 <span style="color:var(--muted);font-size:13px">· vendredi · SwissFirmUp 300K (Jour 2)</span></h3>
+        <div class="callout callout--red">
+          <h4>🔻 Biais baissier — mais c'est VENDREDI : prudence</h4>
+          Pour moi, clairement on va <strong>descendre</strong>. MAIS c'est vendredi → moins de conviction directionnelle, risque de news / clôture hebdo, mouvements erratiques. <strong>Rester prudent</strong> : taille réduite, cible proche, on ne force rien.
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🎯 Targets — Fib sur une mèche weekly</h4>
+          Les prochains targets sont les <strong>niveaux Fib tracés sur une mèche weekly</strong>, en dessous du prix : zone ≈ <strong>28,500–29,000</strong> (prix actuel ≈ 29,268). Ce sont les draws baissiers visés. <em>(Niveaux Fib exacts à confirmer — non labellisés sur la capture.)</em>
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">≈ 29,268</div><div class="s">29,268.50</div></div>
+          <div class="mini-stat"><div class="l">Targets fib weekly</div><div class="v num acc">≈ 28,500–29,000</div><div class="s">en dessous</div></div>
+          <div class="mini-stat"><div class="l">Biais</div><div class="v num neg">Short</div><div class="s">vendredi · prudent</div></div>
+          <div class="mini-stat"><div class="l">Compte SF 300K</div><div class="v num pos">+$459</div><div class="s">après Jour 1</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-26/01-weekly-fib.png" alt="Weekly · fib targets" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · Fib sur mèche → targets ≈ 28,500–29,000</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-26/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-26/03-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-26/04-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-26/05-15m.png" alt="15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧭 Plan</h4>
+          Short uniquement, vers les fib weekly (≈ 28,500–29,000), avec confirmation 5 min. <strong>Vendredi = prudence</strong> : taille réduite, viser la liquidité proche, pas d'ambition longue, et ne pas s'entêter. Rappel discipline : pas d'ordre limite avant le week-end (clôture toutes positions). Sizing 7 micros (6+1), RM fixe.
+        </div>
+      `
+    },
+    { date: "25 juin 2026", status: "closed", statusLabel: "Jour 1 SF · clôturée ✅", pl: "+$459", plSub: "T1 short −$301 + T2 long +$760 · net +$459",
+      html: `
+        <h3>Analyse Pré-Marché · 25 juin · NQU26 <span style="color:var(--muted);font-size:13px">· jeudi · SwissFirmUp 300K (Jour 1)</span></h3>
+        <div class="callout callout--accent">
+          <h4>🆕 Nouveau challenge · SwissFirmUp 300K · MM ajusté à 7 micros</h4>
+          La Combine TopStep est validée → nouveau challenge <strong>SwissFirmUp 300K</strong> (objectif $9 000, MLL $3 500, trailing EOD). Money management adapté : <strong>7 micros MNQU</strong> (+2 vs les 5 de TopStep). Le compte et le suivi multi-challenge sont déjà dans le dashboard (onglet Prop Firm).
+        </div>
+        <div class="callout callout--green mt">
+          <h4>🟢 Biais bullish — MAIS prudence : le 4H Trinity reste bearish</h4>
+          Très beau mouvement de <strong>retournement</strong> (V-reversal). Mon biais reste <strong>bullish</strong> pour l'instant. ATTENTION : sur Trinity, le <strong>4H est toujours bearish</strong> → selon ma règle « désaccord HTF/exécution », c'est un <strong>trade dégradé / contre-tendance</strong> : plus petit, plus court, on ne vise que la liquidité proche. Rester prudent.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">≈ 30,037</div><div class="s">après le reversal</div></div>
+          <div class="mini-stat"><div class="l">FVG bullish 4H</div><div class="v num acc">≈ 29,920–29,945</div><div class="s">déjà rebondi</div></div>
+          <div class="mini-stat"><div class="l">Target (high 5m)</div><div class="v num pos">≈ 30,160</div><div class="s">draw proche</div></div>
+          <div class="mini-stat"><div class="l">DOL</div><div class="v num neg">trait rouge</div><div class="s">draw on liquidity</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🎯 Plan</h4>
+          <strong>Seul niveau exploitable</strong> — le FVG bullish 4H (≈ 29,920–29,945) où le prix a déjà rebondi. <strong>Cible</strong> : le high du 5 min (≈ 30,160). <strong>DOL</strong> = le trait rouge.<br>
+          <strong>Prudence</strong> — 4H bearish = contre-tendance, donc taille réduite, cible proche, pas d'ambition longue. Confirmation 5 min avant toute entrée. <strong>Sizing 7 micros : 6 fixes au TP1 (2:1 · +$600) + 1 runner, SL 25 pts (−$350)</strong>.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-25/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/03-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/04-15m.png" alt="15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/05-5m.png" alt="5 min · target" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · FVG bullish rebondi → cible high ≈ 30,160</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/06-trinity-daily-4h.png" alt="Trinity · 4H bearish" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · Daily/4H — le 4H reste bearish (contre le biais LTF)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-25/07-trinity-1h-5m.png" alt="Trinity · 1H/5min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · 1H + 5 min</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Short 7 micros @ 30,092.50 <span style="color:var(--muted);font-size:13px">· breaker invalidé · −$301</span></h3>
+        <div class="callout callout--red">
+          <h4>❌ Short sur breaker bearish → INVALIDÉ → coupé</h4>
+          Premier trade du compte. Short 7 micros @ 30,092.50 sur un breaker bearish. Le breaker a été <strong>invalidé</strong> (cassure haussière) → position coupée à 30,114.00 = <strong>−$301</strong>. Perte coupée vite, puis flip en long dans le sens de la cassure.
+        </div>
+
+        <h3 style="margin-top:26px">T2 · Long 7 micros @ 30,114.00 <span style="color:var(--muted);font-size:13px">· Win ✅ +$760</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Flip Long · bracket 7 micros (6+1) · target atteint</h4>
+          Dès l'invalidation du breaker, flip Long @ 30,114.00 vers le target. <strong>Premier test du bracket 7 micros</strong> : TP1 6c @ 30,164.75 (+$609) + runner 1c @ 30,189.50 (+$151) = <strong>+$760</strong>. Le biais bullish du pré-marché s'est réalisé (target ≈ 30,160 dépassé, 30,200).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">T1 short</div><div class="v num neg">−$301</div><div class="s">breaker invalidé</div></div>
+          <div class="mini-stat"><div class="l">T2 long</div><div class="v num pos">+$760</div><div class="s">TP1 6c + runner</div></div>
+          <div class="mini-stat"><div class="l">Net jour</div><div class="v num pos">+$459</div><div class="s">Source : Sierra</div></div>
+          <div class="mini-stat"><div class="l">Challenge SF 300K</div><div class="v num pos">+$459</div><div class="s">obj. $9 000 · ~5%</div></div>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-25/08-sf-t1-t2-breaker-flip.png" alt="Breaker invalidé → flip long" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · short breaker invalidé (30,092→30,114), flip long → TP1 30,164.75 + runner 30,189.50, target ≈ 30,160 dépassé (30,200).</figcaption></figure>
+      `
+    },
+    { date: "24 juin 2026", status: "closed", statusLabel: "Jour 6 · Combine validée 🏆", pl: "+$400", plSub: "TP1 long = Combine TopStep passée · suite en backtest",
+      html: `
+        <h3>Analyse Pré-Marché · 24 juin · NQU26 <span style="color:var(--muted);font-size:13px">· mercredi · Jour 6</span></h3>
+        <div class="callout callout--green">
+          <h4>✅ Biais baissier — ET l'algo est baissier : alignés dès le départ</h4>
+          Aujourd'hui, mon biais est <strong>baissier</strong>, et l'algo Trinity confirme : <strong>tout est bearish</strong> sur les TF. C'est exactement la correction de l'erreur d'hier — biais et système alignés AVANT le premier trade. Target marqué en <strong>rouge ≈ 29,600</strong> (4H). Prix actuel ≈ <strong>29,743</strong>. On ne cherche que des <strong>shorts</strong> vers la cible.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--red"><h4>Biais · Short</h4><p>Baissier sur tous les TF (Weekly → 15 min). Aligné avec Trinity. On vend les rebonds / les prises de liquidité haute.</p></div>
+          <div class="panel panel--red"><h4>Target · ≈ 29,600</h4><p>Niveau rouge tracé sur le 4H — draw de liquidité basse visé. Prix actuel ≈ 29,743 → ~143 pts de potentiel.</p></div>
+          <div class="panel panel--green"><h4>Discipline (leçon 23 juin)</h4><p>Suivre l'algo dès le 1er trade. Exécution 5 min, cadre 15 min / 1H. Stop après 2 SL. Pas de longs à contre-biais.</p></div>
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">≈ 29,743</div><div class="s">29,743.25</div></div>
+          <div class="mini-stat"><div class="l">Target (rouge)</div><div class="v num acc">≈ 29,600</div><div class="s">4H · liquidité basse</div></div>
+          <div class="mini-stat"><div class="l">Biais</div><div class="v num neg">Short</div><div class="s">aligné algo</div></div>
+          <div class="mini-stat"><div class="l">Éval</div><div class="v num pos">$2,689</div><div class="s">à ~$311 de l'objectif</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-24/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-24/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-24/03-4h-target.png" alt="4H · target" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H · target rouge ≈ 29,600</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-24/04-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-24/05-15m.png" alt="15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-24/07-trinity-bearish.png" alt="Trinity · bearish" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · tous TF bearish (confirme le biais)</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🎯 Plan</h4>
+          <strong>Sens unique</strong> — shorts seulement, dans le sens de l'algo. Pas de long contre-biais (l'erreur d'hier).<br>
+          <strong>Entrée</strong> — vendre une prise de liquidité haute / un rebond en premium, avec confirmation 5 min (displacement, MSS/CISD, breaker bearish). Cible ≈ 29,600.<br>
+          <strong>Discipline</strong> — 5 micros, RM fixe, stop après 2 SL. Objectif éval à ~$311 : un seul bon short aligné peut suffire.
+        </div>
+
+        <h3 style="margin-top:26px">Update · le biais a atteint la cible → reversal long en construction</h3>
+        <div class="callout callout--green">
+          <h4>🔄 Flip PROPRE (≠ erreur d'hier) · target atteint + liquidité prise + MSS</h4>
+          Le move baissier a fait son travail : le prix est descendu jusqu'au <strong>target ≈ 29,620</strong> (ligne rouge), a <strong>pris la liquidité</strong> sur les equal lows (~29,640), et la structure se retourne. Séquence : <strong>MSS haussier</strong> (cassure vers ~29,800) → <strong>retracement</strong> sur les lows (liquidité prise) → <strong>2e MSS</strong> en formation. Prix ≈ 29,736. C'est le bon type de flip : suivre le biais jusqu'à la liquidité, PUIS reverser sur cassure de structure — pas un long de contre-tendance au milieu de rien (l'erreur du 23 juin). <strong>Confluence en plus</strong> : sur le 15 min il y a <strong>2 pools de liquidité au-dessus (2 EQH)</strong> = cibles claires pour le long, et le prix est en <strong>zone DISCOUNT</strong> selon l'algo (HZONE = range high/low des 20 derniers jours). Discount + draw vers les EQH = le « OÙ » du triangle est aligné pour acheter.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Target atteint</div><div class="v num acc">≈ 29,620</div><div class="s">liquidité basse prise</div></div>
+          <div class="mini-stat"><div class="l">MSS · swing high</div><div class="v num">≈ 29,800</div><div class="s">cassure haussière</div></div>
+          <div class="mini-stat"><div class="l">Prix</div><div class="v num">29,736</div><div class="s">2e MSS en cours</div></div>
+          <div class="mini-stat"><div class="l">Cibles long</div><div class="v num pos">2 EQH (15m)</div><div class="s">≈ 29,800 → 29,880</div></div>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-24/08-long-reversal-mss-target.png" alt="Reversal long · MSS au target" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · le baissier atteint le target ≈ 29,620 → liquidité prise (equal lows) → MSS haussier · reversal long en construction (2e MSS à confirmer).</figcaption></figure>
+        <div class="callout callout--accent mt">
+          <h4>⚠️ Garde-fous pour le long</h4>
+          (1) Attendre la <strong>confirmation du 2e MSS</strong> — ne pas anticiper. (2) Définir la cible : prochaine liquidité ≈ 29,800 puis 29,880. (3) Thèse renforcée : tu es en DISCOUNT du range 20 jours (algo) et tu vises 2 EQH au-dessus → le long est aligné avec la logique premium/discount, pas un simple contre-tendance. Le momentum récent était baissier, donc reste lucide : exécution 5 min, RM fixe, et si stoppé 2 fois, on coupe. Mais la confluence (discount + MSS + 2 EQH) est solide.
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Long 5 micros @ 29,794.00 <span style="color:var(--muted);font-size:13px">· TP1 ✅ · runner live</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Long 5 MNQU · MSS net 15 min · reversal au target · discount + 2 EQH</h4>
+          MSS NET en 15 min confirmé → entrée Long @ 29,794.00. Setup clean : reversal au target (≈ 29,620 atteint, liquidité prise) + discount du range 20 jours + 2 EQH au-dessus comme draws. Bracket 5 micros standard.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">29,794.00</div><div class="s">Long 5 MNQU</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">29,769.00</div><div class="s num">−25 pts · −$250</div></div>
+          <div class="mini-stat"><div class="l">TP1 · 4c</div><div class="v num acc">29,844.00</div><div class="s num">+50 pts · +$400</div></div>
+          <div class="mini-stat"><div class="l">TP2 · runner</div><div class="v num acc">EQH</div><div class="s">fermera avant</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">TP1 ✅ +$400</div><div class="s">runner live (BE)</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🏁 Ce TP1 valide la Combine</h4>
+          TP1 (4c · +$400) → cum <strong>$3,089</strong> ≥ objectif <strong>$3,000</strong>. Consistency OK (meilleur jour $968.50 &lt; $1,500), ≥ 2 jours tradés. <strong>Un seul TP1 et la Combine 50K est passée.</strong>
+        </div>
+        <div class="callout callout--green mt">
+          <h4>🏆 COMBINE 50K VALIDÉE · objectif atteint</h4>
+          TP1 rempli : 4 micros @ 29,844.00 = <strong>+$400</strong> (réel Sierra). Cum période <strong>$3,089 ≥ $3,000</strong> · balance <strong>$53,089</strong>. Consistency OK (meilleur jour $968.50 &lt; $1,500), ≥ 2 jours tradés, plancher MLL verrouillé $50,000. <strong>Tous les objectifs de la Combine sont remplis.</strong> Stop runner → BE, runner 1c laissé courir vers l'EQH (sans risque). 🎉
+        </div>
+        <div class="grid-2 mt">
+          <figure style="margin:0"><img src="plans/2026-06-24/11-tp1-hit-challenge-passed.png" alt="TP1 atteint · challenge validé" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">TP1 4c @ 29,844.00 = +$400 → Combine validée · runner laissé courir.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-24/09-15m-mss-net.png" alt="MSS net 15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min · MSS net (confirmation du reversal).</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-24/10-entry-long-sierra.png" alt="Entrée Long · Sierra" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Sierra · Long 5 @ 29,794.00 · SL 29,769.00 · TP1 4c 29,844.00 · runner → EQH.</figcaption></figure>
+        </div>
+      `
+    },
+    { date: "23 juin 2026", status: "closed", statusLabel: "Jour 5 · clôturée ⚖️ BE", pl: "+$23.00", plSub: "BE · parti à −$898 → remonté à BE via les trades alignés",
+      html: `
+        <h3>Analyse Pré-Marché · 23 juin · NQU26 <span style="color:var(--muted);font-size:13px">· mardi · Jour 5</span></h3>
+        <div class="callout callout--accent">
+          <h4>⏳ Zone d'attente · un seul niveau compte : le Volume Imbalance Weekly</h4>
+          Cadres du jour : <strong>Weekly + 4H + 15 min</strong> (les plus pertinents aujourd'hui), exécution en <strong>5 min</strong>. Le SEUL niveau qui m'intéresse pour l'instant est le <strong>Volume Imbalance Weekly ≈ 30,000–30,200</strong>, visible sur les trois timeframes. <strong>Tant que le prix n'y est pas, je ne fais ABSOLUMENT rien.</strong> Prix actuel ≈ 30,311 → il faut qu'il descende dans la zone avant toute décision.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--accent"><h4>Niveau unique · VI Weekly</h4><p>Volume Imbalance hebdo ≈ <strong>30,000–30,200</strong>. Aimant / zone de réaction visée. Pas d'action avant que le prix l'atteigne.</p></div>
+          <div class="panel panel--accent"><h4>Cadre · 15 min</h4><p>Le cadre se lit en 15 min aujourd'hui (avec contexte Weekly/4H). On y cherchera la structure une fois le prix dans le VI.</p></div>
+          <div class="panel panel--green"><h4>Exécution · 5 min</h4><p>Entrées en 5 min, après confirmation. Discipline semaine : pas de 1 min.</p></div>
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">≈ 30,311</div><div class="s">au-dessus du VI</div></div>
+          <div class="mini-stat"><div class="l">VI · haut</div><div class="v num acc">≈ 30,200</div><div class="s">bord supérieur</div></div>
+          <div class="mini-stat"><div class="l">VI · bas</div><div class="v num acc">≈ 30,000</div><div class="s">bord inférieur</div></div>
+          <div class="mini-stat"><div class="l">Action</div><div class="v">Attente</div><div class="s">rien avant le VI</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-23/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · Volume Imbalance marqué</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-23/02-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H · zone VI ≈ 30,000–30,200 (grise) sous le prix</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-23/03-15m.png" alt="15 minutes" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min · cadre d'exécution</figcaption></figure>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-23/04-trinity-3tf.png" alt="Trinity · Weekly + 4H + 15 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · cockpit 3 timeframes (Weekly + 4H + 15 min) · le VI weekly comme niveau de référence, exécution 5 min — « le 5 min exécute, le 1H/15 min autorise ».</figcaption></figure>
+        <div class="callout callout--accent mt">
+          <h4>🎯 Plan</h4>
+          <strong>Avant le VI</strong> — rien. On laisse le prix venir. Patience = pré-requis.<br>
+          <strong>Dans le VI (≈ 30,000–30,200)</strong> — chercher une réaction et la structure en 15 min, puis exécuter en 5 min (displacement + FVG), dans le sens autorisé par le cadre. Sizing 5 micros MNQU, RM fixe.<br>
+          <strong>Discipline</strong> — pas de 1 min, pas d'anticipation hors zone, TP à temps.
+        </div>
+
+        <h3 style="margin-top:26px">Update · prix arrivé dans la zone (VI weekly)</h3>
+        <div class="callout callout--accent">
+          <h4>🎯 Zone atteinte · partie haute du Volume Imbalance</h4>
+          Le prix est descendu à <strong>30,184.75</strong> = dans la <strong>partie supérieure du VI weekly</strong>. Range tiré sur le 4H : on est <strong>au 25% pile</strong> (zone théorique des meilleurs setups). Et sur le 15 min, un <strong>FVG non noté</strong> se trouve <strong>à l'intérieur du haut du VI</strong> → confluence VI weekly + 25% 4H + FVG 15 min.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num acc">30,184.75</div><div class="s">dans le haut du VI</div></div>
+          <div class="mini-stat"><div class="l">4H · range</div><div class="v num">25%</div><div class="s">pile — best setups</div></div>
+          <div class="mini-stat"><div class="l">15 min</div><div class="v">FVG</div><div class="s">dans le haut du VI</div></div>
+          <div class="mini-stat"><div class="l">Confluence</div><div class="v num pos">3 niveaux</div><div class="s">VI + 25% + FVG</div></div>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-23/05-zone-reached-vi-25pct.png" alt="Prix dans le VI · 25% du range 4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min · prix 30,184.75 dans le haut du VI weekly · 25% du range 4H · FVG 15 min en confluence.</figcaption></figure>
+        <div class="callout callout--accent mt">
+          <h4>⚠️ Plan d'attente · note sur le passage en 1 min</h4>
+          <strong>Plan</strong> — guetter un setup même avant la London KZ : il peut se former tôt et accélérer à l'ouverture. Confirmation puis exécution en 5 micros, RM fixe.<br>
+          <strong>Note discipline</strong> — passer en 1 min = exception à la règle de la semaine (« cadre 1H/15 min, exécution 5 min, PAS de 1 min »), justement la TF qui a induit le piège short du 22 juin. Si tu y vas : exiger une structure très propre, ne pas flipper le biais, et prendre la <strong>confirmation finale en 5 min</strong>. La confluence (VI + 25% + FVG) est forte — laisse le prix te montrer le sens, ne l'anticipe pas en lisant le bruit 1 min.
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Long 5 micros @ 30,150.25 <span style="color:var(--muted);font-size:13px">· SL Hit ❌ −$250</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Long 5 MNQU · VI weekly + 25% 4H + 2 FVG 15 min · displacement</h4>
+          Entrée dans la partie haute du Volume Imbalance weekly, en pleine confluence (25% du range 4H + 2 FVG 15 min). Petit displacement haussier → Long. Bracket 5 micros standard.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,150.25</div><div class="s">Long 5 MNQU · dans le VI</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,125.25</div><div class="s num">−25 pts · −$250</div></div>
+          <div class="mini-stat"><div class="l">TP1 · 4c</div><div class="v num acc">30,200.25</div><div class="s num">+50 pts · +$400 · 2:1</div></div>
+          <div class="mini-stat"><div class="l">TP2 · runner 1c</div><div class="v num acc">30,250.25</div><div class="s num">+100 pts · +$200</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num neg">SL ❌ −$250</div><div class="s">−25 pts · 5 micros</div></div>
+        </div>
+        <div class="grid-2 mt">
+          <figure style="margin:0"><img src="plans/2026-06-23/07-15min-2fvg-vi.png" alt="15 min · 2 FVG dans le VI" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 min · 2 FVG dans le haut du VI weekly · zone d'entrée.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-23/06-entry-long-1min-sierra.png" alt="Entrée Long 5 micros · Sierra 1 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Sierra (1 min) · Long 5 @ 30,150.25 · SL 30,125.25 · TP1 4c 30,200.25 · runner 1c 30,250.25.</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🔍 Détail entrée · MSS + CISD dans les FVG</h4>
+          Déclencheur précis : <strong>MSS</strong> (market structure shift, labellisé « MMS » sur le chart ≈ 30,170) puis <strong>CISD</strong> (Change in State of Delivery ≈ 30,138) à l'intérieur des FVG → displacement haussier → entrée. La confirmation du retournement de delivery (CISD) donne le timing précis du Long.
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-23/08-entry-detail-cisd-mss.png" alt="Détail entrée · MSS + CISD" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · MSS (≈ 30,170) + CISD (≈ 30,138) dans les FVG → déclencheur du Long.</figcaption></figure>
+        <div class="callout callout--accent mt">
+          <h4>⚠️ Process · déviation assumée</h4>
+          Localisation du trade = A+ (VI weekly + 25% 4H + 2 FVG 15 min). MAIS l'entrée a été déclenchée <strong>en 1 min et avant la London KZ</strong> — la double déviation à la règle de la semaine. Le marqueur « process clean » est mis à <strong>false</strong> non pas pour l'idée (excellente) mais pour la discipline TF/timing.
+        </div>
+        <div class="callout callout--red mt">
+          <h4>❌ SL touché · −$250 · le caveat s'est matérialisé</h4>
+          Le prix est venu chercher le stop à 30,125.25 (−25 pts · −$250). L'entrée <strong>1 min, avant la London KZ</strong>, s'est fait sortir avant le vrai mouvement — exactement le risque flaggé. <strong>Plan de ré-entrée</strong> : attendre un nouveau displacement. Un <strong>breaker block bullish</strong> commence à se former — une des meilleures confirmations en setup de Londres. On ne re-rentre qu'après le displacement + breaker confirmé (et idéalement dans la KZ).
+        </div>
+
+        <h3 style="margin-top:26px">Ré-entrée en préparation · rejet du 2e FVG 15 min + breaker</h3>
+        <div class="callout callout--accent">
+          <h4>👀 Le 2e FVG a réagi · setup en formation</h4>
+          Le prix a poussé dans le <strong>2e FVG 15 min (≈ 30,095–30,115)</strong> et a <strong>rejeté</strong>. C'est là que la vraie réaction se forme — le 1er FVG (plus haut) n'a pas tenu, d'où le SL de T1. <strong>Leçon</strong> : l'entrée sur le 1er FVG était prématurée ; le 2e FVG, plus profond/discount, est la zone de réaction réelle. Setup en formation + <strong>breaker block bullish</strong> en place → ré-entrée long potentielle sur displacement confirmé.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">2e FVG 15 min</div><div class="v num acc">≈ 30,095–30,115</div><div class="s">zone de réaction</div></div>
+          <div class="mini-stat"><div class="l">Rejet</div><div class="v num pos">✅</div><div class="s">mèche basse</div></div>
+          <div class="mini-stat"><div class="l">Breaker bullish</div><div class="v">en place</div><div class="s">meilleure confirm Londres</div></div>
+          <div class="mini-stat"><div class="l">Prix</div><div class="v num">30,114.25</div><div class="s">dans le 2e FVG</div></div>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-23/09-2nd-fvg-rejection-breaker.png" alt="Rejet 2e FVG 15 min + breaker" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · rejet du 2e FVG 15 min (≈ 30,095–30,115) · breaker bullish en formation → ré-entrée potentielle sur displacement.</figcaption></figure>
+
+        <h3 style="margin-top:26px">T2 · SL ❌ + ré-entrée Short · erreur du jour</h3>
+        <div class="callout callout--red">
+          <h4>❌ 2e SL · longs à contre-biais · −$500 cumulés</h4>
+          La ré-entrée Long (breaker / 2e FVG) a aussi été stoppée = <strong>2e SL d'affilée (−$250)</strong>, soit <strong>−$500</strong> sur la journée. Erreur reconnue : l'algo Trinity était <strong>entièrement baissier</strong>, et j'ai quand même cherché des LONGS à contre-courant. J'aurais dû m'arrêter après le 2e SL.
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🔻 T3 · ré-entrée Short (enfin avec le biais) · cible PWL ≈ 29,870</h4>
+          Ré-entrée <strong>Short</strong>, cette fois DANS le sens du biais algo. Cible : le <strong>PWL ≈ 29,870</strong> (draw on liquidity le plus visible). Prix ≈ 30,010, le breaker (30,032.50) comme résistance. <strong>Mais</strong> : trade pris APRÈS 2 SL — overtrade assumé. Niveaux exacts à réconcilier à la clôture (export).
+        </div>
+        <div class="grid-2 mt">
+          <figure style="margin:0"><img src="plans/2026-06-23/10-context-bearish-algo.png" alt="Trinity baissier · contexte" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · tous TF baissiers — les longs étaient à contre-biais.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-23/11-short-reentry-pwl.png" alt="Short · cible PWL" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Short avec le biais · cible PWL ≈ 29,870 · breaker 30,032.50.</figcaption></figure>
+        </div>
+        <div class="callout callout--red mt">
+          <h4>📌 Erreur du jour (marquée dans l'onglet Erreurs)</h4>
+          (1) Trader contre le biais de mon propre algo (longs alors que tout était baissier). (2) Ne pas couper après 2 SL. Le bon process : suivre le biais algo dès le départ (short), et s'arrêter après 2 pertes. Le 3e trade est dans le bon sens, mais il aurait dû être le premier — pas le trade « de trop ».
+        </div>
+
+        <h3 style="margin-top:26px">Bilan clôture · 23 juin · retour à BE</h3>
+        <div class="callout callout--accent">
+          <h4>⚖️ Net +$23 (BE) · parti à −$898, remonté via les trades alignés</h4>
+          6 trades. Le matin : 3 LONGS à contre-courant du biais algo baissier (−$320, −$462.50, −$517.50) → −$898 au creux. L'après-midi : les trades ALIGNÉS ont tout rattrapé — 2 shorts avec le biais (+$402, +$509.50) et 1 long de réaction au PWL (+$411.50). Journée bouclée à <strong>break-even (+$23)</strong>. Le principal : ne pas avoir cassé le compte et avoir su revenir.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Pertes (3 longs contre-biais)</div><div class="v num neg">−$1,300</div><div class="s">matin · biais faux</div></div>
+          <div class="mini-stat"><div class="l">Gains (3 alignés)</div><div class="v num pos">+$1,323</div><div class="s">2 shorts + long PWL</div></div>
+          <div class="mini-stat"><div class="l">Net journée</div><div class="v num pos">+$23 (BE)</div><div class="s">Source : Sierra Chart</div></div>
+          <div class="mini-stat"><div class="l">Cum. période</div><div class="v num pos">$2,689</div><div class="s">balance $52,689</div></div>
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--red"><h4>Leçon · biais algo (la preuve)</h4><p>TOUS les trades alignés au biais ont gagné (+$1,323) ; TOUS les longs contre-biais du matin ont perdu (−$1,300). Le système avait raison du début à la fin. Mauvaise analyse de départ = le vrai problème.</p></div>
+          <div class="panel panel--green"><h4>Force · la remontée</h4><p>De −$898 à BE sans paniquer ni casser le compte. Une fois recalé sur le biais (shorts), l'exécution a payé. C'est la résilience qui sauve une journée.</p></div>
+          <div class="panel panel--green"><h4>Compte Topstep · SAUF</h4><p>Balance <strong>$52,689</strong> (nouveau plus-haut) · plancher MLL verrouillé à <strong>$50,000</strong> → coussin <strong>$2,689</strong>. Objectif éval à <strong>~$311</strong> seulement.</p></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧭 À retenir</h4>
+          La leçon n'est pas dans le résultat (BE) mais dans le chemin : j'ai lu le marché à l'envers et ignoré mon algo le matin (−$898), puis je me suis recalé sur le biais et tout est rentré. Demain : <strong>suivre Trinity dès le 1er trade</strong>, et <strong>arrêter après 2 SL</strong>. L'éval est à $311 de l'objectif — la régularité prime.
+        </div>
+      `
+    },
+    { date: "22 juin 2026", status: "closed", statusLabel: "Jour 4 · London clôturée ✅", pl: "+$620.50", plSub: "Net London · short −$55 + long +$675.50 · NY à suivre ?",
+      html: `
+        <h3>Analyse Pré-Marché · 22 juin · NQU26 <span style="color:var(--muted);font-size:13px">· lundi · Jour 4</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Biais Long · structure 1H haussière — mais entrée à patienter</h4>
+          On est bien en <strong>buy</strong> : la structure 1H reste haussière. MAIS le week-end a <strong>retracé beaucoup plus bas que prévu</strong> (jusqu'à ≈ 30,470), bien sous la limite envisagée (30,603) et même sous le SL structurel (30,537.75). Le prix est ensuite revenu au-dessus de la zone (≈ <strong>30,658.75</strong>). Bien vu de ne pas avoir laissé d'ordre limite le week-end → <strong>nouvelle règle actée</strong>.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--green"><h4>Biais · Long</h4><p>Structure 1H haussière intacte. On cherche les achats en discount, dans le sens du biais.</p></div>
+          <div class="panel panel--red"><h4>Leçon week-end</h4><p>Retrace à ≈ 30,470 &lt; limite 30,603 &lt; … le SL 30,537.75 aurait sauté. Pas d'ordre limite le week-end — exécuter en séance.</p></div>
+          <div class="panel panel--accent"><h4>Exécution</h4><p>Trinity 1H + 5 min. Le 1H autorise, le 5 min exécute. Attendre confirmation (displacement + FVG) en Kill Zone.</p></div>
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">30,658.75</div><div class="s">retour au-dessus de la zone</div></div>
+          <div class="mini-stat"><div class="l">Low week-end</div><div class="v num neg">≈ 30,470</div><div class="s">sous limite & SL prévus</div></div>
+          <div class="mini-stat"><div class="l">PDH · cible</div><div class="v num acc">30,783</div><div class="s">liquidité haute</div></div>
+          <div class="mini-stat"><div class="l">PWH · cible</div><div class="v num acc">≈ 30,975</div><div class="s">liquidité hebdo</div></div>
+          <div class="mini-stat"><div class="l">TP · final</div><div class="v num acc">31,104.50</div><div class="s">fib 100 du range</div></div>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-22/01-premarket-trinity-multitf.png" alt="Trinity multi-TF · 22 juin" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Trinity · Daily + 1H + 5 min · 22 juin (open) — « le 5 min exécute, le 1H autorise »</figcaption></figure>
+        <div class="callout callout--accent mt">
+          <h4>🎯 Plan d'exécution</h4>
+          <strong>Sizing</strong> — 5 micros MNQU, SL 25 pts ($250), 4c TP 2:1 + 1 runner, BE auto après +50 pts (RM fixe). Sur un setup à stop large, réduire les contrats pour tenir le risque ≤ $250.<br>
+          <strong>Entrée</strong> — attendre le retour en discount + confirmation 5 min (displacement + FVG) en Kill Zone, dans le sens du biais Long. Ne pas chasser.<br>
+          <strong>Cibles</strong> — PDH 30,783 → PWH ≈ 30,975 → TP final 31,104.50. Invalidation : cassure + clôture 1H franche sous la structure.
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Long 5 micros @ 30,642.50 <span style="color:var(--muted);font-size:13px">· Win ✅ +$675.50</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Long 5 MNQU · biais 1H + 5 min alignés · entrée London KZ</h4>
+          Entrée dans le sens du biais Long 1H, après le retour du prix au-dessus de la zone (le retrace week-end était allé chercher ≈ 30,470). <strong>Pas d'ordre limite week-end</strong> — exécution en séance, confirmation faite. Bracket 5 micros standard, RM fixe respecté.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,642.50</div><div class="s">Long 5 MNQU · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,617.50</div><div class="s num">−25 pts · −$250</div></div>
+          <div class="mini-stat"><div class="l">TP1 · 4c</div><div class="v num acc">30,692.50</div><div class="s num">+50 pts · +$400 · 2:1</div></div>
+          <div class="mini-stat"><div class="l">TP2 · runner 1c</div><div class="v num acc">30,782.25</div><div class="s num">PDH · ≈ +140 pts</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">Win +$675.50</div><div class="s">TP1 +$400 · runner +$275.50</div></div>
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-22/02-entry-long-5micros-sierra.png" alt="Entrée Long 5 micros · Sierra" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Sierra · Long 5 @ 30,642.50 · SL 30,617.50 · TP1 4c 30,692.50 · runner 1c → PDH 30,782.25</figcaption></figure>
+
+        <h3 style="margin-top:26px">Triangle ICT · lecture du setup</h3>
+        <div class="grid-3 mt">
+          <div class="panel panel--green"><h4>OÙ ? · réglé sur le fractal 5min</h4><p>Au niveau session, le high de l'Asia a été pris (BSL) → premium, d'où l'instinct short initial (pris en 1min puis fermé). MAIS sur le <strong>5 min, tout aligne le Long</strong> : les PDA discount ont été utilisés, le prix est <strong>revenu dans la grosse bougie 5 min (FVG)</strong> et y a <strong>rejeté</strong> → continuation haussière attendue. Au-dessus : EQH + PDH + PWH comme draws. Le « OÙ » est réglé sur le plan fractal + biais 1H.</p></div>
+          <div class="panel panel--green"><h4>QUOI ? · propre</h4><p>Cassure de structure nette + <strong>breaker block</strong> créé, en discount du range 5min. Côté validé.</p></div>
+          <div class="panel panel--green"><h4>OÙ VA ? · propre</h4><p>Draw on liquidity clair : le <strong>PDH 30,782.25</strong> pour la session. Côté validé (runner posé dessus).</p></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>⏱️ Risque résiduel · timing d'entrée</h4>
+          Analyse 1H + 5 min jugée alignée par le trader, dans la London KZ. Le seul risque résiduel = être <strong>rentré un tout petit peu trop tôt</strong> : si stoppé, c'est que le premium de session a tiré un retrace plus profond avant la continuation — pas que la direction était fausse. « Si je me fais sortir, c'est que je suis rentré trop tôt. » À surveiller aussi : runner déplacé du +100 vers le PDH = <strong>TP modifié</strong> (règle « ne jamais déplacer le TP » — OK si la cible PDH était planifiée d'avance).
+        </div>
+        <div class="callout callout--green mt">
+          <h4>📊 Synthèse triangle · 3 côtés alignés (fractal)</h4>
+          OÙ ✅ (discount 5 min, FVG rejeté) + QUOI ✅ (cassure + breaker) + OÙ VA ✅ (EQH → PDH → PWH). Le triangle se ferme sur le plan fractal 5 min + biais 1H. La seule réserve n'est pas la direction mais le <strong>timing</strong> (entrée peut-être un peu tôt vs un retrace de session plus profond).
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-22/03-triangle-read-5min.png" alt="Lecture triangle · 5 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · structure + breaker · runner re-ciblé sur le PDH 30,782.25</figcaption></figure>
+
+        <div class="callout callout--green mt">
+          <h4>📊 Management · TP1 atteint → runner vers le PDH</h4>
+          <strong>TP1</strong> — 4 micros sortis à <span class="num acc">30,692.50</span> · +50 pts · <span class="pos">+$400</span> réalisés.<br>
+          <strong>Stop</strong> — trailé à <span class="num acc">30,643.50</span> (BE +1 pt) → <strong>trade sans risque</strong>.<br>
+          <strong>Runner</strong> — 1 micro en route vers le <strong>PDH 30,782.25</strong> (TP2), P/L ouvert ≈ +67 pts. Au-dessus : EQH → PDH → PWH.
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-22/05-tp1-hit-runner-pdh.png" alt="TP1 atteint · runner vers PDH" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Sierra · +1@30,642.50 restant · SL→BE 30,643.50 · runner TP 30,782.25 (PDH)</figcaption></figure>
+
+        <h3 style="margin-top:26px">Bilan clôture London · 22 juin</h3>
+        <div class="callout callout--green">
+          <h4>✅ Session London clôturée · net +$620.50</h4>
+          Runner clôturé <strong>manuellement</strong> à 30,780.25, juste sous le PDH : le prix fait souvent un gros retracement juste sous le TP (mèche) pour aller chercher la liquidité avant de continuer plus tard — clôture choisie pour sécuriser et boucler London. Un short 1min d'instinct (−$55) a été pris puis corrigé vers le biais avant de passer Long. Setup globalement clean. <strong>Décision semaine : exécution 5 min / cadre 1H, on arrête de regarder le 1 min</strong> (source du piège short).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Short 1min</div><div class="v num neg">−$55</div><div class="s">flip corrigé vers le biais</div></div>
+          <div class="mini-stat"><div class="l">Long bracket</div><div class="v num pos">+$675.50</div><div class="s">TP1 +$400 · runner +$275.50</div></div>
+          <div class="mini-stat"><div class="l">Net London</div><div class="v num pos">+$620.50</div><div class="s">Source : Sierra Chart</div></div>
+          <div class="mini-stat"><div class="l">Cum. période</div><div class="v num pos">$2,666.00</div><div class="s">+$620.50 vs veille</div></div>
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--red"><h4>Leçon · short 1min contre-biais</h4><p>Réflexe short sur le high de l'Asia = entorse à « ne pas flipper le biais ». Rattrapé vite (−$55), mais l'idéal est de ne pas le prendre du tout : le biais 1H était haussier.</p></div>
+          <div class="panel panel--green"><h4>Process · long fractal propre</h4><p>Triangle fermé sur le 5min (discount + FVG rejeté + draw PDH). Bracket déroulé, BE auto après TP1, runner pris sous le PDH. +$675.50.</p></div>
+          <div class="panel panel--accent"><h4>Éval Topstep 50K</h4><p>Balance ≈ <strong>$52,666</strong> · objectif $3,000 atteint à <strong>~89%</strong> · 4 jours tradés (min 2 ✓) · consistency OK (meilleur jour $968.50 &lt; $1,500). NY peut suivre.</p></div>
+        </div>
+
+        <div class="callout callout--accent mt">
+          <h4>🎯 Leçon · protéger le gain du runner (sortie validée)</h4>
+          Sortie du runner sous le PDH parce qu'un <strong>short s'est formé / la structure a cassé</strong>. C'est exactement la situation à éviter : laisser un runner à <strong>+$200 et plus</strong> revenir au BE. Après la sortie, le prix a chuté jusqu'à ≈ 30,450 — bien sous le BE 30,643.50. Le BE est un plancher, pas une cible : sur cassure de structure en profit, on encaisse.
+        </div>
+        <figure style="margin:14px 0 0"><img src="plans/2026-06-22/07-post-exit-structure-break.png" alt="Cassure de structure après la sortie du runner" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · après la sortie sous le PDH, cassure baissière → chute jusqu'à ≈ 30,450 (sous le BE). La sortie discrétionnaire du runner a sauvé le gain.</figcaption></figure>
+      `
+    },
+    { date: "19 juin 2026", status: "closed", statusLabel: "Jour 3 · clôturée ✅", pl: "+$600", plSub: "1 trade · Win · éval Topstep 50K",
+      html: `
+        <h3>Cadre multi-timeframe · 19 juin · NQU26 <span style="color:var(--muted);font-size:13px">· vendredi · Jour 3</span></h3>
+        <div class="callout callout--accent">
+          <h4>🧭 Vendredi · pas de news · biais pas encore clair (léger penchant baissier)</h4>
+          Vendredi sans catalyseur. <strong>Pas de biais clair pour le moment</strong>, léger penchant baissier (« je pense qu'on va descendre »). Sur le <strong>4H</strong>, le prix est à <strong>50% du range tracé</strong> (zone d'équilibre), et il y a un <strong>gros FVG</strong>. Journée d'observation — on verra comment le marché évolue.
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--accent"><h4>4H · 50% du range</h4><p>Prix au milieu du range tracé sur le 4H — pas de bord. Gros FVG présent à surveiller.</p></div>
+          <div class="panel panel--accent"><h4>Biais</h4><p>Pas encore tranché. Léger penchant baissier, à confirmer selon la structure et les Kill Zones.</p></div>
+          <div class="panel panel--accent"><h4>Contexte</h4><p>Vendredi, pas de news. Observation + backtest possible dans la journée.</p></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/03-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/04-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/05-15m.png" alt="15 minutes" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 minutes</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Entrée · Long 5 micros @ 30,495.00 <span style="color:var(--muted);font-size:13px">· position ouverte</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Long 5 MNQ · sweep low + low Asie · discount (sous TDO)</h4>
+          Sweep d'un low en 15min (+ <strong>low de l'Asie</strong> pris), prix <strong>sous le TDO</strong> = discount → setup de retournement haussier. Bracket 5 micros standard.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,495.00</div><div class="s">Long 5 MNQ · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,470.00</div><div class="s num">−25 pts · −$250</div></div>
+          <div class="mini-stat"><div class="l">TP1 · 4c</div><div class="v num acc">30,545.00</div><div class="s num">+50 pts · +$400</div></div>
+          <div class="mini-stat"><div class="l">Runner · 1c</div><div class="v num pos">30,595.00</div><div class="s num">+100 pts</div></div>
+          <div class="mini-stat"><div class="l">Statut</div><div class="v acc">Live</div><div class="s">P/L Sierra à la clôture</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🕐 Note · entrée un peu tardive (attente London KZ)</h4>
+          Entrée un peu tard car attente de la <strong>London Kill Zone</strong> — <strong>ce n'est pas une erreur</strong>, c'est dans mes règles. Réflexion : quand un setup valide est là, le prendre <strong>même hors Kill Zone</strong>. À garder en tête pour affiner la règle KZ.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/06-entry-long-sweep-low.png" alt="Entrée long sweep low" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Long 5 micros @ 30,495 · stop 30,470 · TP1 30,545 · runner 30,595.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-19/07-15m-sweep-low-asia.png" alt="15min sweep low Asie" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15min · NQ / ES · sweep de low + low de l'Asie pris, prix sous le TDO (discount).</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Management · TP1 atteint → runner + BE <span style="color:var(--muted);font-size:13px">· en cours</span></h3>
+        <div class="callout callout--green">
+          <h4>✅ TP1 atteint · 4c @ 30,545 · +$400 verrouillés · runner vers 30,595 · BE</h4>
+          Premier TP touché : les <strong>4 contrats fixes sont sortis à 30,545</strong> (+50 pts · <strong>+$400</strong>). Le <strong>runner (1c)</strong> court vers 30,595, stop déjà à <strong>BE</strong> → trade sans risque. Le sweep de low a bien donné le retournement haussier attendu.
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/08-tp1-hit-runner-be.png" alt="TP1 atteint runner BE" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · TP1 atteint (4c @ 30,545, +$400) · runner 1c vers 30,595 · stop à BE.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Bilan Jour 3 · 19 juin · Net +$600 (réel Sierra)</h3>
+        <div class="callout callout--green">
+          <h4>✅ Jour 3 · éval Topstep 50K · 1 trade · Win · +$600</h4>
+          Long sur sweep de low (+ low Asie, sous le TDO) → bracket 5 micros déroulé EN PLEIN : TP1 4c @ 30,545 (+$400) + TP2 runner 1c @ 30,595 (+$200). Un seul trade, propre, sans risque après le TP1. Balance éval : <strong>$52,045.50</strong>.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Net Jour 3</div><div class="v num pos">+$600</div><div class="s">1 Win / 0 Perte</div></div>
+          <div class="mini-stat"><div class="l">Objectif +$3,000</div><div class="v num acc">68%</div><div class="s">reste +$954.50</div></div>
+          <div class="mini-stat"><div class="l">Balance</div><div class="v num pos">$52,045.50</div><div class="s">cumul +$2,045.50</div></div>
+          <div class="mini-stat"><div class="l">Discipline</div><div class="v pos">Bracket fixe ✅</div><div class="s">3 jours verts</div></div>
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-19/09-tp2-final-tp.png" alt="TP2 final atteint" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · TP2 atteint (runner @ 30,595) — long complet déroulé, +$600.</figcaption></figure>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:14px">Note compte : Sim resetté (bascule SIM2), export reparti de 0. Balance d'éval Topstep (cumulative) mise à jour : $51,445.50 + $600 = <strong>$52,045.50</strong>.</p>
+      ` },
+    { date: "18 juin 2026", status: "closed", statusLabel: "Jour 2 · clôturée ✅", pl: "+$477", plSub: "2 trades · 1W / 1L · éval Topstep 50K",
+      html: `
+        <h3>Cadre multi-timeframe · 18 juin · NQU26 <span style="color:var(--muted);font-size:13px">· post-FOMC · Jour 2</span></h3>
+        <p class="view-intro">Screenshots du jour rangés par time frame (Weekly → 15 min). Analyse à suivre.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-18/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-18/03-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-18/04-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-18/05-15m.png" alt="15 minutes" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15 minutes</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🔀 SMT NQ / ES · low de l'Asie</h4>
+          Le <strong>NQ a pris le low de l'Asie</strong>, l'<strong>ES pas encore</strong> → divergence SMT. Blocs gris (OB) et déviations de l'Asie marqués.
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/06-smt-nq-es-asia.png" alt="SMT NQ vs ES low Asie" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">NQ (gauche) vs ES (droite) · 15min · blocs gris + déviations Asie. Le NQ a balayé le low Asie, l'ES non → SMT.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Setup potentiel · Long limite · MSS + Breaker <span style="color:var(--muted);font-size:13px">· ordre en attente</span></h3>
+        <div class="callout callout--accent">
+          <h4>📐 Long limite 4 micros · 30,304.00 · rebond FVG + MSS + Breaker</h4>
+          Rebond dans le <strong>FVG</strong> qui a créé le mouvement de l'Asie, suivi d'un <strong>MSS</strong> (market structure shift) et d'un <strong>breaker block</strong>. Ordre limite long posé sur le retour dans la zone — <strong>pas sûr que le prix y revienne</strong>. Aligné au RM (4 micros · stop 25 pts · 2:1) et au contexte SMT (NQ a balayé le low Asie, l'ES non).
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Entrée (limite)</div><div class="v num pos">30,304.00</div><div class="s">Long 4 MNQ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,279.00</div><div class="s num">−25 pts · −$200</div></div>
+          <div class="mini-stat"><div class="l">TP</div><div class="v num acc">30,354.00</div><div class="s num">+50 pts · +$400</div></div>
+          <div class="mini-stat"><div class="l">R:R</div><div class="v num pos">2:1</div><div class="s">ordre en attente</div></div>
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/07-setup-long-limit-mss-breaker.png" alt="Setup long limite MSS Breaker" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Long limite 30,304.00 · Stop 30,279.00 · TP 30,354.00 (2:1) · rebond FVG + MSS + breaker block.</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📏 OTE tracé · entrée bien placée · cible révisée = high de l'Asie</h4>
+          Fib OTE tracé : l'entrée <strong>30,304</strong> tombe dans la zone OTE — bien placée. Mais le prix a déjà <strong>rebondi au-dessus</strong>, donc la limite pourrait ne pas se remplir. Si elle se déclenche, je viserais plutôt le <strong>high de l'Asie</strong> (plutôt que le target fixe +50 pts). Extensions de projection : −50% ~30,375 · −100% ~30,405 · −150% ~30,437.
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/08-ote-entry-asia-high-target.png" alt="OTE entrée + cible high Asie" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · OTE tracé · entrée 30,304 dans la zone OTE · projection vers le high de l'Asie.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Entrée · Long 4 micros @ 30,347.75 <span style="color:var(--muted);font-size:13px">· position ouverte</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Long Live · 30,347.75 · TP juste avant le high de l'Asie</h4>
+          Le prix n'est pas revenu jusqu'à la limite initiale (30,304) — entrée sur un <strong>retracement plus haut à 30,347.75</strong>. TP <strong>30,409.00</strong> placé juste avant le <strong>high de l'Asie (déviation −200% ≈30,440)</strong>, entre les déviations −100%/−150% (30,400 / 30,420) où le prix devrait commencer à accumuler. Un peu plus que le target standard : <strong>+$490</strong> (vs +$400). SMT NQ/ES en support.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,347.75</div><div class="s">Long 4 MNQ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,322.75</div><div class="s num">−25 pts · −$200</div></div>
+          <div class="mini-stat"><div class="l">TP · avant high Asie</div><div class="v num acc">30,409.00</div><div class="s num">+61.25 pts · +$490</div></div>
+          <div class="mini-stat"><div class="l">R:R</div><div class="v num pos">2.45:1</div><div class="s">61.25 / 25</div></div>
+          <div class="mini-stat"><div class="l">Statut</div><div class="v acc">Live</div><div class="s">P/L Sierra à la clôture</div></div>
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/09-entry-long-30347.png" alt="Entrée long 30347.75" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Long 4 micros @ 30,347.75 · Stop 30,322.75 · TP 30,409.00 · déviations 100/150/200 (high Asie au 200 ≈30,440).</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🔎 Note timing · le prix est revenu pile dans l'OTE</h4>
+          Après l'entrée, le prix est <strong>revenu pile poil dans l'OTE</strong> — j'aurais pu attendre pour une meilleure entrée. Mais vu la vitesse du mouvement, j'ai préféré <strong>entrer sur le breaker</strong> plutôt que risquer de rater le trade. Compromis assumé : un peu moins de prix, mais le trade est pris.
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/10-price-back-in-ote.png" alt="Prix revenu dans OTE" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · le prix retrace pile dans la zone OTE après l'entrée — meilleure entrée possible, mais entrée prise sur le breaker.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Management · Partiel 3c au 100% Fib (TDO) + runner + BE <span style="color:var(--muted);font-size:13px">· plan non exécuté</span></h3>
+        <div class="callout callout--accent">
+          <h4>📊 Partiel 3c @ 30,400.00 (100% Fib = TDO) · 1c runner au high Asie · BE après</h4>
+          Ordre limite de <strong>partiel : 3 contrats à 30,400.00</strong> — le 100% du Fib, qui coïncide avec le <strong>TDO (True Day Open)</strong>. Le <strong>4e contrat</strong> reste pour courir vers le <strong>high de l'Asie</strong> (~30,440, déviation 200). <strong>Une fois les 3 partiels pris → stop à BE</strong> (30,347.75) : trade sans risque.<br/><span style="color:var(--accent)">⚠️ Réconciliation export : le prix n'est finalement pas monté à 30,400 sur cette position — partiel <strong>non rempli</strong>, sortie sur la mèche à 30,333.25 (−$116). Voir bilan.</span>
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Partiel · 100% Fib / TDO</div><div class="v num acc">30,400.00</div><div class="s num">3c · +52.25 pts · +$313.50</div></div>
+          <div class="mini-stat"><div class="l">Runner · high Asie</div><div class="v num pos">~30,440</div><div class="s">1c · déviation 200</div></div>
+          <div class="mini-stat"><div class="l">Stop après partiel</div><div class="v num">BE 30,347.75</div><div class="s">trade free</div></div>
+          <div class="mini-stat"><div class="l">Statut</div><div class="v num neg">Non rempli</div><div class="s">prix pas monté à 30,400</div></div>
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/11-partial-100fib-tdo-be.png" alt="Partiel 100% Fib TDO + BE" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · partiel 3c @ 30,400.00 (100% Fib / TDO) · 4e contrat runner vers le high Asie · BE après les partiels.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">Sortie sur la mèche + Ré-entrée · Long 5 micros (bracket) @ ~30,344.70 <span style="color:var(--muted);font-size:13px">· clôturé +$593</span></h3>
+        <div class="callout callout--accent">
+          <h4>🔄 Stoppé sur la mèche (BE) → re-entrée même zone</h4>
+          La 1ère position est sortie en petite perte à 30,333.25 (−$116 ; le partiel à 30,400 n'a pas filé). Setup toujours valide → <strong>re-entrée long 5 micros (le nouveau bracket) @ ~30,344.70</strong>, même objectif (zone 100% Fib / TDO ~30,400). Pas une re-entrée de revenge : la petite perte n'invalide pas le setup, juste une mèche qui a balayé le stop.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Ré-entrée</div><div class="v num pos">~30,344.70</div><div class="s">Long 5 MNQ (avg)</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,320.50</div><div class="s num">−24 pts · ~$194</div></div>
+          <div class="mini-stat"><div class="l">TP</div><div class="v num acc">30,395.50</div><div class="s num">+50.8 pts · ~+$406</div></div>
+          <div class="mini-stat"><div class="l">R:R</div><div class="v num pos">~2:1</div><div class="s">même plan</div></div>
+          <div class="mini-stat"><div class="l">Statut</div><div class="v acc">Live</div><div class="s">P/L Sierra à la clôture</div></div>
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/12-stop-wick-reentry.png" alt="Stop mèche + ré-entrée" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · runner stoppé à BE sur la mèche · re-entrée long ~30,344.70 · stop 30,320.50 · TP 30,395.50.</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📈 Progression · Target 1 pris → runner vers Target 2</h4>
+          Le <strong>premier target a été enclenché</strong> (les fixes sortis) et le prix monte vers le <strong>second target (~high de l'Asie, ~30,440)</strong>. Stop déjà à BE → runner sans risque. P/L exact à confirmer à l'export Sierra.
+        </div>
+        <div style="margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-18/13-target1-hit-runner-to-target2.png" alt="Target 1 pris runner vers Target 2" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · Target 1 enclenché · le runner monte vers le Target 2 (~high Asie ~30,440).</figcaption></figure>
+        </div>
+        <div class="callout callout--green mt">
+          <h4>💡 Évolution MM envisagée · 5 micros (4 fixes 2:1 + 1 runner)</h4>
+          Idée pour concilier discipline et instinct de range : <strong>entrer à 5 micros</strong> (SL 25 pts), <strong>4 contrats au TP fixe 2:1</strong> (verrouille les +$400 = objectif du jour) et <strong>1 contrat runner</strong>. Coût : +1 contrat de risque = <strong>$250/trade</strong> (vs $200). L'avantage : le +$400 est sécurisé <em>sans toucher au TP</em>, et le runner satisfait l'envie de laisser courir — sans violer la règle « TP fixe ». Conforme Topstep 50K (2 pertes = $500/jour, sous la DLL $1,000 · 5 micros OK).
+        </div>
+
+        <h3 style="margin-top:26px">Bilan Jour 2 · 18 juin · Net +$477 (réel Sierra)</h3>
+        <div class="callout callout--green">
+          <h4>✅ Jour 2 · éval Topstep 50K · 2 trades · 1 Win / 1 Perte · +$477</h4>
+          Réconciliation export. <strong>T1 −$116</strong> : le partiel prévu à 30,400 n'a pas filé, sortie sur la mèche à 30,333.25 (petite perte gérée). <strong>T2 +$593</strong> : la re-entrée avec le NOUVEAU bracket 5 micros (4 fixes @ 30,395.50 + runner @ 30,438.00) — premier test grandeur nature réussi. Balance éval : <strong>$51,445.50</strong>.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Net Jour 2</div><div class="v num pos">+$477</div><div class="s">1 Win / 1 Perte</div></div>
+          <div class="mini-stat"><div class="l">Objectif +$3,000</div><div class="v num acc">48%</div><div class="s">reste +$1,554.50</div></div>
+          <div class="mini-stat"><div class="l">Meilleur trade</div><div class="v num pos">+$593</div><div class="s">bracket 5 micros</div></div>
+          <div class="mini-stat"><div class="l">Balance</div><div class="v num pos">$51,445.50</div><div class="s">cumul +$1,445.50</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧠 Leçon du jour, confirmée</h4>
+          Le partiel / TP mobile sur T1 n'a rien donné (l'erreur du jour, déjà notée). Mais le <strong>bracket fixe 5 micros</strong> sur T2 a tourné parfaitement : objectif sécurisé sur les 4 fixes, runner encaissé jusqu'au high Asie, BE auto. La config qu'on vient de poser est la bonne — discipline + runner, sans toucher au TP.
+        </div>
+      ` },
+    { date: "17 juin 2026", status: "closed", statusLabel: "Jour 1 · clôturée ✅", pl: "+$968.50", plSub: "2 trades · 2 Win · éval Topstep 50K",
+      html: `
+        <h3>Cadre du jour · 17 juin · NQU26 <span style="color:var(--muted);font-size:13px">· Jour 1 · éval Topstep 50K</span></h3>
+        <div class="callout callout--accent">
+          <h4>🧭 Contexte HTF · tendance haussière, prix sous l'ATH</h4>
+          Weekly et 4H toujours <strong>haussiers</strong> — le prix consolide près des plus hauts historiques (~31,000). On travaille le <strong>range</strong> du 4H : haut ~30,990 (ATH / BSL), bas ~28,600 (low du 9 juin). Prix actuel ~30,485, milieu de range. Pas de setup engagé : <strong>si une config se présente en Kill Zone, je la prends ; sinon je pars de ce cadre et on verra demain.</strong>
+        </div>
+        <div class="grid-3 mt">
+          <div class="panel panel--green"><h4>Weekly</h4><p>Tendance de fond haussière, près de l'ATH. Le range de travail s'inscrit sous ~31,000.</p></div>
+          <div class="panel panel--green"><h4>4H</h4><p>Range ~28,600 → ~31,000. Pullback depuis l'ATH, prix au milieu (~30,485).</p></div>
+          <div class="panel panel--accent"><h4>15min · niveaux</h4><p>Range high ~30,990 · supports ~30,370 / ~29,750 / ~29,130. Zone de décision intraday.</p></div>
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Range High</div><div class="v num acc">~30,990</div><div class="s">ATH · BSL</div></div>
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">~30,485</div><div class="s">milieu de range</div></div>
+          <div class="mini-stat"><div class="l">Support proche</div><div class="v num">~30,370</div><div class="s">1er niveau bas</div></div>
+          <div class="mini-stat"><div class="l">Supports bas</div><div class="v num">29,750 / 29,130</div><div class="s">plus profonds</div></div>
+        </div>
+        <div class="callout callout--red mt">
+          <h4>⚠️ Discipline éval Topstep 50K</h4>
+          Risk management <strong>fixe</strong> : <strong>4 micros MNQ = $200 de risque/trade</strong>, TP <strong>2:1 (+$400)</strong>, perte max <strong>$400/jour = 2 trades</strong> puis stop. Affichage du mini (NQU26) pour les vrais volumes, exécution sur le micro (MNQU26). Conforme Topstep 50K (DLL $1,000 · drawdown $2,000 · meilleur jour &lt; $1,500 · objectif +$3,000 en min. 2 jours). Pas de trade sans range + Kill Zone + confirmation — zéro revenge.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-17/01-weekly-range.png" alt="Weekly range" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · tendance de fond haussière, range de travail sous l'ATH ~31,000.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-17/02-4h-range.png" alt="4H range" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H · range ~28,600 → ~31,000, prix ~30,485 au milieu.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-17/03-15m-niveaux.png" alt="15min niveaux" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">15min · niveaux affinés : high ~30,990 · supports ~30,370 / ~29,750 / ~29,130.</figcaption></figure>
+        </div>
+
+        <h3 style="margin-top:26px">T1 · Win ✅ · Long 4 micros → TP 2:1 <span style="color:var(--muted);font-size:13px">· +$400</span></h3>
+        <div class="callout callout--green">
+          <h4>✅ Long 4 MNQ · 30,471.25 → 30,521.25 · +$400 (2:1)</h4>
+          Premier trade de l'éval : long 4 micros, TP plein à 2:1 (+50 pts). Risque $200 → gain +$400. RM respecté à la lettre.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num pos">30,471.25</div><div class="s">Long 4 MNQ · NY AM</div></div>
+          <div class="mini-stat"><div class="l">TP</div><div class="v num acc">30,521.25</div><div class="s num">+50 pts · 2:1</div></div>
+          <div class="mini-stat"><div class="l">Risque</div><div class="v num">$200</div><div class="s">stop ~25 pts</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$400</div><div class="s">réel Sierra</div></div>
+        </div>
+
+        <h3 style="margin-top:26px">T2 · Win ✅ · Short 4 micros → TP 30,387.75 (échelonné) <span style="color:var(--muted);font-size:13px">· +$568.50</span></h3>
+        <div class="callout callout--green">
+          <h4>✅ Short 4 MNQ · 30,505.25 → 30,387.75 · +$568.50</h4>
+          Short depuis 30,505.25 (stop 30,530.25), descente vers le support ~30,387. Sortie <strong>échelonnée</strong> — 1 contrat à 30,485.75, 30,433.00, 30,430.25, puis TP final 30,387.75. Le runner transforme un 2:1 en <strong>+$568.50</strong>.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num neg">30,505.25</div><div class="s">Short 4 MNQ</div></div>
+          <div class="mini-stat"><div class="l">Stop</div><div class="v num neg">30,530.25</div><div class="s num">+25 pts · $200</div></div>
+          <div class="mini-stat"><div class="l">TP final</div><div class="v num acc">30,387.75</div><div class="s num">−117.5 pts</div></div>
+          <div class="mini-stat"><div class="l">Partiels</div><div class="v num">4 × 1c</div><div class="s">30,485 → 30,387</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$568.50</div><div class="s">réel Sierra</div></div>
+        </div>
+
+        <h3 style="margin-top:26px">Bilan Jour 1 · 17 juin · Net +$968.50 (réel Sierra)</h3>
+        <div class="callout callout--green">
+          <h4>✅ Jour 1 · éval Topstep 50K · 2 trades · 2 Win · +$968.50</h4>
+          Démarrage parfait : 2 trades, 2 gagnants, sizing micros tenu. T1 long +$400 (2:1 plein), T2 short +$568.50 (sortie échelonnée). Balance éval : <strong>$50,968.50</strong>. Zéro perte, zéro entorse au plan de risque.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Net Jour 1</div><div class="v num pos">+$968.50</div><div class="s">2 Win / 0 Perte</div></div>
+          <div class="mini-stat"><div class="l">Objectif +$3,000</div><div class="v num acc">32%</div><div class="s">reste +$2,031.50</div></div>
+          <div class="mini-stat"><div class="l">Meilleur jour</div><div class="v num pos">+$968.50</div><div class="s">&lt; $1,500 ✓</div></div>
+          <div class="mini-stat"><div class="l">Balance</div><div class="v num pos">$50,968.50</div><div class="s">drawdown intact</div></div>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>📊 Suivi éval (voir onglet Prop Firm)</h4>
+          Drawdown trailing $2,000 : marge pleine (aucune perte) · DLL $1,000 : 0 utilisé · Jour 1 / min. 2. À cette cadence et avec ce RM, l'objectif est atteignable en quelques jours — l'enjeu n'est pas la vitesse mais de <strong>rester aussi discipliné chaque jour</strong>.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-06-17/04-trade-niveaux.png" alt="Niveaux intraday" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · niveaux intraday + gestion du short (stop/TP, RM 2:1).</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-17/05-short-gestion.png" alt="Gestion short" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · short · stop 30,530.25 · cible 30,387.75.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-17/06-short-partiels.png" alt="Sortie échelonnée" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · sortie échelonnée, réduction à 1 contrat vers le TP.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-06-17/07-contexte.png" alt="Contexte" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1min · contexte après les trades, descente vers le support.</figcaption></figure>
+        </div>
+      ` }
+  ],
   rules: [
     { label: "Principe fondamental", text: "Un trader ICT ne réagit pas au prix — il anticipe le prix." },
     { label: "Déterminer le range D'ABORD", critical: true, text: "1ère chose à faire avant toute exécution : déterminer le range dans lequel on va travailler. Trouver le time frame où le range est le plus CLAIR, puis descendre vers le time frame d'exécution en respectant l'alignement avec ce range. Pas de range défini = pas de trade." },
@@ -887,7 +1821,23 @@ const DATA = {
   ],
 
   /* ---- Erreurs documentées (semaine du 9–13 juin) ---- */
-  weeklyErrors: [],
+  weeklyErrors: [
+    { type: "critical", title: "Avoir bougé le TP (au lieu de le laisser fixe)",
+      occurrences: 1, days: "18 juin",
+      description: "Si j'avais laissé le TP fixe (2:1, +$400), la position serait déjà fermée à l'objectif — je serais hors du trade et la journée serait gagnée. Parce que j'aime trader les ranges, j'ai déplacé le TP → bloqué dans une accumulation et stoppé une fois (sortie sur la mèche, re-entrée). Nuance : le runner a payé hier (T2 du 17 juin), mais pour l'éval la régularité d'un TP fixe prime sur l'optimisation au cas par cas.",
+      rule: "Laisser le SL ET le TP FIXES — ne jamais les déplacer une fois posés. TP à 2:1 (+$400), on sort, point. C'est la discipline d'un TP/SL fixe qui permet de passer l'éval et de garder le compte dans la durée.",
+      costStr: "objectif du jour manqué (TP fixe = sortie nette à +$400)" },
+    { type: "critical", title: "Trader CONTRE son propre algo (longs en marché baissier) + ne pas s'arrêter après 2 SL",
+      occurrences: 3, days: "23 juin",
+      description: "Mon algorithme (Trinity) affichait TOUT en baisse — biais clairement vendeur sur tous les TF. J'ai quand même pris TROIS LONGS à contre-courant (−$320, −$462.50, −$517.50). Le SEUL gagnant fut le short, aligné avec le biais (+$402). Pire : après le short gagnant, j'ai repris un 4e trade (encore un long) qui a perdu −$517.50 — le trade de trop. J'aurais dû couper après 2 SL. La journée a fini BE (+$23) grâce aux trades alignés de l'après-midi, mais le creux a touché −$898 (à $102 de la limite). CAUSE RACINE : mauvaise analyse du biais de départ — je n'ai pas correctement lu le marché et je n'ai PAS pris en compte mon algo (Trinity, baissier sur tous les TF). Quand je me suis enfin aligné, tout a gagné.",
+      rule: "Suivre le biais de l'algo : si Trinity est baissier, on cherche des SHORTS (le 5 min exécute, l'algo/1H autorise). Et ARRÊTER après 2 SL — pas de 3e trade « pour se refaire ». La discipline d'arrêt protège le compte ET le mental. Note : le 3e trade (short) est enfin dans le bon sens, mais le bon process aurait été de commencer là.",
+      costStr: "−$500 (2 SL) · 3e trade non planifié" },
+    { type: "critical", title: "Short contre le biais + entrée hors Kill Zone (1:30 AM)",
+      occurrences: 2, days: "29 juin",
+      description: "Biais clairement BULLISH (long planifié vers 29,722.25). J'ai quand même pris DEUX SHORTS en anticipant un sweep du low de l'Asie (−$353.50 puis −$35 = −$388.50). Double faute : (1) trades CONTRE mon propre biais, sur une anticipation NON confirmée ; (2) entrées HORS Kill Zone, à 1:30 AM — créneau des runs qui piègent. Heureusement, le long aligné qui a suivi (+$785) a remis la journée en vert (+$396.50). La leçon : le seul trade aligné a payé ; les 2 shorts erronés ont coûté $388.50 qu'il a fallu rattraper.",
+      rule: "Ne trader que DANS le sens du biais, et UNIQUEMENT en Kill Zone (London 2–5 ET · NY AM 8:30–11 ET). Pas d'entrée à 1:30 AM hors KZ : c'est l'heure des runs qui piègent. Anticiper un sweep ≠ le voir confirmé — attendre la confirmation, ne pas deviner.",
+      costStr: "SL (montant à confirmer · export)" }
+  ],
   ruleCompliance: [
     { label: "Stop structurel (sous OB/FVG/15min)", violations: 0, ok: 0 },
     { label: "Kill Zone respectée (London / NY AM)", violations: 0, ok: 0 },
