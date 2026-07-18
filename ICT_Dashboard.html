@@ -743,9 +743,9 @@
 const DATA = {
   meta: {
     periodStart: "17 juin 2026",
-    periodEnd: "30 juin 2026",
+    periodEnd: "01 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 48,                        // reset challenge Topstep 50K — repeuplé par tools/update_dashboard.py
+    fills: 100,                        // reset challenge Topstep 50K — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Risque max engagé", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -818,7 +818,8 @@ const DATA = {
   equity: [
     // <EQUITY>
     { date: "29 juin", cum: 429 },
-    { date: "30 juin", cum: -1346 }
+    { date: "30 juin", cum: -1346 },
+    { date: "01 juillet", cum: 1294 }
     // </EQUITY>
   ],
 
@@ -847,7 +848,31 @@ const DATA = {
     { date: "30 juin", t: "08:36:52", cum: -1080 },
     { date: "30 juin", t: "08:36:52", cum: -1184 },
     { date: "30 juin", t: "12:02:38", cum: -1322 },
-    { date: "30 juin", t: "12:02:38", cum: -1346 }
+    { date: "30 juin", t: "12:02:38", cum: -1346 },
+    { date: "01 juillet", t: "03:47:17", cum: -1657 },
+    { date: "01 juillet", t: "03:48:44", cum: -1678 },
+    { date: "01 juillet", t: "04:02:12", cum: -1984 },
+    { date: "01 juillet", t: "04:02:12", cum: -2035 },
+    { date: "01 juillet", t: "04:02:12", cum: -2341 },
+    { date: "01 juillet", t: "04:02:12", cum: -2392 },
+    { date: "01 juillet", t: "05:51:52", cum: -2472 },
+    { date: "01 juillet", t: "06:07:19", cum: -3512 },
+    { date: "01 juillet", t: "06:21:04", cum: -2612 },
+    { date: "01 juillet", t: "06:24:39", cum: -1252 },
+    { date: "01 juillet", t: "06:26:08", cum: 568 },
+    { date: "01 juillet", t: "07:01:40", cum: 250 },
+    { date: "01 juillet", t: "07:01:40", cum: 197 },
+    { date: "01 juillet", t: "07:25:23", cum: -2 },
+    { date: "01 juillet", t: "08:28:50", cum: -308 },
+    { date: "01 juillet", t: "08:28:50", cum: -360 },
+    { date: "01 juillet", t: "08:29:08", cum: -632 },
+    { date: "01 juillet", t: "08:29:08", cum: -678 },
+    { date: "01 juillet", t: "10:52:06", cum: -78 },
+    { date: "01 juillet", t: "10:52:06", cum: 522 },
+    { date: "01 juillet", t: "11:00:21", cum: 1310 },
+    { date: "01 juillet", t: "12:02:20", cum: 1304 },
+    { date: "01 juillet", t: "12:02:20", cum: 1299 },
+    { date: "01 juillet", t: "12:02:20", cum: 1294 }
     // </INTRADAY>
   ],
 
@@ -865,13 +890,114 @@ const DATA = {
     { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,155.50", exit: "30,116.25", rr: "—", pl: "−$550", plClass: "neg", plNum: -549.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 05:42:18→06:33:03 · P/L réel Sierra.", contracts: 7, openTime: "05:42:18", closeTime: "06:33:03", kz: "Hors KZ" },
     { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,113.50", exit: "30,090.00", rr: "—", pl: "−$329", plClass: "neg", plNum: -329.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 06:41:01→07:45:24 · P/L réel Sierra.", contracts: 7, openTime: "06:41:01", closeTime: "07:45:24", kz: "London" },
     { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,118.75", exit: "30,066.25", rr: "—", pl: "−$735", plClass: "neg", plNum: -735.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 08:11:28→08:36:52 · P/L réel Sierra.", contracts: 7, openTime: "08:11:28", closeTime: "08:36:52", kz: "London" },
-    { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,122.75", exit: "30,111.25", rr: "—", pl: "−$161", plClass: "neg", plNum: -161.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 11:27:19→12:02:38 · P/L réel Sierra.", contracts: 7, openTime: "11:27:19", closeTime: "12:02:38", kz: "Hors KZ" }
+    { date: "30 juin", instr: "MNQU26", dir: "Long", entry: "30,122.75", exit: "30,111.25", rr: "—", pl: "−$161", plClass: "neg", plNum: -161.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 11:27:19→12:02:38 · P/L réel Sierra.", contracts: 7, openTime: "11:27:19", closeTime: "12:02:38", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Short", entry: "30,445.00", exit: "30,467.25", rr: "—", pl: "−$312", plClass: "neg", plNum: -311.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 3 fills · 03:18:52→03:47:17 · P/L réel Sierra.", contracts: 7, openTime: "03:18:52", closeTime: "03:47:17", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,466.75", exit: "30,465.25", rr: "—", pl: "−$21", plClass: "neg", plNum: -21.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 3 fills · 03:47:19→03:48:44 · P/L réel Sierra.", contracts: 7, openTime: "03:47:19", closeTime: "03:48:44", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,469.00", exit: "30,443.50", rr: "—", pl: "−$714", plClass: "neg", plNum: -714.0, result: "Perte", setup: "—", notes: "14 contrat(s) max · 8 fills · 03:50:09→04:02:12 · P/L réel Sierra.", contracts: 14, openTime: "03:50:09", closeTime: "04:02:12", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,440.75", exit: "30,438.75", rr: "—", pl: "−$80", plClass: "neg", plNum: -80.0, result: "Perte", setup: "—", notes: "20 contrat(s) max · 2 fills · 05:51:51→05:51:52 · P/L réel Sierra.", contracts: 20, openTime: "05:51:51", closeTime: "05:51:52", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,433.50", exit: "30,413.50", rr: "—", pl: "−$1,040", plClass: "neg", plNum: -1040.0, result: "Perte", setup: "—", notes: "40 contrat(s) max · 3 fills · 05:52:33→06:07:19 · P/L réel Sierra.", contracts: 40, openTime: "05:52:33", closeTime: "06:07:19", kz: "Hors KZ" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Short", entry: "30,413.50", exit: "30,368.00", rr: "—", pl: "+$4,080", plClass: "pos", plNum: 4080.0, result: "Win", setup: "—", notes: "60 contrat(s) max · 6 fills · 06:07:25→06:26:08 · P/L réel Sierra.", contracts: 60, openTime: "06:07:25", closeTime: "06:26:08", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,397.75", exit: "30,371.25", rr: "—", pl: "−$371", plClass: "neg", plNum: -371.0, result: "Perte", setup: "—", notes: "7 contrat(s) max · 4 fills · 06:54:50→07:01:40 · P/L réel Sierra.", contracts: 7, openTime: "06:54:50", closeTime: "07:01:40", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Short", entry: "30,332.00", exit: "30,346.25", rr: "—", pl: "−$200", plClass: "neg", plNum: -199.5, result: "Perte", setup: "—", notes: "7 contrat(s) max · 3 fills · 07:15:19→07:25:23 · P/L réel Sierra.", contracts: 7, openTime: "07:15:19", closeTime: "07:25:23", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,353.75", exit: "30,326.25", rr: "—", pl: "−$676", plClass: "neg", plNum: -675.5, result: "Perte", setup: "—", notes: "14 contrat(s) max · 8 fills · 07:27:15→08:29:08 · P/L réel Sierra.", contracts: 14, openTime: "07:27:15", closeTime: "08:29:08", kz: "London" },
+    { date: "01 juillet", instr: "MNQU26", dir: "Long", entry: "30,352.25", exit: "30,351.50", rr: "—", pl: "+$1,972", plClass: "pos", plNum: 1971.5, result: "Win", setup: "—", notes: "21 contrat(s) max · 12 fills · 08:46:25→12:02:20 · P/L réel Sierra.", contracts: 21, openTime: "08:46:25", closeTime: "12:02:20", kz: "London" }
     // </TRADES>
   ],
 
-  bestTrade: { value: "+$785", sub: "MNQ · 29 juin · réel Sierra" },
+  bestTrade: { value: "+$4,080", sub: "MNQ · 01 juillet · réel Sierra" },
 
   sessions: [
+    { date: "1er juillet 2026", status: "live", statusLabel: "Jour 5 SF · en cours", pl: null, plSub: "T1–T10 · net +$2,639.50",
+      html: `
+        <h3>Analyse Pré-Marché · 1er juillet · NQU26 <span style="color:var(--muted);font-size:13px">· mercredi · SwissFirmUp 300K (Jour 5)</span></h3>
+        <div class="callout callout--green">
+          <h4>🟢 Biais bullish maintenu · structure intacte sur tous les timeframes</h4>
+          Le biais ne change pas : toujours <strong>haussier</strong>. Weekly et Daily confirment la structure de fond (rally soutenu depuis le creux d'avril ≈ 23,600 jusqu'à ≈ 31,200 récemment). Sur 4H et 1H, le marché consolide sous le high récent (≈ 30,600 des 29-30 juin) après le rebond depuis le swing low ≈ 29,200–29,300 (25 juin). Prix actuel ≈ <strong>30,463.50</strong>.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">30,463.50</div><div class="s">consolidation</div></div>
+          <div class="mini-stat"><div class="l">Structure (QUOI)</div><div class="v num pos">Haussière</div><div class="s">HH/HL sur 4H et 1H</div></div>
+          <div class="mini-stat"><div class="l">Vers où (cible)</div><div class="v num acc">≈ 30,600 → 31,000+</div><div class="s">high récent · BSL</div></div>
+          <div class="mini-stat"><div class="l">Invalidation (SSL)</div><div class="v num neg">≈ 29,200–29,300</div><div class="s">swing low 25 juin</div></div>
+        </div>
+        <div class="callout callout--red mt">
+          <h4>📅 News à haut risque aujourd'hui — prudence</h4>
+          <strong>Mercredi 1er juillet</strong> : ADP Non-Farm (8:15 ET) · <strong>Fed Chairman Warsh Speaks (9:00 ET, fort impact)</strong> · ISM Manufacturing PMI + Prices (10:00 ET). Demain <strong>NFP (8:30 ET, très fort impact)</strong>, vendredi Bank Holiday US. <strong>Pas d'ordre limite ouvert avant ces annonces</strong>, taille réduite autour de 9h et 10h ET.
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-07-01/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · structure haussière de fond (triangle de lecture OÙ/QUOI/VERS OÙ)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily · rally depuis ≈ 23,600 (avril) vers ≈ 31,200</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/03-4h.png" alt="4H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">4H · swing low ≈ 29,200–29,300 (25 juin) → swing high ≈ 30,600 (29-30 juin)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/04-1h.png" alt="1H" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H · consolidation sous le high, prix ≈ 30,463.50</figcaption></figure>
+        </div>
+        <div class="callout callout--accent mt">
+          <h4>🧭 Plan</h4>
+          Long dans le sens du biais uniquement. Deux scénarios : <strong>continuation</strong> — cassure displacement du high ≈ 30,600 → draw vers 31,000 puis le high weekly ≈ 31,200 ; <strong>retracement</strong> — retour vers une zone de discount (≈ 30,000 psychologique ou OB/FVG plus proche) avant la reprise, entrée avec confirmation LTF uniquement. Pas d'entrée avant la London KZ (2h–5h ET), pas d'anticipation de sweep non confirmé. Sizing 7 micros, RM fixe, stop après 2 SL. Vigilance ADP 8:15 / Fed Warsh 9:00 / ISM 10:00 ET.
+        </div>
+
+        <div class="callout mt" style="border-left-color:#d9534f">
+          <h4>⚠️ Session Asia (hors KZ) · 5 trades avant Londres · −$2,167</h4>
+          Entre 23h18 ET (30 juin) et 2h07 ET, cinq trades pris en dehors de toute Kill Zone. Séquence : short 7 stoppé (T1), scratch long (T2), puis trois tentatives longues dans le sens du biais journalier qui se sont toutes fait vendre — avec une taille qui grossit à chaque reprise (7 → 14 → 20 → 40). Aucune de ces cinq entrées n'était en London KZ.
+        </div>
+        <table class="trade-table" style="width:100%;border-collapse:collapse;margin-top:10px;font-size:13px">
+          <thead><tr style="text-align:left;color:var(--muted)"><th style="padding:6px 8px">#</th><th>Sens</th><th>Entrée</th><th>Sortie</th><th>Taille</th><th style="text-align:right">P/L</th><th>Heure ET</th></tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T1</td><td>Short</td><td class="num">30,445.00</td><td class="num">30,467.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$312</td><td class="num">23:18–23:47</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T2</td><td>Long</td><td class="num">30,466.75</td><td class="num">30,465.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$21</td><td class="num">23:47–23:48</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T3</td><td>Long</td><td class="num">30,469.00</td><td class="num">30,443.50</td><td class="num">14</td><td class="num neg" style="text-align:right">−$714</td><td class="num">23:50–00:02</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T4</td><td>Long</td><td class="num">30,440.75</td><td class="num">30,438.75</td><td class="num">20</td><td class="num neg" style="text-align:right">−$80</td><td class="num">01:51–01:51</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T5</td><td>Long</td><td class="num">30,433.50</td><td class="num">30,413.50</td><td class="num">40</td><td class="num neg" style="text-align:right">−$1,040</td><td class="num">01:52–02:07</td></tr>
+            <tr style="border-top:2px solid var(--border);font-weight:600"><td style="padding:6px 8px" colspan="5">Sous-total hors KZ</td><td class="num neg" style="text-align:right">−$2,167</td><td></td></tr>
+          </tbody>
+        </table>
+        <figure style="margin:14px 0 0"><img src="plans/2026-07-01/05-t1-short-init.png" alt="T1 · short initial" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · T1 en cours (−7 @ 30,445.00), avant le stop à 30,467.25 · hors Kill Zone.</figcaption></figure>
+
+        <h3>T6 · Win ✅ · Short 60 @ 30,413.50 → 30,368.00</h3>
+        <div class="callout callout--green">
+          <h4>✅ Shift + displacement + retour FVG (SIBI) · draw vers le low de l'Asia</h4>
+          Sur le 15 min : <strong>shift</strong> de structure, <strong>displacement</strong> baissier franc, puis <strong>retour dans le FVG (SIBI)</strong> avant la continuation. Cible : le <strong>low de la session Asia</strong>. Entrée en <strong>London KZ (2h07 ET)</strong> — la seule des 6 entrées du jour prise dans la fenêtre. Scale-out en 3 legs de 20 : 30,391.00 / 30,379.50 / 30,368.00.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée</div><div class="v num neg">30,413.50</div><div class="s">2h07 ET · London KZ</div></div>
+          <div class="mini-stat"><div class="l">Sortie (3 legs)</div><div class="v num pos">30,391 / 30,380 / 30,368</div><div class="s">2h21 → 2h26 ET</div></div>
+          <div class="mini-stat"><div class="l">Taille</div><div class="v num acc">60 contrats</div><div class="s">⚠️ voir erreur ci-dessous</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$4,080</div><div class="s">meilleur trade du challenge</div></div>
+          <div class="mini-stat"><div class="l">Net jour</div><div class="v num pos">+$1,913.50</div><div class="s">après −$2,167 du matin</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-07-01/06-orders-staging.png" alt="Gestion des ordres" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · gestion des ordres pendant la séquence, avant l'entrée finale à 60.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/07-orders-tp-legs.png" alt="TP en 3 legs" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · TP en échelle 30,391 / 30,379.75 / 30,368 sur le short 60.</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-01/08-tv-displacement-fvg.png" alt="Displacement + FVG" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">TradingView 1 min · shift, displacement et retour dans le FVG avant la continuation baissière.</figcaption></figure>
+        </div>
+
+        <div class="callout mt" style="border-left-color:#d9534f">
+          <h4>⚠️ Money management · sizing de rattrapage 7→60 · règle du jour : 7 micros, point final</h4>
+          Confirmé : sur Topstep, <strong>TopstepX est désormais l'unique plateforme</strong> (ProjectX a coupé le support des plateformes tierces le 28 février 2026, plus aucun compte legacy Tradovate/NinjaTrader) — le ratio <strong>10:1 (5 mini = 50 micros) s'applique donc sans exception</strong>. Par analogie, le « Max positions : 30 » de SwissFirmUp 300K est très probablement le même type d'équivalent mini (≈300 micros), ce qui aurait mis le short de 60 largement dans les clous — mais non confirmé directement par SwissFirmUp.
+          <br><br><strong>Décision prise plutôt que d'attendre la confirmation</strong> : retour au money management standard de <strong>7 micros</strong> sur SwissFirmUp, quel que soit le cap exact. Le point n'était pas vraiment le nombre 30 vs 60 — c'est que la taille a grossi à chaque trade perdant de la session Asia (7 → 7 → 14 → 20 → 40 → 60), décidée sous le coup du moment plutôt que planifiée. Si le trade était parti dans l'autre sens, 20 points contre 60 contrats = −$2,400, la quasi-totalité de la marge restante avant le plancher MLL. Rester sur 7 micros retire ce risque de la table, indépendamment de toute zone grise réglementaire.
+        </div>
+
+        <div class="callout callout--accent mt">
+          <h4>🔄 Reprise · T7–T10 (London KZ) · net +$725.50</h4>
+          Quatre trades après le short 60. Taille proche du standard sur T7/T8 (7), plus élevée sur T9/T10 (14 et 21) — à garder à l'œil vu la décision de rester sur 7 micros.
+        </div>
+        <table class="trade-table" style="width:100%;border-collapse:collapse;margin-top:10px;font-size:13px">
+          <thead><tr style="text-align:left;color:var(--muted)"><th style="padding:6px 8px">#</th><th>Sens</th><th>Entrée</th><th>Sortie</th><th>Taille</th><th style="text-align:right">P/L</th><th>Heure ET</th></tr></thead>
+          <tbody>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T7</td><td>Long</td><td class="num">30,397.75</td><td class="num">30,371.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$371</td><td class="num">2:54–3:01</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T8</td><td>Short</td><td class="num">30,332.00</td><td class="num">30,346.25</td><td class="num">7</td><td class="num neg" style="text-align:right">−$200</td><td class="num">3:15–3:25</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T9</td><td>Long</td><td class="num">30,353.75</td><td class="num">30,326.25</td><td class="num">14</td><td class="num neg" style="text-align:right">−$676</td><td class="num">3:27–4:29</td></tr>
+            <tr style="border-top:1px solid var(--border)"><td style="padding:6px 8px">T10</td><td>Long</td><td class="num">30,352.25</td><td class="num">30,351.50</td><td class="num">21</td><td class="num pos" style="text-align:right">+$1,972</td><td class="num">4:46–8:02</td></tr>
+            <tr style="border-top:2px solid var(--border);font-weight:600"><td style="padding:6px 8px" colspan="5">Net T7–T10</td><td class="num pos" style="text-align:right">+$725.50</td><td></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:var(--muted);margin-top:8px">T9 (8 fills) et T10 (12 fills) sont des trades multi-legs : entrée/sortie affichées = premier/dernier fill, P/L réel = somme FIFO des fills Sierra.</p>
+
+        <div class="callout callout--green mt">
+          <h4>✅ Net jour (T1–T10) : +$2,639.50</h4>
+          Malgré −$2,167 hors KZ le matin et trois pertes supplémentaires (T7/T8/T9), la journée reste largement positive grâce à T6 (+$4,080) et T10 (+$1,972).
+        </div>
+      `
+    },
     { date: "30 juin 2026", status: "closed", statusLabel: "Jour 4 SF · clôturée ✗", pl: "−$1,774.50", plSub: "Mauvaise journée · 4 longs, 4 SL · biais bon mais entrées chassées · compte NON invalidé",
       html: `
         <h3>Analyse Pré-Marché · 30 juin · NQU26 <span style="color:var(--muted);font-size:13px">· mardi · SwissFirmUp 300K (Jour 4)</span></h3>
@@ -941,7 +1067,7 @@ const DATA = {
         </div>
       `
     },
-    { date: "29 juin 2026", status: "closed", statusLabel: "Jour 3 SF · clôturée ✅", pl: "+$396.50", plSub: "2 shorts erreur (−$388.50) + long aligné (+$785) · net +$396.50",
+    { date: "29 juin 2026", status: "closed", statusLabel: "Jour 3 SF · clôturée ✅", pl: "+$429", plSub: "2 shorts erreur (−$388.50) + long aligné (+$785) + suite session London (+$32.50) · net +$429",
       html: `
         <h3>Analyse Pré-Marché · 29 juin · NQU26 <span style="color:var(--muted);font-size:13px">· lundi · SwissFirmUp 300K (Jour 3)</span></h3>
         <div class="callout callout--green">
@@ -1725,6 +1851,40 @@ const DATA = {
   /* ---- Stats hebdo pour Performance tab ---- */
   /* ---- Backtests (screenshots + commentaires) ---- */
   backtests: [
+    {
+      date: "1er juillet 2026",
+      instrument: "NQU2026 (E-mini, pas micro)",
+      timeframe: "15s (exécution) · TradingView Paper Trading",
+      setup: "Long 3 @ 30,176.00 · scale-out progressif + trailing stop",
+      result: "valid",
+      title: "Long NQ mini · 3 contrats · scale-out 1+1+1 + trailing stop · +$4,550",
+      comment: "Trade pris sur le compte TradingView Paper Trading (distinct du compte Sierra Chart Sim1 SwissFirmUp) et sur NQU2026 en mini (20$/pt), pas en micro — donc hors suivi du challenge, logué ici en backtest/practice. Entrée : Long 3 @ 30,176.00 (9h41 ET), SL initial 30,085.25 (−90.75 pts), TP 30,372.50. Tentative d'ajout d'un 4e contrat refusée (fonds insuffisants) à 9h47. Gestion : 1er contrat sorti à 30,234.00 (9h51, +58 pts) ; 2e contrat sorti à 30,267.75 (9h59, +91.75 pts) ; stop trailé cinq fois (30,157 → 30,187 → 30,215 → 30,230 → 30,244 → 30,253) jusqu'à toucher sur le dernier contrat à 30,253.75 (10h16, +77.75 pts) — clôturé par le trailing stop plutôt que le TP (jamais atteint, prix culminé ≈30,310 avant retracement). Total : +$4,550.",
+      lessons: [
+        { type: "pos", text: "Gestion propre : scale-out progressif (1+1+1) qui sécurise du profit à chaque étape, combiné à un trailing stop remonté à chaque étape suivante — le dernier contrat capture l'essentiel du mouvement sans redonner le gain au retracement." },
+        { type: "pos", text: "Le TP fixe (30,372.50) n'a jamais été touché — c'est le trailing stop qui a fait le travail. Sur un mouvement qui s'essouffle avant la cible théorique, laisser le trailing gérer la sortie a payé plus qu'un TP figé n'aurait payé si le prix était reparti avant." },
+        { type: "neutral", text: "Instrument et compte différents du challenge SwissFirmUp (NQ mini sur TradingView Paper Trading, pas MNQ sur Sierra Sim1) — logué en backtest, ne compte pas dans le P/L du challenge." },
+        { type: "neutral", text: "Thèse d'entrée (structure/PDA) non précisée — à compléter si utile pour le replay." }
+      ],
+      images: [
+        { src: "plans/2026-07-01/10-tv-paper-trade-mgmt-1.png", caption: "15s NQU2026 · gestion du long après les 2 premiers scale-outs, stop trailé sous le prix, 9h48 ET." },
+        { src: "plans/2026-07-01/11-tv-paper-trade-mgmt-2.png", caption: "15s NQU2026 · extension vers ≈30,310 avant retracement, clôture du dernier contrat sur le trailing stop à 30,253.75, 10h00 ET." }
+      ]
+    },
+    {
+      date: "1er juillet 2026",
+      instrument: "NQU26 / MNQU26",
+      timeframe: "1 min",
+      setup: "Fib/OTE sur la jambe baissière de T6 · setup en observation",
+      result: "neutral",
+      title: "Setup en observation · Fib sur la jambe 30,410.00 → 30,364.50 (post-T6)",
+      comment: "Setup potentiel, pas encore déclenché. Fib tracé sur la jambe baissière qui a servi de cible à T6 : 0 = 30,410.00 → 1 = 30,364.50. Zone OTE 0.62–0.79 = 30,374.00–30,381.75. Prix au repérage (2h37 ET) : 30,390.75, juste au-dessus du 0.5 (30,387.25) — pas encore entré dans l'OTE. Extensions tracées au-dessus du point 0 : −0.5 (30,432.75) / −1 (30,455.50) / −1.5 (30,478.25) / −2 (30,501.00) / −2.5 (30,523.75).",
+      lessons: [
+        { type: "neutral", text: "Direction à confirmer : retour en discount pour chercher un long (OTE 0.62–0.79 puis extension vers −0.5/−1/−1.5), ou niveau de continuation baissière ? Le screenshot seul ne tranche pas — préciser la thèse et la confirmation LTF avant toute entrée." }
+      ],
+      images: [
+        { src: "plans/2026-07-01/09-backtest-fib-ote-watch.png", caption: "1 min NQU2026 · Fib 0 (30,410.00) → 1 (30,364.50) sur la jambe post-T6 · OTE 0.62–0.79 = 30,374–30,382 · prix 30,390.75, pas encore dans la zone." }
+      ]
+    },
     {
       date: "24 juin 2026",
       instrument: "NQU26 / MNQU26",

@@ -1,6 +1,6 @@
 # Topstep — Règles complètes (référence dashboard)
 
-> Source : help.topstep.com — Vérifié le **17 juin 2026**.
+> Source : help.topstep.com — Vérifié le **17 juin 2026**, mise à jour plateforme le **1er juillet 2026**.
 > Toutes les heures en **CT (America/Chicago)**. Devise : **USD**.
 > Fichier compagnon : `topstep_rules_config.json` (config machine-readable à importer).
 
@@ -49,7 +49,7 @@ Tailles : **50K / 100K / 150K**.
 - **Passage possible en 2 jours minimum** (pas en 1 seul jour).
 - **Consistency Target 50%** : `best_day / total_profit ≤ 50%`. Si dépassé → le Profit Target augmente : `nouveau_PT = best_day / 0.50`.
 - Le meilleur jour se **verrouille à 15:10 CT**. Les pertes ne réinitialisent pas le best day.
-- Micros comptés **10:1** (10 micros = 1 mini) sur TopstepX.
+- Micros comptés **10:1** (10 micros = 1 mini) — **sans exception depuis le 28 février 2026** : ProjectX (moteur tiers utilisé pour NinjaTrader/Tradovate) a coupé le support des prop firms tierces ce jour-là, donc **TopstepX est désormais la seule plateforme** Topstep (plus de compte legacy non-TopstepX, plus de ratio 1:1 alternatif).
 
 ---
 
