@@ -743,9 +743,9 @@
 const DATA = {
   meta: {
     periodStart: "18 juillet 2026",
-    periodEnd: "18 juillet 2026",
+    periodEnd: "20 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 0,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 5,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Risque max engagé", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -817,7 +817,7 @@ const DATA = {
   /* P/L cumulé RÉEL — généré depuis TradeActivityLogExport par tools/update_dashboard.py */
   equity: [
     // <EQUITY>
-
+    { date: "20 juillet", cum: 1944 }
     // </EQUITY>
   ],
 
@@ -825,21 +825,22 @@ const DATA = {
      Vide ⇒ le dashboard reconstruit la courbe au trade depuis trades[] (fallback). */
   intraday: [
     // <INTRADAY>
-
+    { date: "20 juillet", t: "07:22:59", cum: 600 },
+    { date: "20 juillet", t: "07:27:07", cum: 1944 }
     // </INTRADAY>
   ],
 
   /* Trades RÉELS (cycles flat→flat) — généré depuis TradeActivityLogExport · annotations ICT via tools/annotations.json */
   trades: [
     // <TRADES>
-
+    { date: "20 juillet", instr: "MNQU26", dir: "Long", entry: "28,800.25", exit: "28,870.25", rr: "—", pl: "+$1,944", plClass: "pos", plNum: 1943.5, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "14 contrat(s) max · 5 fills · 06:42:28→07:27:07 · P/L réel Sierra.", taggedBy: "override", contracts: 14, openTime: "06:42:28", closeTime: "07:27:07", kz: "London", sb: "SB London", violations: ["SIZING 14>7"] }
     // </TRADES>
   ],
 
-  bestTrade: { value: "—", sub: "—" },
+  bestTrade: { value: "+$1,944", sub: "MNQ · 20 juillet · réel Sierra" },
 
   sessions: [
-    { date: "20 juillet 2026", status: "live", statusLabel: "Pré-marché · en cours", pl: null, plSub: "Sim1 · pas de challenge actif",
+    { date: "20 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$1,944", plSub: "T1 win · Sim1 · pas de challenge actif",
       html: `
         <h3>Analyse Pré-Marché · 20 juillet · NQU26 <span style="color:var(--muted);font-size:13px">· lundi · Sim1</span></h3>
         <div class="callout callout--accent">
@@ -862,6 +863,28 @@ const DATA = {
         <div class="callout callout--green mt">
           <h4>🧭 Plan</h4>
           <strong>Scénario 1 (privilégié) — Long</strong> : tenue du 1H Discount Breaker Block (≈28,750) / re-test du Weekly BISI en London ou NY AM KZ, cible Daily Premium SIBI ≈29,250–29,300 ; extension vers BSL 30,094 seulement si le SIBI cède. <strong>Scénario 2 — Short de continuation</strong> : cassure franche et clôture 1H sous la SSL 28,512 invalidant le discount weekly — mais tant que 28,512 n'est pas proprement purgée, ce pool reste un aimant pour un dernier sweep avant retournement. Pas d'entrée hors Kill Zone (voir session du 1er juillet : −$2,167 sur 5 trades hors KZ).
+        </div>
+
+        <h3>T1 · Win ✅ · Long 14 MNQU26 @ 28,792 avg → 28,861 avg</h3>
+        <div class="callout callout--green">
+          <h4>✅ Sweep SSL → FVG 5m · London KZ</h4>
+          Conforme au plan pré-marché (scénario 1) : entrée sur la zone de discount 1H après purge, retour dans un FVG 5 min, London KZ (2h42 ET). Bracket initial 7 lots (6 @ 28,800.25 + 1 @ 28,795.25) à 2h42 ET. Sortie en 2 legs : 6 @ 28,850.25 (3h23 ET) puis 8 @ 28,870.25 (3h27 ET, clôture).
+        </div>
+        <div class="callout mt" style="border-left-color:#d9534f">
+          <h4>⚠️ Sizing 14 &gt; 7 — ajout après entrée en drawdown flottant</h4>
+          Après le bracket initial (7 lots), ajout de 7 lots supplémentaires au marché à 2h49 ET (28,785.00) alors que la position initiale flottait déjà en perte (creux flottant ≈ −$128 sur les 7 premiers, cf. captures). Taille finale doublée à 14 — hors du sizing standard (7 micros). Le trade a fini gagnant, mais le process n'était pas propre : ajouter au lieu de laisser le stop initial faire son travail est le même réflexe que la séquence hors-KZ du 1er juillet.
+        </div>
+        <div class="stat-row cols-5 mt">
+          <div class="mini-stat"><div class="l">Entrée initiale (7)</div><div class="v num">28,800 / 28,795</div><div class="s">2h42 ET · bracket</div></div>
+          <div class="mini-stat"><div class="l">Ajout (7)</div><div class="v num neg">28,785.00</div><div class="s">2h49 ET · marché</div></div>
+          <div class="mini-stat"><div class="l">Sortie (2 legs)</div><div class="v num pos">28,850.25 / 28,870.25</div><div class="s">3h23 → 3h27 ET</div></div>
+          <div class="mini-stat"><div class="l">Taille max</div><div class="v num acc">14 contrats</div><div class="s">⚠️ 2× le sizing standard</div></div>
+          <div class="mini-stat"><div class="l">Résultat</div><div class="v num pos">+$1,944</div><div class="s">1er trade documenté post-reset</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-07-20/06-t1-mgmt-1m.png" alt="Gestion 1 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · ordres en place (TP legs 28,963.50/28,870.25, stop 28,795.25), creux flottant −$44 puis −$128</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-20/07-t1-mgmt-5m.png" alt="Gestion 5 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · vue élargie de la gestion, purge sous 28,600 avant le rebond</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-20/08-t1-close-1m.png" alt="Clôture 1 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1 min · reprise vers 28,960 et clôture des 2 legs en profit</figcaption></figure>
         </div>
       `
     },
