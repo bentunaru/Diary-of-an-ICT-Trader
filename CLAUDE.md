@@ -6,7 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A personal ICT (Inner Circle Trader) trading journal for NQM26 / ESM26 futures on a Sierra Chart Sim1 account. There is no build system, no package manager, and no test suite — the deliverables are self-contained HTML files opened directly in a browser, plus one Python script that regenerates data.
 
-The language of the content (UI text, comments, commit messages, docs) is **French**. Match it when editing.
+**Language convention (décision Ben, 20 juillet 2026)** : l'**interface du
+dashboard est en anglais** (nav, titres de sections, libellés KPI, boutons,
+états vides, footer — tout ce que le renderer génère) ; **tout le contenu
+reste en français** (narratifs de sessions, notes de trades, rules/concepts/
+backtests, commentaires de code, messages de commit, docs). Les valeurs
+produites par le pipeline (`classify_kz` → "Hors KZ", violations) restent
+telles quelles pour ne pas casser la validation.
 
 ## Key files
 

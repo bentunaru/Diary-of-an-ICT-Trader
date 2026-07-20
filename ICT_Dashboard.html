@@ -174,7 +174,7 @@ const DATA = {
     periodEnd: "20 juillet 2026",
     account: "Topstep — Combine 50K",
     fills: 9,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
-    riskMaxDay: { value: 0, label: "Risque max engagé", sub: "—" },
+    riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
     // ddModel : "trailing-eod" | "trailing-intraday" | "static". Une règle à null = carte désactivée.
@@ -227,7 +227,7 @@ const DATA = {
     ],
     // Money management — profil CONSERVATEUR. Tout est dérivé de propFirms ci-dessus : aucun seuil en dur.
     mm: {
-      profile: "Conservateur",
+      profile: "Conservative",
       dailyStopPctOfDLL: 0.40,     // stop perso = 40 % du Daily Loss Limit Topstep…
       minBufferDays: 5,            // …et jamais plus que MLL ÷ 5 (≥ 5 journées rouges de marge avant blow-up)
       riskTradesPerDay: 2,         // risque/trade = stop quotidien ÷ 2 (≤ 2 trades perdants par jour)
@@ -271,7 +271,7 @@ const DATA = {
   bestTrade: { value: "+$2,350", sub: "NQ · 20 juillet · réel TradingView" },
 
   sessions: [
-    { date: "20 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$4,294", plSub: "T1 Sierra +$1,944 · T2 TV +$2,350",
+    { date: "20 juillet 2026", status: "live", statusLabel: "In progress", pl: "+$4,294", plSub: "T1 Sierra +$1,944 · T2 TV +$2,350",
       html: `<h3>Analyse pré-marché · NQU26 · lundi · Sim1</h3>
 <p>Après l'ATH ≈ 31,200 (mi-juin), le Daily a corrigé cinq séances de suite (15→17 juillet), de ≈ 30,050 à ≈ 28,440. Le prix (≈ 28,822 au réveil) est revenu dans le <strong>Weekly Discount BISI (≈ 28,600)</strong> — la zone qui a produit le rebond de vendredi (low 5 min ≈ 28,440 à 9h50 ET, purge partielle vers la SSL 1H puis rejet). Structure Weekly toujours haussière de fond.</p>
 <p>Prix actuel ≈ 28,822 · BSL (1H) 30,094 · Cible 1 (Daily Premium SIBI) ≈ 29,250–29,300 · SSL (1H) 28,512.</p>
@@ -695,38 +695,38 @@ const DEMO = {
     { date: "24 juillet", cum: 1535 }
   ],
   trades: [
-    { date: "20 juillet", instr: "MNQU26", dir: "Long", entry: "31,182.50", exit: "31,232.50", pl: "+$500", plClass: "pos", plNum: 500, result: "Win", contracts: 5, setupType: "OTE + FVG", kz: "London", mood: "Confiant", processClean: true,
+    { date: "20 juillet", instr: "MNQU26", dir: "Long", entry: "31,182.50", exit: "31,232.50", pl: "+$500", plClass: "pos", plNum: 500, result: "Win", contracts: 5, setupType: "OTE + FVG", kz: "London", mood: "Confident", processClean: true,
       setup: "Retour en discount (OTE 0.705) dans le FVG 5 min après sweep de la SSL asiatique.",
       notes: "Entrée limite pendant la London KZ, bracket fixe 5 micros. TP1 touché sans stress — +50 pts." },
-    { date: "20 juillet", instr: "MNQU26", dir: "Short", entry: "31,289.50", exit: "31,314.50", pl: "−$250", plClass: "neg", plNum: -250, result: "Loss", contracts: 5, setupType: "Sweep + MSS", kz: "NY AM", mood: "Neutre", processClean: true,
+    { date: "20 juillet", instr: "MNQU26", dir: "Short", entry: "31,289.50", exit: "31,314.50", pl: "−$250", plClass: "neg", plNum: -250, result: "Loss", contracts: 5, setupType: "Sweep + MSS", kz: "NY AM", mood: "Neutral", processClean: true,
       setup: "Short après sweep du high de Londres + MSS 5 min.",
       notes: "Le MSS n'a pas tenu — stop plein à 25 pts. Process respecté, on s'arrête là pour la journée." },
-    { date: "21 juillet", instr: "MNQU26", dir: "Long", entry: "31,240.00", exit: "31,290.00", pl: "+$500", plClass: "pos", plNum: 500, result: "Win", contracts: 5, setupType: "Unicorn", kz: "NY AM", mood: "Confiant", processClean: true,
+    { date: "21 juillet", instr: "MNQU26", dir: "Long", entry: "31,240.00", exit: "31,290.00", pl: "+$500", plClass: "pos", plNum: 500, result: "Win", contracts: 5, setupType: "Unicorn", kz: "NY AM", mood: "Confident", processClean: true,
       setup: "Breaker + FVG (Unicorn) au-dessus du TDO, biais 1H haussier.",
       notes: "Une seule entrée aujourd'hui — objectif journalier atteint, plateforme fermée." },
-    { date: "22 juillet", instr: "MNQU26", dir: "Short", entry: "31,410.25", exit: "31,435.25", pl: "−$250", plClass: "neg", plNum: -250, result: "Loss", contracts: 5, setupType: "Sweep + MSS", kz: "London", mood: "Neutre", processClean: true,
+    { date: "22 juillet", instr: "MNQU26", dir: "Short", entry: "31,410.25", exit: "31,435.25", pl: "−$250", plClass: "neg", plNum: -250, result: "Loss", contracts: 5, setupType: "Sweep + MSS", kz: "London", mood: "Neutral", processClean: true,
       setup: "Short sous le high de l'Asie après prise de liquidité.",
       notes: "Stoppé — le sweep était une vraie cassure. Le 1H était en désaccord : trade dégradé." },
     { date: "22 juillet", instr: "MNQU26", dir: "Short", entry: "31,455.00", exit: "31,477.50", pl: "−$225", plClass: "neg", plNum: -225, result: "Loss", contracts: 5, setupType: "Re-entry", kz: "London", mood: "Impatient", processClean: false,
       setup: "Re-entrée short au-dessus du premier stop.",
       notes: "Hors-process : re-entrée sans nouveau setup, contre le biais 1H. Deux stops → journée terminée (règle des 2 SL)." },
-    { date: "23 juillet", instr: "MNQU26", dir: "Long", entry: "31,367.75", exit: "31,428.75", pl: "+$610", plClass: "pos", plNum: 610, result: "Win", contracts: 5, setupType: "OTE + FVG", kz: "NY AM", mood: "Confiant", processClean: true,
+    { date: "23 juillet", instr: "MNQU26", dir: "Long", entry: "31,367.75", exit: "31,428.75", pl: "+$610", plClass: "pos", plNum: 610, result: "Win", contracts: 5, setupType: "OTE + FVG", kz: "NY AM", mood: "Confident", processClean: true,
       setup: "Long OTE sur la jambe post-9h30, draw sur le PDH.",
       notes: "4 micros au TP1 (+50 pts), runner sorti +105 pts sur cassure de structure sous le PDH." },
-    { date: "24 juillet", instr: "MNQU26", dir: "Long", entry: "31,502.00", exit: "31,552.00", pl: "+$500", plClass: "pos", plNum: 500, result: "Win", contracts: 5, setupType: "Unicorn", kz: "London", mood: "Confiant", processClean: true,
+    { date: "24 juillet", instr: "MNQU26", dir: "Long", entry: "31,502.00", exit: "31,552.00", pl: "+$500", plClass: "pos", plNum: 500, result: "Win", contracts: 5, setupType: "Unicorn", kz: "London", mood: "Confident", processClean: true,
       setup: "Unicorn (breaker + FVG) en discount du range overnight.",
       notes: "Textbook. TP1 2:1 touché en 40 minutes." },
-    { date: "24 juillet", instr: "MNQU26", dir: "Short", entry: "31,588.25", exit: "31,613.25", pl: "−$250", plClass: "neg", plNum: -250, result: "Loss", contracts: 5, setupType: "Judas Swing", kz: "NY AM", mood: "Neutre", processClean: true,
+    { date: "24 juillet", instr: "MNQU26", dir: "Short", entry: "31,588.25", exit: "31,613.25", pl: "−$250", plClass: "neg", plNum: -250, result: "Loss", contracts: 5, setupType: "Judas Swing", kz: "NY AM", mood: "Neutral", processClean: true,
       setup: "Short sur Judas présumé au-dessus du high de Londres.",
       notes: "Pas de displacement derrière le sweep — stop plein. Setup B, à ne plus prendre sans MSS confirmé." },
-    { date: "24 juillet", instr: "MNQU26", dir: "Long", entry: "31,570.50", exit: "31,610.50", pl: "+$400", plClass: "pos", plNum: 400, result: "Win", contracts: 5, setupType: "OTE + FVG", kz: "NY AM", mood: "Neutre", processClean: true,
+    { date: "24 juillet", instr: "MNQU26", dir: "Long", entry: "31,570.50", exit: "31,610.50", pl: "+$400", plClass: "pos", plNum: 400, result: "Win", contracts: 5, setupType: "OTE + FVG", kz: "NY AM", mood: "Neutral", processClean: true,
       setup: "Long de continuation dans le sens du 1H après la prise de liquidité basse.",
       notes: "Dernier trade de la semaine — TP ramené à 40 pts avant la lunch macro." }
   ],
   sessions: [
-    { date: "24 juillet 2026", status: "closed", statusLabel: "Clôturée", pl: "+$650", plSub: "3 trades · London + NY AM",
+    { date: "24 juillet 2026", status: "closed", statusLabel: "Closed", pl: "+$650", plSub: "3 trades · London + NY AM",
       html: "<p><strong>Biais long tenu toute la séance.</strong> Unicorn textbook en London (+$500), un short Judas mal qualifié rendu (−$250), puis la continuation long en NY AM (+$400) — dans le sens du 1H, après la prise de liquidité basse.</p><p>Meilleure journée de la semaine (+$650), sous le plafond de consistance. Le seul point à corriger : le short sans MSS confirmé, un setup B qui n'avait rien à faire là.</p>" },
-    { date: "22 juillet 2026", status: "closed", statusLabel: "Clôturée", pl: "−$475", plSub: "2 trades · London",
+    { date: "22 juillet 2026", status: "closed", statusLabel: "Closed", pl: "−$475", plSub: "2 trades · London",
       html: "<p><strong>Journée rouge, discipline tenue à moitié.</strong> Premier short stoppé proprement — le 1H était en désaccord, trade dégradé assumé. La re-entrée derrière, en revanche, était du tilt : pas de nouveau setup, contre le biais, à l'impatience.</p><p>Deux stops → plateforme fermée, conformément à la règle. La perte du jour reste très en dessous du stop quotidien perso ($400 sur budget… dépassé de $75 — à surveiller).</p>" }
   ]
 };
@@ -736,7 +736,7 @@ const DEMO = {
    Tout le rendu se régénère depuis DATA ; DEMO ne s'affiche que si DATA.trades
    est vide ET que le mode démo est actif (badge DÉMO — cliquable pour basculer). */
 
-const VIEWS = [["apercu","Aperçu"],["journal","Journal"],["preparation","Préparation"],["playbook","Playbook"],["compte","Compte"]];
+const VIEWS = [["apercu","Overview"],["journal","Journal"],["preparation","Preparation"],["playbook","Playbook"],["compte","Account"]];
 const VIEW_IDS = VIEWS.map(v => v[0]);
 
 const S = {
@@ -824,7 +824,7 @@ function compute() {
   const hasTrades = closed > 0;
 
   const periodLabel = active
-    ? (active.startDate || "—") + " → " + (active.endDate || "en cours")
+    ? (active.startDate || "—") + " → " + (active.endDate || "ongoing")
     : (meta.periodStart ? meta.periodStart + " → " + (meta.periodEnd || "—") : "");
 
   /* hero */
@@ -833,7 +833,7 @@ function compute() {
   const heroColor = hasTrades ? (cum >= 0 ? GREEN : RED) : MUT;
   const heroSub = hasTrades
     ? periodLabel + " · " + closed + " trades · " + wins + "W / " + losses + "L"
-    : "Journal remis à zéro le 18 juillet — en attente des premiers trades de la nouvelle tentative.";
+    : "Journal reset on July 18 — waiting for the first trades of the new attempt.";
   const target = activePf && activePf.profitTarget ? activePf.profitTarget : 0;
   const targetPct = target ? Math.max(0, Math.min(100, Math.round(100 * cum / target))) : 0;
   const targetColor = targetPct >= 100 ? GREEN : ACC;
@@ -869,17 +869,17 @@ function compute() {
   const kpis = [
     { label: "Win rate", value: hasTrades ? wr + "%" : dash, sub: wins + "W / " + losses + "L", color: TXT },
     { label: "Profit factor", value: hasTrades ? pf.toFixed(2) + "×" : dash, sub: fmtAbs(totWins) + " / " + fmtAbs(totLoss), color: !hasTrades ? TXT : pf >= 1.5 ? GREEN : pf >= 1 ? TXT : RED },
-    { label: "Expectancy", value: hasTrades && hasR ? (rExp >= 0 ? "+" : "−") + Math.abs(rExp).toFixed(2) + "R" : dash, sub: hasTrades ? fmt(expectancy) + " / trade" : "par trade", color: !hasTrades ? TXT : rExp >= 0 ? GREEN : RED },
-    { label: "Payoff", value: hasTrades ? payoff.toFixed(2) : dash, sub: "gain moyen / perte moyenne", color: TXT },
-    { label: "Max drawdown", value: hasTrades ? "−" + fmtAbs(maxDD) : dash, sub: hasTrades ? "pic " + fmt(peakT) : "creux equity", color: hasTrades ? RED : TXT },
-    { label: "Discipline", value: adher === null ? dash : adher + "%", sub: adher === null ? "process propre" : cleanN + " / " + annot.length + " process propre", color: adher === null ? TXT : adher >= 80 ? GREEN : ACC }
+    { label: "Expectancy", value: hasTrades && hasR ? (rExp >= 0 ? "+" : "−") + Math.abs(rExp).toFixed(2) + "R" : dash, sub: hasTrades ? fmt(expectancy) + " / trade" : "per trade", color: !hasTrades ? TXT : rExp >= 0 ? GREEN : RED },
+    { label: "Payoff", value: hasTrades ? payoff.toFixed(2) : dash, sub: "avg win / avg loss", color: TXT },
+    { label: "Max drawdown", value: hasTrades ? "−" + fmtAbs(maxDD) : dash, sub: hasTrades ? "peak " + fmt(peakT) : "equity trough", color: hasTrades ? RED : TXT },
+    { label: "Discipline", value: adher === null ? dash : adher + "%", sub: adher === null ? "clean process" : cleanN + " / " + annot.length + " clean", color: adher === null ? TXT : adher >= 80 ? GREEN : ACC }
   ];
 
   /* journal des trades */
   const isDirty = t => t.processClean === false || (Array.isArray(t.violations) && t.violations.length > 0);
   const anyDirty = trades.some(isDirty);
-  const filters = [["all", "Tous"], ["win", "Gagnants"], ["loss", "Perdants"]];
-  if (anyDirty) filters.push(["dirty", "Hors-process"]);
+  const filters = [["all", "All"], ["win", "Winners"], ["loss", "Losers"]];
+  if (anyDirty) filters.push(["dirty", "Off-process"]);
   const tradeFilters = filters.map(([id, label]) => ({ id, label, on: S.tradeFilter === id }));
   const visible = trades.map((t, i) => ({ t, i })).filter(({ t }) => {
     const v = plOf(t);
@@ -903,31 +903,31 @@ function compute() {
       r: hasR ? (r >= 0 ? "+" : "−") + Math.abs(r).toFixed(1) + "R" : dash, rColor: r >= 0 ? GREEN : RED,
       pl: t.pl || "", plColor: v >= 0 ? GREEN : RED,
       dotColor: clean === false ? RED : clean === true ? GREEN : "var(--border2)",
-      dotTitle: viol ? viol.join(" · ") : clean === false ? "Hors-process" : clean === true ? "Process propre" : "Non annoté",
+      dotTitle: viol ? viol.join(" · ") : clean === false ? "Off-process" : clean === true ? "Clean process" : "Not annotated",
       instr: t.instr || "", entryExit: (t.entry || "—") + " → " + (t.exit || "—"),
-      contractsTxt: t.contracts ? t.contracts + " contrats" : "",
+      contractsTxt: t.contracts ? t.contracts + " contracts" : "",
       moodTxt: t.mood ? "Mood · " + t.mood : "",
-      taggedTxt: t.taggedBy === "declaration" ? "déclaré en session" : t.taggedBy === "override" ? "override manuel" : t.taggedBy === "auto" ? "non déclaré en session" : "",
-      procTxt: viol ? "⚠ " + viol.join(" · ") : clean === false ? "Hors-process" : clean === true ? "Process propre" : "",
+      taggedTxt: t.taggedBy === "declaration" ? "declared in session" : t.taggedBy === "override" ? "manual override" : t.taggedBy === "auto" ? "not declared in session" : "",
+      procTxt: viol ? "⚠ " + viol.join(" · ") : clean === false ? "Off-process" : clean === true ? "Clean process" : "",
       procColor: clean === false ? RED : GREEN,
       setup: t.setup || "—", notes: t.notes || ""
     };
   });
   const tradeStatsLine = hasTrades
-    ? "Gain moyen +" + fmtAbs(avgWin) + " · Perte moyenne −" + fmtAbs(avgLoss) +
-      " · Meilleur " + fmt(Math.max(0, ...winPLs, 0)) + " · Pire " + fmt(Math.min(0, ...lossPLs, 0))
+    ? "Avg win +" + fmtAbs(avgWin) + " · Avg loss −" + fmtAbs(avgLoss) +
+      " · Best " + fmt(Math.max(0, ...winPLs, 0)) + " · Worst " + fmt(Math.min(0, ...lossPLs, 0))
     : "";
   const emptyTradesNote = hasTrades
-    ? "Aucun trade ne correspond au filtre."
-    : "Le pipeline (tools/update_dashboard.py) repeuplera le journal — marqueurs &lt;TRADES&gt; / &lt;EQUITY&gt; inchangés." +
-      (S.demo ? "" : '<div style="margin-top:12px"><button class="chip" data-act="demo">Afficher les données démo</button></div>');
+    ? "No trade matches the filter."
+    : "The pipeline (tools/update_dashboard.py) will repopulate the journal — &lt;TRADES&gt; / &lt;EQUITY&gt; markers unchanged." +
+      (S.demo ? "" : '<div style="margin-top:12px"><button class="chip" data-act="demo">Show demo data</button></div>');
 
   /* sessions */
   const sessionsList = sessions.map((s, i) => {
     const plStr = s.pl || dash;
     return {
       i, open: !!S.openSessions[i],
-      date: s.date, statusLabel: s.statusLabel || "Clôturée",
+      date: s.date, statusLabel: s.statusLabel || "Closed",
       pl: plStr, plColor: plStr.startsWith("+") ? GREEN : (plStr.startsWith("−") || plStr.startsWith("-")) ? RED : MUT,
       plSub: s.plSub || "", bodyHtml: rich(s.html)
     };
@@ -942,10 +942,10 @@ function compute() {
   const wp = DATA.weekPlan || null;
   const planTfs = wp ? (wp.timeframes || []).map(tf => ({
     tf: tf.tf, title: tf.title, img: tf.img || "",
-    imgNote: "capture locale — " + (tf.img || "à venir"),
+    imgNote: "local capture — " + (tf.img || "coming soon"),
     noteHtml: rich(tf.note), levels: tf.levels || []
   })) : [];
-  const resMap = { valid: ["Setup validé", GREEN], invalid: ["Invalidé", RED], neutral: ["Neutre / mixte", ACC] };
+  const resMap = { valid: ["Setup valid", GREEN], invalid: ["Invalidated", RED], neutral: ["Neutral / mixed", ACC] };
   const btsSorted = (DATA.backtests || []).map((bt, i) => ({ bt, i }))
     .sort((a, b) => (frTime(b.bt.date) - frTime(a.bt.date)) || (a.i - b.i));
   const backtestsList = btsSorted.map(({ bt }, idx) => {
@@ -958,7 +958,7 @@ function compute() {
       bodyHtml: rich(bt.comment),
       lessons: (bt.lessons || []).map(l => ({
         color: l.type === "pos" ? GREEN : l.type === "neg" ? RED : ACC,
-        label: l.type === "pos" ? "Point fort" : l.type === "neg" ? "Erreur" : "Note",
+        label: l.type === "pos" ? "Strength" : l.type === "neg" ? "Mistake" : "Note",
         text: l.text
       })),
       images: (bt.images || []).map(im => ({ src: im.src, caption: im.caption || "" }))
@@ -994,26 +994,26 @@ function compute() {
     const cKnown = trades.some(t => typeof t.contracts === "number");
     const cMax = cKnown ? Math.max(0, ...trades.map(t => t.contracts || 0)) : null;
     const rows = [
-      { name: "Objectif de profit", sub: "Atteindre +" + fmtAbs(p.profitTarget) + " net",
-        val: fmt(cum) + " (" + tPct + "%)", status: tOk ? "Atteint" : "En cours", ...(tOk ? okS : accS) },
-      { name: "Maximum Loss Limit", sub: (p.ddModel === "static" ? "Statique" : "Trailing EOD") + " −" + fmtAbs(p.mll) + " · seuil " + fmtAbs(thr),
-        val: "marge " + fmtAbs(margin), status: breach ? "Franchi" : "Sain", ...(breach ? badS : okS) },
+      { name: "Profit target", sub: "Reach +" + fmtAbs(p.profitTarget) + " net",
+        val: fmt(cum) + " (" + tPct + "%)", status: tOk ? "Reached" : "In progress", ...(tOk ? okS : accS) },
+      { name: "Maximum Loss Limit", sub: (p.ddModel === "static" ? "Static" : "Trailing EOD") + " −" + fmtAbs(p.mll) + " · threshold " + fmtAbs(thr),
+        val: "margin " + fmtAbs(margin), status: breach ? "Breached" : "Healthy", ...(breach ? badS : okS) },
       dllOn
-        ? { name: "Daily Loss Limit", sub: (p.dllOptional ? "Option du Combine (informatif) · " : "") + "pire journée " + fmt(worstDay),
-            val: "−" + fmtAbs(p.dailyLossLimit), status: dllBreach ? (p.dllOptional ? "Dépassée (option)" : "Franchi") : "Respecté",
+        ? { name: "Daily Loss Limit", sub: (p.dllOptional ? "Combine option (informational) · " : "") + "worst day " + fmt(worstDay),
+            val: "−" + fmtAbs(p.dailyLossLimit), status: dllBreach ? (p.dllOptional ? "Exceeded (option)" : "Breached") : "Respected",
             ...(dllBreach ? (p.dllOptional ? accS : badS) : okS) }
-        : { name: "Daily Loss Limit", sub: "Pas de DLL sur ce plan", val: dash, status: "n/a", ...naS },
-      { name: "Consistance ≤ " + (p.consistencyPct || 50) + "%" + (p.consistencyBasis === "target" ? " de l'objectif" : " du profit"),
-        sub: "Meilleure journée " + fmt(bestDay) + " = " + consPct + "%" + (tOk ? "" : " · vérifiée à l'atteinte de l'objectif"),
-        val: consPct + "%", status: consOk ? "OK" : "Dépassé", ...(consOk ? okS : badS) },
+        : { name: "Daily Loss Limit", sub: "No DLL on this plan", val: dash, status: "n/a", ...naS },
+      { name: "Consistency ≤ " + (p.consistencyPct || 50) + "%" + (p.consistencyBasis === "target" ? " of target" : " of profit"),
+        sub: "Best day " + fmt(bestDay) + " = " + consPct + "%" + (tOk ? "" : " · checked once target is reached"),
+        val: consPct + "%", status: consOk ? "OK" : "Exceeded", ...(consOk ? okS : badS) },
       p.minWinDays != null
-        ? { name: "Jours gagnants (payout)", sub: "Critère de payout du financé · jour ≥ " + fmtAbs(p.winDayThreshold || 150) + " net",
-            val: winDays + " / " + p.minWinDays, status: winDays >= p.minWinDays ? "OK" : "En cours", ...(winDays >= p.minWinDays ? okS : accS) }
-        : { name: "Jours gagnants", sub: "Non applicable sur ce plan", val: dash, status: "n/a", ...naS },
-      { name: "Limite de contrats (" + p.maxContracts + " max)", sub: cKnown ? "Max utilisé sur la période : " + cMax : "Champ « contracts » non renseigné",
+        ? { name: "Winning days (payout)", sub: "Funded payout criterion · day ≥ " + fmtAbs(p.winDayThreshold || 150) + " net",
+            val: winDays + " / " + p.minWinDays, status: winDays >= p.minWinDays ? "OK" : "In progress", ...(winDays >= p.minWinDays ? okS : accS) }
+        : { name: "Winning days", sub: "Not applicable on this plan", val: dash, status: "n/a", ...naS },
+      { name: "Contract limit (" + p.maxContracts + " max)", sub: cKnown ? "Max used in period: " + cMax : "\"contracts\" field not provided",
         val: cKnown ? cMax + " / " + p.maxContracts : dash,
-        status: !cKnown ? "n/a" : cMax <= p.maxContracts ? "Respecté" : "Dépassé", ...(!cKnown ? naS : cMax <= p.maxContracts ? okS : badS) },
-      { name: "Flat à la clôture", sub: "Avant " + p.flatByCT + " " + (p.flatTz || "CT") + " — jamais d'overnight", val: dash, status: "manuel", ...naS }
+        status: !cKnown ? "n/a" : cMax <= p.maxContracts ? "Respected" : "Exceeded", ...(!cKnown ? naS : cMax <= p.maxContracts ? okS : badS) },
+      { name: "Flat at close", sub: "Before " + p.flatByCT + " " + (p.flatTz || "CT") + " — never overnight", val: dash, status: "manual", ...naS }
     ];
     return { rows, margin, bestDay, breach, tPct };
   };
@@ -1032,10 +1032,10 @@ function compute() {
     const gainCap = Math.round(acct.profitTarget * mm.dailyGainPctOfTarget);
     mmProfile = mm.profile || "";
     mmStats = [
-      { label: "Risque par trade", value: fmtAbs(risk), sub: "fixe — jamais augmenté après une perte" },
-      { label: "Stop quotidien perso", value: fmtAbs(dailyStop), sub: acct.dailyLossLimit != null ? Math.round(100 * dailyStop / acct.dailyLossLimit) + "% du DLL " + fmtAbs(acct.dailyLossLimit) : "pas de DLL — MLL ÷ " + mm.minBufferDays },
-      { label: "Plafond de gain / jour", value: fmtAbs(gainCap), sub: "protège la consistance " + (acct.consistencyPct || 50) + "%" },
-      { label: "Marge avant blow-up", value: buffer + " j", sub: "journées rouges pleines · MLL " + fmtAbs(acct.mll) }
+      { label: "Risk per trade", value: fmtAbs(risk), sub: "fixed — never increased after a loss" },
+      { label: "Personal daily stop", value: fmtAbs(dailyStop), sub: acct.dailyLossLimit != null ? Math.round(100 * dailyStop / acct.dailyLossLimit) + "% of DLL " + fmtAbs(acct.dailyLossLimit) : "no DLL — MLL ÷ " + mm.minBufferDays },
+      { label: "Daily gain cap", value: fmtAbs(gainCap), sub: "protects the " + (acct.consistencyPct || 50) + "% consistency rule" },
+      { label: "Buffer before blow-up", value: buffer + " d", sub: "full red days · MLL " + fmtAbs(acct.mll) }
     ];
     sizingHead = mm.instruments.map(i => i.label);
     sizingRows = mm.stopGrid.map(sp => ({
@@ -1048,15 +1048,15 @@ function compute() {
           : { txt: n + (capped ? "⤒" : "") + " (" + fmtAbs(n * sp * inst.perPt) + ")", color: TXT };
       })
     }));
-    mmNote = "Cellule = contrats au risque " + fmtAbs(risk) + " (risque réel entre parenthèses). « — » = stop trop large pour 1 contrat → réduire le stop ou passer en micro. « ⤒ » = plafonné à la limite " + acct.firm + ". Profil éditable dans meta.mm (bloc DATA de ce fichier).";
+    mmNote = "Cell = contracts at risk " + fmtAbs(risk) + " (actual risk in parentheses). \"—\" = stop too wide for 1 contract → reduce the stop or switch to micro. \"⤒\" = capped at the " + acct.firm + " limit. Profile editable in meta.mm (DATA block of this file).";
   }
 
   /* historique des tentatives */
-  const stMap = { passed: ["Réussi", GREEN, "var(--green-soft)"], failed: ["Raté", RED, "var(--red-soft)"], active: ["En cours", ACC, "var(--accent-soft)"] };
+  const stMap = { passed: ["Passed", GREEN, "var(--green-soft)"], failed: ["Failed", RED, "var(--red-soft)"], active: ["Active", ACC, "var(--accent-soft)"] };
   const challengesList = challenges.slice().reverse().map(ch => {
     const st = stMap[ch.status] || ["—", MUT, "var(--hover)"];
     return { title: ch.firm + " · " + ch.plan, statusLabel: st[0], dot: st[1], bg: st[2],
-      period: (ch.startDate || "—") + " → " + (ch.endDate || "en cours"), note: ch.note || "" };
+      period: (ch.startDate || "—") + " → " + (ch.endDate || "ongoing"), note: ch.note || "" };
   });
   const nPass = challenges.filter(c => c.status === "passed").length;
   const nFail = challenges.filter(c => c.status === "failed").length;
@@ -1081,17 +1081,17 @@ function compute() {
     planTfs, backtestsList, anyBtClosed,
     hasActive: !!active,
     activeTitle: active ? active.firm + " · " + active.plan : "",
-    activePeriod: active ? (active.startDate || "—") + " → " + (active.endDate || "en cours") : "",
+    activePeriod: active ? (active.startDate || "—") + " → " + (active.endDate || "ongoing") : "",
     activeNote: active ? (active.note || "") : "",
-    targetSub: "objectif +" + fmtAbs(target) + " · " + targetPct + "%",
+    targetSub: "target +" + fmtAbs(target) + " · " + targetPct + "%",
     mllMargin: activeComp ? fmtAbs(activeComp.margin) : dash,
     mllColor: activeComp && activeComp.margin <= (activePf ? activePf.mll * 0.5 : 0) ? RED : GREEN,
-    mllSub: activePf ? "MLL trailing −" + fmtAbs(activePf.mll) : "",
+    mllSub: activePf ? "Trailing MLL −" + fmtAbs(activePf.mll) : "",
     bestDayTxt: activeComp ? fmt(activeComp.bestDay) : dash,
-    bestDaySub: activePf ? "plafond consistance " + fmtAbs(activePf.profitTarget * (activePf.consistencyPct || 50) / 100) : "",
+    bestDaySub: activePf ? "consistency cap " + fmtAbs(activePf.profitTarget * (activePf.consistencyPct || 50) / 100) : "",
     accountChips, complianceRows: acctComp.rows,
     mmProfile, mmStats, sizingHead, sizingRows, mmNote,
-    challengesList, challSummary: nPass + " réussie(s) · " + nFail + " ratée(s) · " + nAct + " en cours"
+    challengesList, challSummary: nPass + " passed · " + nFail + " failed · " + nAct + " active"
   };
 }
 
@@ -1102,7 +1102,7 @@ function conceptItems(q) {
   return all.filter(c => !qq || (c.label + " " + c.text).toLowerCase().includes(qq));
 }
 function conceptListHtml(items) {
-  if (!items.length) return '<div style="padding:44px 20px;text-align:center;color:var(--muted);font-size:13px">Aucun concept ne correspond à la recherche.</div>';
+  if (!items.length) return '<div style="padding:44px 20px;text-align:center;color:var(--muted);font-size:13px">No concept matches the search.</div>';
   return items.map(c => '<div class="concept"><div style="font-size:14px;font-weight:600;margin-bottom:7px">' + esc(c.label) + '</div>' + rich(c.text) + '</div>').join("");
 }
 
@@ -1117,9 +1117,9 @@ function topbar(D) {
     + '<nav class="tabs" aria-label="Navigation">'
     + VIEWS.map(([id, label]) => '<button class="tab' + (S.view === id ? " on" : "") + '" data-go="' + id + '">' + label + '</button>').join("")
     + '</nav><div class="top-right">'
-    + (D.demoUsed ? '<span class="demo-badge" data-act="demo" title="Données de démonstration (le journal réel est vide) — cliquer pour repasser à l\'état réel">DÉMO</span>' : "")
+    + (D.demoUsed ? '<span class="demo-badge" data-act="demo" title="Demo data (the real journal is empty) — click to switch back to real data">DEMO</span>' : "")
     + '<div class="period">' + esc(D.periodLabel) + '</div>'
-    + '<button class="theme-btn" data-act="theme" aria-label="Basculer le thème clair / sombre">' + (S.dark ? SUN : MOON) + '</button>'
+    + '<button class="theme-btn" data-act="theme" aria-label="Toggle light / dark theme">' + (S.dark ? SUN : MOON) + '</button>'
     + '</div></div></div>';
 }
 
@@ -1129,31 +1129,31 @@ function vApercu(D) {
     + '<div class="hero-pl" style="color:' + D.heroColor + '">' + esc(D.heroPl) + '</div>'
     + '<div class="hero-sub">' + esc(D.heroSub) + '</div>';
   if (D.hasTarget) {
-    h += '<div class="target-wrap"><div class="target-head"><span>Objectif ' + esc(D.targetLabel) + '</span><span style="color:' + D.targetColor + ';font-weight:600">' + D.targetPct + '%</span></div>'
+    h += '<div class="target-wrap"><div class="target-head"><span>Target ' + esc(D.targetLabel) + '</span><span style="color:' + D.targetColor + ';font-weight:600">' + D.targetPct + '%</span></div>'
       + '<div class="bar"><div style="width:' + D.targetPct + '%;background:' + D.targetColor + '"></div></div></div>';
   }
   h += '</div><div>';
   if (D.hasTrades) {
-    h += '<div class="eq-head"><span class="lbl">Equity — cumul</span><span class="small-muted mono">pic ' + esc(D.peakLabel) + ' · DD max −' + esc(D.ddMaxLabel) + '</span></div>'
-      + '<svg class="eq-svg" viewBox="0 0 560 190" preserveAspectRatio="none" aria-label="Courbe d\'equity">' + D.gridSvg
+    h += '<div class="eq-head"><span class="lbl">Equity — cumulative</span><span class="small-muted mono">peak ' + esc(D.peakLabel) + ' · max DD −' + esc(D.ddMaxLabel) + '</span></div>'
+      + '<svg class="eq-svg" viewBox="0 0 560 190" preserveAspectRatio="none" aria-label="Equity curve">' + D.gridSvg
       + '<polygon points="' + D.eqArea + '" fill="' + D.eqFill + '"></polygon>'
       + '<polyline points="' + D.eqPts + '" fill="none" stroke="' + D.eqStroke + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>'
       + '<div class="eq-x"><span>' + esc(D.eqStart) + '</span><span>' + esc(D.eqEnd) + '</span></div>';
   } else {
-    h += '<div class="eq-empty"><span class="small-muted mono">courbe d\'equity — dès le premier trade loggé</span></div>';
+    h += '<div class="eq-empty"><span class="small-muted mono">equity curve — appears after the first logged trade</span></div>';
   }
   h += '</div></header>';
   h += '<div class="kpis">' + D.kpis.map(k =>
     '<div class="kpi"><div class="lbl">' + esc(k.label) + '</div><div class="kpi-v" style="color:' + k.color + '">' + esc(k.value) + '</div><div class="kpi-s">' + esc(k.sub) + '</div></div>').join("") + '</div>';
   if (D.multiDay) {
-    h += '<section style="margin-top:48px"><h2 class="h2" style="margin-bottom:18px">P&amp;L par jour</h2><div class="bars">'
+    h += '<section style="margin-top:48px"><h2 class="h2" style="margin-bottom:18px">Daily P&amp;L</h2><div class="bars">'
       + D.dailyBars.map(b => '<div class="barcol"><div class="barval" style="color:' + b.color + '">' + esc(b.val) + '</div><div class="barwrap"><div class="barfill" style="height:' + b.h + '%;background:' + b.color + '"></div></div><div class="barlbl">' + esc(b.label) + '</div></div>').join("")
       + '</div></section>';
   }
   h += '<section style="margin-top:48px"><div class="sec-head"><h2 class="h2">Trades <span style="color:var(--muted);font-weight:400;font-size:12px">· ' + esc(String(D.tradeCount)) + '</span></h2><div class="chips">'
     + D.tradeFilters.map(f => '<button class="chip' + (f.on ? " on" : "") + '" data-filter="' + f.id + '">' + esc(f.label) + '</button>').join("") + '</div></div>';
   if (D.tradesList.length) {
-    h += '<div class="card tablewrap"><div class="tgrid thead"><div>Date</div><div>Sens</div><div>Setup</div><div>Kill Zone</div><div class="right">R</div><div class="right">P/L</div><div></div></div>';
+    h += '<div class="card tablewrap"><div class="tgrid thead"><div>Date</div><div>Direction</div><div>Setup</div><div>Kill Zone</div><div class="right">R</div><div class="right">P/L</div><div></div></div>';
     for (const t of D.tradesList) {
       h += '<div><div class="tgrid trow" data-trade="' + t.i + '">'
         + '<div class="mono" style="font-size:12px">' + esc(t.date) + '</div>'
@@ -1175,15 +1175,15 @@ function vApercu(D) {
     }
     h += '</div><div class="stats-line">' + esc(D.tradeStatsLine) + '</div>';
   } else {
-    h += '<div class="empty"><div class="empty-title">Aucun trade sur la période</div><div class="empty-sub">' + D.emptyTradesNote + '</div></div>';
+    h += '<div class="empty"><div class="empty-title">No trades in this period</div><div class="empty-sub">' + D.emptyTradesNote + '</div></div>';
   }
   h += '</section></section>';
   return h;
 }
 
 function vJournal(D) {
-  let h = '<section><header style="margin-bottom:30px"><h1 class="h1">Journal de sessions</h1>'
-    + '<p class="h1-sub">Le récit qualitatif de chaque séance — ce que les chiffres ne disent pas. Les sessions gardent tout l\'historique, toutes tentatives confondues.</p></header>';
+  let h = '<section><header style="margin-bottom:30px"><h1 class="h1">Session journal</h1>'
+    + '<p class="h1-sub">The qualitative story of each session — what the numbers don\'t say. Sessions keep the full history, across all attempts.</p></header>';
   if (D.sessionsList.length) {
     for (const s of D.sessionsList) {
       h += '<article class="acc"><div class="acc-head" data-session="' + s.i + '">'
@@ -1196,15 +1196,15 @@ function vJournal(D) {
       h += '</article>';
     }
   } else {
-    h += '<div class="empty"><div class="empty-title">Aucune session pour l\'instant</div>'
-      + '<div class="empty-sub">Les récits de séance s\'ajoutent dans <span class="mono" style="font-size:11px">DATA.sessions</span> (ce fichier), la plus récente en premier.</div></div>';
+    h += '<div class="empty"><div class="empty-title">No sessions yet</div>'
+      + '<div class="empty-sub">Session write-ups are added to <span class="mono" style="font-size:11px">DATA.sessions</span> (this file), most recent first.</div></div>';
   }
   return h + '</section>';
 }
 
 function vPrep(D) {
-  let h = '<section><header style="margin-bottom:30px"><h1 class="h1">Préparation</h1>'
-    + '<p class="h1-sub">Le plan de la semaine et les backtests documentés — la thèse avant la séance, la preuve après.</p></header>';
+  let h = '<section><header style="margin-bottom:30px"><h1 class="h1">Preparation</h1>'
+    + '<p class="h1-sub">The plan for the week and the documented backtests — the thesis before the session, the proof after.</p></header>';
   if (D.hasPlan) {
     h += '<div class="panel"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
       + '<h2 style="font-size:15px;font-weight:600">' + esc(D.planTitle) + '</h2>'
@@ -1221,7 +1221,7 @@ function vPrep(D) {
     }
   }
   h += '<div class="sec-head" style="margin-top:48px"><h2 class="h2">Backtests <span style="color:var(--muted);font-weight:400;font-size:12px">· ' + D.backtestsList.length + '</span></h2>'
-    + '<button class="chip" data-act="allbts">' + (D.anyBtClosed ? "Tout déplier" : "Tout replier") + '</button></div>';
+    + '<button class="chip" data-act="allbts">' + (D.anyBtClosed ? "Expand all" : "Collapse all") + '</button></div>';
   for (const b of D.backtestsList) {
     h += '<div class="acc" style="margin-bottom:10px"><div class="acc-head" data-bt="' + b.idx + '" style="padding:13px 18px;flex-wrap:nowrap">'
       + '<span class="caret' + (b.open ? " open" : "") + '">▶</span>'
@@ -1254,43 +1254,43 @@ function vPlaybook(D) {
   const items = conceptItems(S.q);
   const total = (DATA.concepts || []).length;
   let h = '<section><header style="margin-bottom:26px"><h1 class="h1">Playbook</h1>'
-    + '<p class="h1-sub">Les règles non-négociables d\'abord, puis les règles opérationnelles et le glossaire des concepts ICT. Le résultat ne valide jamais le process.</p></header>';
-  h += '<div style="display:flex;align-items:center;gap:8px;margin:26px 0 14px"><span class="dot" style="width:7px;height:7px;background:var(--red)"></span><h2 class="h2">Non-négociables</h2><span class="mono small-muted">· ' + D.rulesCrit.length + '</span></div>';
+    + '<p class="h1-sub">Non-negotiable rules first, then operating rules and the ICT concepts glossary. The outcome never validates the process.</p></header>';
+  h += '<div style="display:flex;align-items:center;gap:8px;margin:26px 0 14px"><span class="dot" style="width:7px;height:7px;background:var(--red)"></span><h2 class="h2">Non-negotiables</h2><span class="mono small-muted">· ' + D.rulesCrit.length + '</span></div>';
   h += '<div class="grid-320">' + D.rulesCrit.map(r =>
     '<div class="rule-card"><div class="rule-lbl" style="color:var(--red)">' + esc(r.label) + '</div><div class="rule-txt">' + esc(r.text) + '</div></div>').join("") + '</div>';
-  h += '<div style="display:flex;align-items:center;gap:8px;margin:34px 0 14px"><span class="dot" style="width:7px;height:7px;background:var(--accent)"></span><h2 class="h2">Règles opérationnelles</h2><span class="mono small-muted">· ' + D.rulesOp.length + '</span></div>';
+  h += '<div style="display:flex;align-items:center;gap:8px;margin:34px 0 14px"><span class="dot" style="width:7px;height:7px;background:var(--accent)"></span><h2 class="h2">Operating rules</h2><span class="mono small-muted">· ' + D.rulesOp.length + '</span></div>';
   h += '<div class="grid-320">' + D.rulesOp.map(r =>
     '<div class="rule-card"><div class="rule-lbl" style="color:var(--accent)">' + esc(r.label) + '</div><div class="rule-txt">' + esc(r.text) + '</div></div>').join("") + '</div>';
   h += '<div style="margin-top:52px"><div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px"><h2 class="h2">Concepts</h2><span class="mono small-muted" id="concept-count">' + items.length + ' / ' + total + '</span></div>'
-    + '<input id="concept-q" class="search" value="' + esc(S.q) + '" placeholder="Rechercher un concept (Macro, NWOG, HRLR, Judas…)" aria-label="Rechercher un concept">'
+    + '<input id="concept-q" class="search" value="' + esc(S.q) + '" placeholder="Search a concept (Macro, NWOG, HRLR, Judas…)" aria-label="Search concepts">'
     + '<div id="concept-results">' + conceptListHtml(items) + '</div></div>';
   h += '<div class="quote-card"><div style="font-size:15px;font-weight:600;color:var(--accent);letter-spacing:.01em">« Un trader ICT ne réagit pas au prix — il anticipe le prix. »</div>'
-    + '<div style="font-size:12px;color:var(--muted);margin-top:7px">Patience + Plan = Exécution sans émotion. Le modèle fonctionne — c\'est documenté.</div></div>';
+    + '<div style="font-size:12px;color:var(--muted);margin-top:7px">Patience + Plan = execution without emotion. The model works — it\'s documented.</div></div>';
   return h + '</section>';
 }
 
 function vCompte(D) {
-  let h = '<section><header style="margin-bottom:30px"><h1 class="h1">Compte &amp; risque</h1>'
-    + '<p class="h1-sub">La tentative en cours, les règles du compte sélectionné et le plan de money management dérivé — tout est calculé depuis le bloc <span class="mono" style="font-size:11.5px">DATA</span> de ce fichier, rien en dur.</p></header>';
+  let h = '<section><header style="margin-bottom:30px"><h1 class="h1">Account &amp; risk</h1>'
+    + '<p class="h1-sub">The current attempt, the rules of the selected account and the derived money management plan — everything is computed from the <span class="mono" style="font-size:11.5px">DATA</span> block of this file, nothing hardcoded.</p></header>';
   if (D.hasActive) {
     h += '<div class="panel"><div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
       + '<h2 style="font-size:15px;font-weight:600">' + esc(D.activeTitle) + '</h2>'
-      + '<span class="pill" style="color:var(--accent);background:var(--accent-soft)">En cours</span>'
+      + '<span class="pill" style="color:var(--accent);background:var(--accent-soft)">Active</span>'
       + '<span class="mono small-muted" style="margin-left:auto">' + esc(D.activePeriod) + '</span></div>'
       + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;margin-top:22px">'
-      + '<div><div class="lbl">P&amp;L net / objectif</div><div class="mono" style="font-size:22px;font-weight:600;margin-top:8px;color:' + D.heroColor + '">' + esc(D.heroPl) + '</div>'
+      + '<div><div class="lbl">Net P&amp;L / target</div><div class="mono" style="font-size:22px;font-weight:600;margin-top:8px;color:' + D.heroColor + '">' + esc(D.heroPl) + '</div>'
       + '<div class="bar" style="height:3px;margin-top:10px;max-width:200px"><div style="width:' + D.targetPct + '%;background:' + D.targetColor + '"></div></div>'
       + '<div class="kpi-s" style="margin-top:5px">' + esc(D.targetSub) + '</div></div>'
-      + '<div><div class="lbl">Marge avant MLL</div><div class="mono" style="font-size:22px;font-weight:600;margin-top:8px;color:' + D.mllColor + '">' + esc(D.mllMargin) + '</div><div class="kpi-s" style="margin-top:5px">' + esc(D.mllSub) + '</div></div>'
-      + '<div><div class="lbl">Meilleure journée</div><div class="mono" style="font-size:22px;font-weight:600;margin-top:8px">' + esc(D.bestDayTxt) + '</div><div class="kpi-s" style="margin-top:5px">' + esc(D.bestDaySub) + '</div></div>'
+      + '<div><div class="lbl">Margin before MLL</div><div class="mono" style="font-size:22px;font-weight:600;margin-top:8px;color:' + D.mllColor + '">' + esc(D.mllMargin) + '</div><div class="kpi-s" style="margin-top:5px">' + esc(D.mllSub) + '</div></div>'
+      + '<div><div class="lbl">Best day</div><div class="mono" style="font-size:22px;font-weight:600;margin-top:8px">' + esc(D.bestDayTxt) + '</div><div class="kpi-s" style="margin-top:5px">' + esc(D.bestDaySub) + '</div></div>'
       + '</div>'
       + (D.activeNote ? '<div style="font-size:12px;color:var(--muted);margin-top:18px;line-height:1.6;border-top:1px solid var(--border);padding-top:14px">' + esc(D.activeNote) + '</div>' : "")
       + '</div>';
   } else {
-    h += '<div class="empty" style="border-radius:14px;padding:40px 24px"><div class="empty-title">Aucune tentative active</div>'
-      + '<div class="empty-sub">Ajoutez une entrée <span class="mono" style="font-size:11px">status: "active"</span> dans <span class="mono" style="font-size:11px">meta.challenges</span> (bloc DATA de ce fichier).</div></div>';
+    h += '<div class="empty" style="border-radius:14px;padding:40px 24px"><div class="empty-title">No active attempt</div>'
+      + '<div class="empty-sub">Add an entry with <span class="mono" style="font-size:11px">status: "active"</span> in <span class="mono" style="font-size:11px">meta.challenges</span> (DATA block of this file).</div></div>';
   }
-  h += '<section style="margin-top:46px"><h2 class="h2" style="margin-bottom:14px">Règles prop firm</h2><div class="chips">'
+  h += '<section style="margin-top:46px"><h2 class="h2" style="margin-bottom:14px">Prop firm rules</h2><div class="chips">'
     + D.accountChips.map(a => '<button class="chip' + (a.on ? " on" : "") + '" data-acct="' + esc(a.id) + '">' + esc(a.label) + '</button>').join("") + '</div>'
     + '<div class="card" style="padding:4px 20px;margin-top:14px;overflow:visible">'
     + D.complianceRows.map(row =>
@@ -1298,10 +1298,10 @@ function vCompte(D) {
       + '<div style="font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.5">' + esc(row.sub) + '</div></div>'
       + '<div class="mono right" style="font-size:12.5px;white-space:nowrap">' + esc(row.val) + '</div>'
       + '<div style="min-width:92px;text-align:right"><span class="pill" style="color:' + row.color + ';background:' + row.bg + '">' + esc(row.status) + '</span></div></div>').join("")
-    + '<div style="font-size:11px;color:var(--muted);padding:11px 0;line-height:1.6">Calcul en clôture de journée (EOD) sur la courbe d\'equity du journal. Seuils éditables dans meta.propFirms.</div>'
+    + '<div style="font-size:11px;color:var(--muted);padding:11px 0;line-height:1.6">Computed at end-of-day (EOD) close on the journal\'s equity curve. Thresholds editable in meta.propFirms.</div>'
     + '</div></section>';
   if (D.mmStats.length) {
-    h += '<section style="margin-top:46px"><h2 class="h2" style="margin-bottom:14px">Money management <span style="color:var(--muted);font-weight:400;font-size:12px">· profil ' + esc(D.mmProfile) + '</span></h2>'
+    h += '<section style="margin-top:46px"><h2 class="h2" style="margin-bottom:14px">Money management <span style="color:var(--muted);font-weight:400;font-size:12px">· ' + esc(D.mmProfile) + ' profile</span></h2>'
       + '<div class="mm-kpis">' + D.mmStats.map(m =>
         '<div class="kpi"><div class="lbl">' + esc(m.label) + '</div><div class="kpi-v">' + esc(m.value) + '</div><div class="kpi-s">' + esc(m.sub) + '</div></div>').join("") + '</div>'
       + '<div class="mm-table"><div class="mm-head"><div class="lbl" style="flex:0 0 72px;font-size:10px">Stop</div>'
@@ -1310,7 +1310,7 @@ function vCompte(D) {
         + r.cells.map(c => '<div class="mono right" style="flex:1;font-size:12px;color:' + c.color + ';white-space:nowrap">' + esc(c.txt) + '</div>').join("") + '</div>').join("")
       + '</div><div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6">' + esc(D.mmNote) + '</div></section>';
   }
-  h += '<section style="margin-top:46px"><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px"><h2 class="h2">Historique des tentatives</h2><span class="mono small-muted">' + esc(D.challSummary) + '</span></div>'
+  h += '<section style="margin-top:46px"><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px"><h2 class="h2">Attempt history</h2><span class="mono small-muted">' + esc(D.challSummary) + '</span></div>'
     + D.challengesList.map(ch =>
       '<div class="hist-row"><span class="dot" style="width:7px;height:7px;background:' + ch.dot + ';margin-top:6px"></span>'
       + '<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
@@ -1332,7 +1332,7 @@ function render() {
   else main = vApercu(D);
   document.getElementById("app").innerHTML =
     topbar(D) + '<main class="wrap main">' + main + '</main>'
-    + '<footer class="footer">NQ · ES — Sierra Chart · SIM (P/L réels) — données régénérées par tools/update_dashboard.py</footer>';
+    + '<footer class="footer">NQ · ES — Sierra Chart · SIM (real P/L) — data regenerated by tools/update_dashboard.py</footer>';
 }
 
 /* ── interactions ── */
