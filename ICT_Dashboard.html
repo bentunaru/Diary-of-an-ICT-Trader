@@ -797,6 +797,7 @@ function compute() {
   const wr = closed ? Math.round(100 * wins / closed) : 0;
   const totWins = winPLs.reduce((a, b) => a + b, 0), totLoss = Math.abs(lossPLs.reduce((a, b) => a + b, 0));
   const avgWin = wins ? totWins / wins : 0, avgLoss = losses ? totLoss / losses : 0;
+  const hasR = avgLoss > 0;
   const oneR = avgLoss || 1;
   const payoff = avgLoss ? avgWin / avgLoss : 0;
   const expectancy = closed ? (wins / closed) * avgWin - (losses / closed) * avgLoss : 0;
@@ -858,7 +859,7 @@ function compute() {
   const kpis = [
     { label: "Win rate", value: hasTrades ? wr + "%" : dash, sub: wins + "W / " + losses + "L", color: TXT },
     { label: "Profit factor", value: hasTrades ? pf.toFixed(2) + "×" : dash, sub: fmtAbs(totWins) + " / " + fmtAbs(totLoss), color: !hasTrades ? TXT : pf >= 1.5 ? GREEN : pf >= 1 ? TXT : RED },
-    { label: "Expectancy", value: hasTrades ? (rExp >= 0 ? "+" : "−") + Math.abs(rExp).toFixed(2) + "R" : dash, sub: hasTrades ? fmt(expectancy) + " / trade" : "par trade", color: !hasTrades ? TXT : rExp >= 0 ? GREEN : RED },
+    { label: "Expectancy", value: hasTrades && hasR ? (rExp >= 0 ? "+" : "−") + Math.abs(rExp).toFixed(2) + "R" : dash, sub: hasTrades ? fmt(expectancy) + " / trade" : "par trade", color: !hasTrades ? TXT : rExp >= 0 ? GREEN : RED },
     { label: "Payoff", value: hasTrades ? payoff.toFixed(2) : dash, sub: "gain moyen / perte moyenne", color: TXT },
     { label: "Max drawdown", value: hasTrades ? "−" + fmtAbs(maxDD) : dash, sub: hasTrades ? "pic " + fmt(peakT) : "creux equity", color: hasTrades ? RED : TXT },
     { label: "Discipline", value: adher === null ? dash : adher + "%", sub: adher === null ? "process propre" : cleanN + " / " + annot.length + " process propre", color: adher === null ? TXT : adher >= 80 ? GREEN : ACC }
@@ -889,7 +890,7 @@ function compute() {
       dir: t.dir || "", dirColor: t.dir === "Long" ? GREEN : RED,
       setupType: t.setupType || t.setup || "—",
       kz: t.kz || "—",
-      r: (r >= 0 ? "+" : "−") + Math.abs(r).toFixed(1) + "R", rColor: r >= 0 ? GREEN : RED,
+      r: hasR ? (r >= 0 ? "+" : "−") + Math.abs(r).toFixed(1) + "R" : dash, rColor: r >= 0 ? GREEN : RED,
       pl: t.pl || "", plColor: v >= 0 ? GREEN : RED,
       dotColor: clean === false ? RED : clean === true ? GREEN : "var(--border2)",
       dotTitle: viol ? viol.join(" · ") : clean === false ? "Hors-process" : clean === true ? "Process propre" : "Non annoté",
