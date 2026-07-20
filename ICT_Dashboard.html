@@ -838,7 +838,34 @@ const DATA = {
 
   bestTrade: { value: "—", sub: "—" },
 
-  sessions: [],
+  sessions: [
+    { date: "20 juillet 2026", status: "live", statusLabel: "Pré-marché · en cours", pl: null, plSub: "Sim1 · pas de challenge actif",
+      html: `
+        <h3>Analyse Pré-Marché · 20 juillet · NQU26 <span style="color:var(--muted);font-size:13px">· lundi · Sim1</span></h3>
+        <div class="callout callout--accent">
+          <h4>🧭 Discount weekly après correction daily · réaction sur BISI</h4>
+          Après l'ATH ≈ 31,200 (mi-juin), le Daily a corrigé cinq séances de suite (15→17 juillet), de ≈ 30,050 à ≈ 28,440. Le prix (≈ 28,822 au réveil) est revenu dans le <strong>Weekly Discount BISI (≈ 28,600)</strong> — la zone qui a produit le rebond de vendredi (low 5 min ≈ 28,440 à 9h50 ET, purge partielle vers la SSL 1H puis rejet). Structure Weekly toujours haussière de fond.
+        </div>
+        <div class="stat-row cols-4 mt">
+          <div class="mini-stat"><div class="l">Prix actuel</div><div class="v num">28,822</div><div class="s">discount 1H/Daily</div></div>
+          <div class="mini-stat"><div class="l">BSL (1H)</div><div class="v num pos">30,094</div><div class="s">haut du range de travail</div></div>
+          <div class="mini-stat"><div class="l">Cible 1 (Daily Premium SIBI)</div><div class="v num acc">≈ 29,250–29,300</div><div class="s">intact depuis la descente</div></div>
+          <div class="mini-stat"><div class="l">SSL (1H)</div><div class="v num neg">28,512</div><div class="s">invalidation / pool de liquidité</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+          <figure style="margin:0"><img src="plans/2026-07-20/01-weekly.png" alt="Weekly" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Weekly · tendance haussière de fond intacte malgré la correction récente</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-20/02-daily.png" alt="Daily" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">Daily · correction ATH ≈31,200 → ≈28,440 (15-17 juillet)</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-20/03-60m.png" alt="60 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">60 min · range de travail, rejet sur le Weekly BISI</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-20/04-5m.png" alt="5 min" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">5 min · purge vers 28,440 (9h50 ET) puis rejet, consolidation 28,700–29,000</figcaption></figure>
+          <figure style="margin:0"><img src="plans/2026-07-20/05-1h-tv-annotated.png" alt="1H annoté TradingView" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:zoom-in" onclick="document.getElementById('bt-lightbox-img').src=this.src;document.getElementById('bt-lightbox').classList.add('open')"><figcaption style="font-size:12px;color:var(--muted);margin-top:6px">1H TradingView · BSL 30,094 / SSL 28,512, Daily Premium SIBI, Weekly Discount BISI, 1H Discount Breaker Block</figcaption></figure>
+        </div>
+        <div class="callout callout--green mt">
+          <h4>🧭 Plan</h4>
+          <strong>Scénario 1 (privilégié) — Long</strong> : tenue du 1H Discount Breaker Block (≈28,750) / re-test du Weekly BISI en London ou NY AM KZ, cible Daily Premium SIBI ≈29,250–29,300 ; extension vers BSL 30,094 seulement si le SIBI cède. <strong>Scénario 2 — Short de continuation</strong> : cassure franche et clôture 1H sous la SSL 28,512 invalidant le discount weekly — mais tant que 28,512 n'est pas proprement purgée, ce pool reste un aimant pour un dernier sweep avant retournement. Pas d'entrée hors Kill Zone (voir session du 1er juillet : −$2,167 sur 5 trades hors KZ).
+        </div>
+      `
+    },
+  ],
   rules: [
     { label: "Principe fondamental", text: "Un trader ICT ne réagit pas au prix — il anticipe le prix." },
     { label: "Déterminer le range D'ABORD", critical: true, text: "1ère chose à faire avant toute exécution : déterminer le range dans lequel on va travailler. Trouver le time frame où le range est le plus CLAIR, puis descendre vers le time frame d'exécution en respectant l'alignement avec ce range. Pas de range défini = pas de trade." },
