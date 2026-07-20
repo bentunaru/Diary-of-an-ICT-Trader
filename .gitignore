@@ -18,9 +18,13 @@ plans/.trash_tmp/
 *.bmp
 *.tiff
 
-# Sierra Chart exports (données brutes, non versionnées)
+# Sierra Chart exports (données brutes, non versionnées)…
 *.txt
 TradeStatisticsForCharts*.txt
+# …SAUF les fills persistés par le pipeline : imports/ est la mémoire durable
+# des sources (Sierra + TradingView) qui rend le journal régénérable à vie.
+!imports/**/*.txt
+!imports/**/*.csv
 
 # PDFs générés (reproductibles depuis le dashboard)
 *.pdf

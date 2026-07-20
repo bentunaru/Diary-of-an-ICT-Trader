@@ -22,21 +22,70 @@ The language of the content (UI text, comments, commit messages, docs) is **Fren
 
 ```bash
 python3 tools/update_dashboard.py path/to/TradeActivityLogExport_YYYY-MM-DD.txt
-# no arg → uses the most recent TradeActivityLogExport_*.txt in cwd / repo root
+# no arg → merges everything already persisted in imports/ (Sierra + TradingView)
 ```
 
+**Two fill sources, one journal.** The pipeline merges chronologically:
+- **Sierra Chart** (compte Sim1, PC) : l'export TSV passé en argument est **copié dans `imports/sierra/`** puis tous les exports persistés y sont relus et dédoublonnés — les exports bruts hors repo sont volatils (supprimés/écrasés par Sierra ou OneDrive), `imports/` est la mémoire durable qui rend le journal régénérable. Timestamps UTC.
+- **TradingView Paper Trading** (Mac, backtests/trades) : dépose les `paper-trading-order-history-all-*.csv` dans `imports/tradingview/` — lus automatiquement à chaque run, dédoublonnés par Order ID. Seuls NQ/ES/MNQ/MES sont retenus (autres symboles = warning). **Timestamps en heure locale Paris, convertis via `TV_LOCAL_TO_UTC_H = -2`** (à ajuster hors DST, comme `UTC_TO_ET_OFFSET`). Trades tagués `(TV)` dans l'instrument et `src: "TradingView"`.
+
 The pipeline (`reconstruct` → `build_data` → `inject`):
-1. Parses the TSV log, keeps `Fills` rows.
-2. Reconstructs flat→flat trades per symbol via FIFO lot matching.
-3. Computes real P/L (NQ $20/pt, ES $50/pt), daily equity, and best trade.
-4. Derives each trade's Kill Zone from its open time. **The Sierra log is UTC; the script converts to ET via `UTC_TO_ET_OFFSET = -4` (EDT).** This offset is hardcoded and must change for non-DST dates.
+1. Parses Sierra TSV logs (rows `Fills`) + TradingView order-history CSVs (orders `Filled`).
+2. Reconstructs flat→flat trades per symbol via FIFO lot matching, all sources merged.
+3. Computes real P/L (NQ $20/pt, ES $50/pt, micros 1/10e), daily equity, and best trade.
+4. Derives each trade's Kill Zone from its open time. **Sierra logs are UTC; the script converts to ET via `UTC_TO_ET_OFFSET = -4` (EDT).** This offset is hardcoded and must change for non-DST dates.
 5. Merges `tools/annotations.json` by trade-id (`YYYY-MM-DD_HH:MM:SS`, the UTC open time).
 6. Injects only `equity[]` and `trades[]` into the HTML, plus `meta.fills`, `periodEnd`, and `bestTrade`.
 
 ### Critical constraints
 
 - **The script rewrites the HTML in place between marker comments** (`// <EQUITY>`…`// </EQUITY>`, `// <TRADES>`…`// </TRADES>`). Never delete or reformat these markers, and do not hand-edit the data between them — it gets overwritten on the next run. Everything outside the markers (sessions, rules, errors, performance — authored HTML in `DATA`) is left untouched and must be edited by hand.
-- **Annotations survive regeneration**; raw Sierra exports do not (they are gitignored). `annotations.json` has two blocks: `declarations[]` (setup déclaré en session, voir "Workflow de session" ci-dessous — `date`, `declared_at` heure ET, `setup`, `direction` optionnelle, `note` optionnelle, `screenshot` optionnelle, `source`) and `overrides{}` (correction a posteriori, clé `"<date_iso UTC>|<openTime UTC>"`, prime sur tout). `reconcile_declarations()` (`tools/trade_validation.py`) rapproche chaque déclaration d'un fill : tolérance ±15 min en heure ET (avec gestion du changement de jour), même direction si déclarée. Aucun match → `setup: "Non documenté"`, `taggedBy: "auto"` — **jamais bloquant** pour la régénération.
+- **`imports/` est committé et fait foi** : ne jamais supprimer un fichier de `imports/sierra/` ou `imports/tradingview/` — c'est la seule copie durable des fills (les exports bruts sont gitignorés partout ailleurs). Un fichier corrompu se corrige, ne se supprime pas.
+- **Annotations survive regeneration**. `annotations.json` has two blocks: `declarations[]` (setup déclaré en session, voir "Workflow de session" ci-dessous — `date`, `declared_at` heure ET, `setup`, `direction` optionnelle, `note` optionnelle, `screenshot` optionnelle, `source`) and `overrides{}` (correction a posteriori, clé `"<date_iso UTC>|<openTime UTC>"`, prime sur tout). `reconcile_declarations()` (`tools/trade_validation.py`) rapproche chaque déclaration d'un fill : tolérance ±15 min en heure ET (avec gestion du changement de jour), même direction si déclarée. Aucun match → `setup: "Non documenté"`, `taggedBy: "auto"` — **jamais bloquant** pour la régénération.
+
+## « Session ouverte » — routine automatisée (Mac + PC)
+
+Le repo vit en double : un clone **PC Windows** (`OneDrive\Trading Journal`, où
+tourne Sierra Chart) et un clone **Mac** (`/Users/benjamin/Trading Journal`, où
+tourne TradingView). **La synchro entre les deux passe exclusivement par
+GitHub** (branche → PR → merge, cf. workflow git habituel) — jamais par OneDrive
+pour le repo lui-même. OneDrive sert uniquement de boîte de dépôt pour les
+fichiers bruts (exports, screenshots, notes iPad).
+
+Quand Ben dit **« session ouverte »** (ou partage des exports/screenshots en
+vrac), Claude déroule :
+
+1. **`git pull` d'abord, toujours** — l'autre machine a pu merger des PRs.
+   Vérifier aussi `git log origin/main..HEAD` : un commit local non poussé de
+   l'autre session doit remonter par PR avant d'empiler du nouveau travail.
+2. **Scanner la boîte de dépôt OneDrive** (`Images/Captures d'écran/` — chemin
+   Mac : `/Users/benjamin/Library/CloudStorage/OneDrive-Personal/Images/Captures d'écran/`,
+   chemin PC : `C:\Users\<user>\OneDrive\Images\Captures d'écran\`) pour les
+   fichiers plus récents que le dernier commit de journal :
+   - `TradeActivityLogExport_*.txt` (Sierra — **le nom de fichier ment souvent**,
+     regarder les dates des fills dedans, pas le nom) ;
+   - `paper-trading-*-????-??-??T*.csv` (TradingView — copier au moins
+     l'order-history dans `imports/tradingview/`) ;
+   - screenshots TradingView (`NQU2026_YYYY-MM-DD_*.png`), captures Sierra
+     (`Screenshot YYYY-MM-DD *.png`), notes iPad (`IMG_*.PNG`).
+3. **Lancer le pipeline** (`python3 tools/update_dashboard.py <export>` ; sans
+   argument si les CSV TV suffisent). L'export Sierra est persisté
+   automatiquement dans `imports/sierra/`.
+4. **Lire chaque screenshot/note** et classer dans `plans/YYYY-MM-DD/` avec la
+   numérotation en place (`01-` pré-marché top-down … `NN-tX-…` par trade),
+   rédiger/mettre à jour le narratif de session (`DATA.sessions[]`, style
+   `.rich` : `h3/p/strong/img`, pas de callouts) et documenter les setups via
+   `overrides{}` si Ben ne les a pas déclarés en direct.
+5. **Valider avant commit** (parse JS + rendu navigateur, cf. workflow de
+   validation habituel), puis branche → PR — merge après OK de Ben.
+6. Les violations détectées (sizing, hors-KZ, stop quotidien) se **signalent
+   dans le narratif**, jamais en les masquant : le résultat ne valide pas le
+   process.
+
+Ne jamais modifier le clone de l'autre machine (fichiers ou git) — le lire pour
+diagnostiquer est OK, écrire non. Si un commit non poussé y traîne, le
+récupérer par `git fetch <chemin-du-clone> main` + cherry-pick dans une branche
+du clone courant.
 
 ## Workflow de session (déclarations en direct)
 

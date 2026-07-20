@@ -116,6 +116,7 @@ VALID_SETUPS = {
     "Sweep SSL → FVG 5m", "Sweep BSL → FVG 5m",
     "OB 15m → Displacement 1m → FVG 1m",
     "IFVG 5m", "Breaker 5m", "OTE 0.677–0.788",
+    "FVG multi-TF",   # confluence de FVG/BISI validée étage par étage (1h→15m→5m→1m)
     "MMXM", "Judas Swing", "SMT divergence",
     "Hors modèle",   # tag explicite : trade pris SANS setup (à assumer, pas à cacher)
 }

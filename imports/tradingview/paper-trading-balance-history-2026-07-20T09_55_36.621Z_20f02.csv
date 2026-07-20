@@ -1,0 +1,6 @@
+Time,Balance before,Balance after,Realized PnL (value),Realized PnL (currency),Action
+2026-07-20 11:48:09,112520,114010,1490,USD,"Close long position for symbol CME_MINI:NQU2026 at price 28964.00 for 1 units. Position AVG Price was 28889.500000, currency: USD, rate: 1.000000, point value: 20.000000"
+2026-07-20 11:43:12,111660,112520,860,USD,"Close long position for symbol CME_MINI:NQU2026 at price 28932.50 for 1 units. Position AVG Price was 28889.500000, currency: USD, rate: 1.000000, point value: 20.000000"
+2026-07-20 09:13:24,112000,111660,-340,USD,"Close long position for symbol COMEX:GC1! at price 4007.8 for 2 units. Position AVG Price was 4009.500000, currency: USD, rate: 1.000000, point value: 100.000000"
+2026-07-17 16:00:05,108610,112000,3390,USD,"Close long position for symbol CME_MINI:NQU2026 at price 28697.25 for 1 units. Position AVG Price was 28527.750000, currency: USD, rate: 1.000000, point value: 20.000000"
+2026-07-17 15:37:19,100000,108610,8610,USD,"Close short position for symbol CME_MINI:NQU2026 at price 28510.00 for 3 units. Position AVG Price was 28653.500000, currency: USD, rate: 1.000000, point value: 20.000000"
