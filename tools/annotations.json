@@ -3,5 +3,7 @@
 
   "declarations": [],
 
-  "overrides": {}
+  "overrides": {
+    "2026-07-20|06:42:28": { "setup": "Sweep SSL → FVG 5m" }
+  }
 }
