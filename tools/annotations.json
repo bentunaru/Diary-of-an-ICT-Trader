@@ -1,5 +1,7 @@
 {
-  "_comment": "Annotations ICT par trade-id (date_HH:MM:SS UTC). Fusionnées dans le dashboard par update_dashboard.py. La Kill Zone est dérivée exclusivement de l'openTime via classify_kz (trade_validation.py) — le champ 'kz' n'est plus pris en compte. Champs possibles: setupType, mood, processClean, setup, notes, rr. Le bloc 'trades' (clés date|openTime) porte setup/grade pour la validation. Journal remis à zéro le 18 juillet 2026 — annotations précédentes archivées (archive/2026-07-pre-reset/ · tag journal-v1-pre-reset).",
+  "_comment": "Déclarations de setup faites par Ben en session (skill ict-trading-journal), consignées par Claude — Ben n'édite jamais ce fichier à la main. Rapprochées automatiquement des fills par reconcile_declarations() (tools/trade_validation.py, appelée depuis update_dashboard.py) : tolérance ±15 min autour de l'openTime du fill (converti UTC→ET via OPENTIME_SHIFT_MIN, avec gestion du changement de jour), même direction si la déclaration en porte une. 'overrides' (saisie a posteriori) prime sur tout, clé '<date_iso UTC>|<openTime UTC>' (ex. '2026-07-20|13:26:00', mêmes valeurs que le champ 'id' du trade mais séparées par '|'). Aucun match → setup 'Non documenté', tagged_by 'auto' — non bloquant pour la régénération. kz/sb/violations restent calculés indépendamment de ce fichier. Journal remis à zéro le 18 juillet 2026 (tag journal-v1-pre-reset, archive/2026-07-pre-reset) — aucune déclaration antérieure à reprendre.",
 
-  "trades": {}
+  "declarations": [],
+
+  "overrides": {}
 }

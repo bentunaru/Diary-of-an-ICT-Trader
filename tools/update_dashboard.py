@@ -13,7 +13,9 @@ Ce que fait le script :
   1. Parse le log (TSV), garde les lignes "Fills"
   2. Reconstruit les trades flat→flat par symbole (matching FIFO)
   3. Calcule P/L réel (NQ $20/pt, ES $50/pt), equity journalier, stats
-  4. Fusionne les annotations ICT (annotations.json) par trade-id
+  4. Rapproche chaque trade des déclarations de session (annotations.json,
+     ±15 min ET) via reconcile_declarations() — setup "Non documenté" si
+     aucune déclaration ne matche (voir tools/trade_validation.py)
   5. Injecte equity[] + trades[] dans ICT_Dashboard.html entre marqueurs
 
 Le script ne touche PAS au reste du dashboard (sessions, règles, etc.).
@@ -21,7 +23,9 @@ Le script ne touche PAS au reste du dashboard (sessions, règles, etc.).
 import csv, json, sys, os, glob, re
 from collections import deque, defaultdict
 
-from trade_validation import validate_trades, ValidationError, classify_kz, RULES
+from trade_validation import (
+    validate_trades, ValidationError, classify_kz, RULES, reconcile_declarations,
+)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -164,28 +168,29 @@ def build_data(trades, annotations):
     # Best trade (None si aucun trade)
     best = max(trades, key=lambda t: t["pl"]) if trades else None
 
+    # Rapprochement des déclarations de session (skill ict-trading-journal) + overrides
+    # a posteriori — source unique du setup, voir tools/annotations.json.
+    tags = reconcile_declarations(trades, annotations)
+
     # Render trades JS
     trade_objs = []
     for t in trades:
-        a = annotations.get(t["id"], {})
+        tag = tags.get(t["id"], {})
         pos = t["pl"] >= 0
-        notes = a.get("notes") or f"{t['maxq']} contrat(s) max · {t['fills']} fills · {t['open_time']}→{t['close_time']} · P/L réel Sierra."
-        setup = a.get("setup") or "—"
+        notes = tag.get("note") or f"{t['maxq']} contrat(s) max · {t['fills']} fills · {t['open_time']}→{t['close_time']} · P/L réel Sierra."
         obj = {
             "date": t["date"], "instr": t["instr"], "dir": t["dir"],
             "entry": fmt_px(t["entry"]), "exit": fmt_px(t["exit"]),
-            "rr": a.get("rr", "—"), "pl": fmt_pl(t["pl"]),
+            "rr": "—", "pl": fmt_pl(t["pl"]),
             "plClass": "pos" if pos else "neg", "plNum": t["pl"],
             "result": "Win" if pos else "Perte",
-            "setup": setup, "notes": notes,
+            "setup": tag.get("setup", "Non documenté"), "notes": notes,
+            "taggedBy": tag.get("taggedBy", "auto"),
             # Champs exposés (quick win) : exploités par l'audit de discipline et l'onglet Prop Firm.
             "contracts": t["maxq"], "openTime": t["open_time"], "closeTime": t["close_time"],
         }
         # Kill Zone : source unique = classify_kz (KZ_WINDOWS de trade_validation)
         obj["kz"] = classify_kz(t["open_time"])
-        for k in ("setupType", "mood"):
-            if a.get(k): obj[k] = a[k]
-        if "processClean" in a: obj["processClean"] = a["processClean"]
         trade_objs.append(obj)
 
     return equity, best, trade_objs
@@ -266,20 +271,21 @@ def main():
     if os.path.exists(ANNOTATIONS):
         with open(ANNOTATIONS, encoding="utf-8") as f:
             annotations = json.load(f)
-        print(f"Annotations chargées : {len(annotations)}")
+        print(f"Déclarations de session : {len(annotations.get('declarations', []))} · "
+              f"Overrides : {len(annotations.get('overrides', {}))}")
 
     equity, best, trade_objs = build_data(trades, annotations)
 
     with open(DASHBOARD, encoding="utf-8") as f:
         html = f.read()
 
-    # Validation obligatoire (setups taggés + règles du plan de risque).
-    # Échec ⇒ sortie AVANT toute écriture : le dashboard n'est pas régénéré.
+    # Validation des règles de discipline (setup = "Non documenté" si aucune
+    # déclaration rapprochée, non bloquant). Échec ⇒ sortie AVANT toute écriture
+    # : le dashboard n'est pas régénéré (uniquement si un setup est hors vocabulaire).
     daily_stop = compute_daily_stop(html)
     print(f"Stop quotidien dérivé : {daily_stop:+.0f}$")
     try:
-        trade_objs = validate_trades(trade_objs, annotations,
-                                     rules=dict(RULES, DAILY_STOP=daily_stop))
+        trade_objs = validate_trades(trade_objs, rules=dict(RULES, DAILY_STOP=daily_stop))
     except ValidationError as e:
         sys.exit(f"❌ {e}")
 
@@ -289,6 +295,10 @@ def main():
     closed = wins + losses
     wr = round(100 * wins / closed) if closed else 0
     print(f"P/L total : {fmt_pl(total)} · {wins}W / {losses}L · WR {wr}%")
+
+    documented = sum(1 for t in trade_objs if t.get("taggedBy") in ("declaration", "override"))
+    doc_rate = round(100 * documented / len(trade_objs)) if trade_objs else 0
+    print(f"Taux de documentation : {documented}/{len(trade_objs)} trades ({doc_rate}%)")
 
     # Render blocks
     equity_js = ",\n".join(
