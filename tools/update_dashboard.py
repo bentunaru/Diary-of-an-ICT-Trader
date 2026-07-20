@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 """
 update_dashboard.py — Régénère les données quantitatives du dashboard ICT
-à partir d'un export Sierra Chart "TradeActivityLogExport".
+à partir d'un export Sierra Chart "TradeActivityLogExport" et des exports
+TradingView Paper Trading déposés dans imports/tradingview/.
 
 Usage:
     python3 tools/update_dashboard.py [chemin_export.txt]
 
 Si aucun chemin n'est fourni, prend le TradeActivityLogExport_*.txt le plus
-récent dans le dossier courant.
+récent dans le dossier courant. Les CSV TradingView (paper-trading-order-
+history-all-*.csv) sont TOUJOURS lus depuis imports/tradingview/ en plus de
+l'export Sierra — commités dans le repo pour que la régénération reste
+reproductible sur les deux machines (Mac + PC).
 
 Ce que fait le script :
-  1. Parse le log (TSV), garde les lignes "Fills"
-  2. Reconstruit les trades flat→flat par symbole (matching FIFO)
-  3. Calcule P/L réel (NQ $20/pt, ES $50/pt), equity journalier, stats
+  1. Parse le log Sierra (TSV, lignes "Fills") + les order-history TradingView
+     (CSV, ordres "Filled" sur NQ/ES/MNQ/MES — autres symboles ignorés avec
+     warning). Heures Sierra = UTC ; heures TradingView = heure locale Paris,
+     converties en UTC (TV_LOCAL_TO_UTC_H) pour un référentiel unique.
+  2. Reconstruit les trades flat→flat par symbole (matching FIFO), toutes
+     sources confondues, chronologiquement.
+  3. Calcule P/L réel (NQ $20/pt, ES $50/pt, micros 1/10e), equity journalier
   4. Rapproche chaque trade des déclarations de session (annotations.json,
      ±15 min ET) via reconcile_declarations() — setup "Non documenté" si
      aucune déclaration ne matche (voir tools/trade_validation.py)
@@ -22,6 +30,7 @@ Le script ne touche PAS au reste du dashboard (sessions, règles, etc.).
 """
 import csv, json, sys, os, glob, re
 from collections import deque, defaultdict
+from datetime import datetime, timedelta
 
 from trade_validation import (
     validate_trades, ValidationError, classify_kz, RULES, reconcile_declarations,
@@ -31,6 +40,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 DASHBOARD = os.path.join(ROOT, "ICT_Dashboard.html")
 ANNOTATIONS = os.path.join(HERE, "annotations.json")
+TV_IMPORTS = os.path.join(ROOT, "imports", "tradingview")
+SIERRA_IMPORTS = os.path.join(ROOT, "imports", "sierra")
+
+# Les exports TradingView sont horodatés en heure LOCALE de la machine (Paris,
+# UTC+2 en été) — à convertir vers l'UTC des fills Sierra. Comme UTC_TO_ET_OFFSET
+# (trade_validation), à ajuster hors DST.
+TV_LOCAL_TO_UTC_H = -2
 
 # Journal remis à zéro le 18 juillet 2026 (tag journal-v1-pre-reset) : les fills
 # antérieurs à cette date sont IGNORÉS — un ancien export ne repeuple pas le journal.
@@ -75,6 +91,51 @@ def parse_log(path):
     fills = [x for x in rows if x["ActivityType"] == "Fills"]
     fills.sort(key=lambda x: x["DateTime"])
     return rows, fills
+
+
+def tv_instr(symbol):
+    """'CME_MINI:NQU2026' -> 'NQU26 (TV)' — label contrat + source visible."""
+    tail = symbol.split(":")[-1]
+    m = re.match(r"([A-Z]+?)([HMUZ])(?:20)?(\d{2})$", tail)
+    return (f"{m.group(1)}{m.group(2)}{m.group(3)}" if m else tail) + " (TV)"
+
+
+def parse_tv_orders(directory):
+    """Lit les paper-trading-order-history-all-*.csv de imports/tradingview/.
+
+    Retourne des fills au format Sierra (mêmes clés que parse_log) : les ordres
+    'Filled' sur NQ/ES/MNQ/MES uniquement, horodatage converti Paris→UTC au
+    format 'YYYY-MM-DD  HH:MM:SS' (double espace, comme Sierra). Dédoublonne
+    par Order ID à travers plusieurs exports (le dernier fichier gagne).
+    """
+    paths = sorted(glob.glob(os.path.join(directory, "*order-history*.csv")))
+    by_id, skipped_syms = {}, set()
+    for path in paths:
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            for row in csv.DictReader(f):
+                if row.get("Status") != "Filled" or not row.get("Fill price"):
+                    continue
+                symbol = row["Symbol"].strip()
+                short = sym_short(symbol.split(":")[-1])
+                if short == "?":
+                    skipped_syms.add(symbol)
+                    continue
+                ts = (row.get("Closing time") or row["Placing time"]).strip()
+                dt = datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") + timedelta(hours=TV_LOCAL_TO_UTC_H)
+                by_id[row["Order ID"]] = {
+                    "ActivityType": "Fills",
+                    "Symbol": symbol,
+                    "DateTime": dt.strftime("%Y-%m-%d  %H:%M:%S"),
+                    "FilledQuantity": row["Quantity"],
+                    "FillPrice": str(float(row["Fill price"]) * 100.0),
+                    "BuySell": row["Side"],
+                    "_instr": tv_instr(symbol),
+                    "_src": "TradingView",
+                }
+    for s in sorted(skipped_syms):
+        print(f"⚠️  TradingView : symbole hors périmètre ignoré — {s}")
+    fills = sorted(by_id.values(), key=lambda x: x["DateTime"])
+    return fills, len(paths)
 
 
 def reconstruct(fills):
@@ -132,7 +193,8 @@ def reconstruct(fills):
             if st["pos"] == 0:
                 trades.append({
                     "id": f"{st['open_time'][:10]}_{st['open_time'][12:20]}",
-                    "symbol": short, "instr": instr_full(sym),
+                    "symbol": short, "instr": fl.get("_instr") or instr_full(sym),
+                    "src": fl.get("_src", "Sierra"),
                     "date_iso": st["open_time"][:10], "date": fr_date(st["open_time"][:10]),
                     "open_time": st["open_time"][12:20], "close_time": t[12:20],
                     "dir": st["dir"], "entry": round(st["entry_px"], 2),
@@ -177,7 +239,7 @@ def build_data(trades, annotations):
     for t in trades:
         tag = tags.get(t["id"], {})
         pos = t["pl"] >= 0
-        notes = tag.get("note") or f"{t['maxq']} contrat(s) max · {t['fills']} fills · {t['open_time']}→{t['close_time']} · P/L réel Sierra."
+        notes = tag.get("note") or f"{t['maxq']} contrat(s) max · {t['fills']} fills · {t['open_time']}→{t['close_time']} · P/L réel {t['src']}."
         obj = {
             "date": t["date"], "instr": t["instr"], "dir": t["dir"],
             "entry": fmt_px(t["entry"]), "exit": fmt_px(t["exit"]),
@@ -245,24 +307,53 @@ def inject(html, marker, content):
 
 
 def main():
+    export = None
     if len(sys.argv) > 1:
         export = sys.argv[1]
     else:
         cands = sorted(glob.glob(os.path.join(ROOT, "TradeActivityLogExport_*.txt")) +
                        glob.glob(os.path.join(os.getcwd(), "TradeActivityLogExport_*.txt")))
-        if not cands:
-            raise SystemExit("Aucun TradeActivityLogExport_*.txt trouvé. Donne le chemin en argument.")
-        export = cands[-1]
-    print(f"Export : {export}")
+        if cands:
+            export = cands[-1]
 
-    rows, fills = parse_log(export)
+    # Sources Sierra : l'export CLI (copié dans imports/sierra/ pour persistance —
+    # les exports bruts hors repo sont volatils) + tous les exports déjà persistés.
+    # Dédoublonnage par (DateTime, Symbol, BuySell, FillPrice, FilledQuantity).
+    if export:
+        print(f"Export Sierra : {export}")
+        os.makedirs(SIERRA_IMPORTS, exist_ok=True)
+        dest = os.path.join(SIERRA_IMPORTS, os.path.basename(export))
+        if os.path.abspath(export) != os.path.abspath(dest):
+            with open(export, encoding="utf-8") as src, open(dest, "w", encoding="utf-8") as out:
+                out.write(src.read())
+            print(f"Export persisté : {dest}")
+
+    seen, fills = set(), []
+    for path in sorted(glob.glob(os.path.join(SIERRA_IMPORTS, "*.txt"))):
+        _, part = parse_log(path)
+        for f in part:
+            key = (f["DateTime"], f["Symbol"], f["BuySell"], f["FillPrice"], f["FilledQuantity"])
+            if key not in seen:
+                seen.add(key)
+                fills.append(f)
+
+    tv_fills, tv_files = parse_tv_orders(TV_IMPORTS) if os.path.isdir(TV_IMPORTS) else ([], 0)
+    if tv_files:
+        print(f"TradingView : {tv_files} fichier(s) order-history · {len(tv_fills)} fills retenus")
+    if not fills and not tv_fills:
+        raise SystemExit("Aucun fill : ni export Sierra (CLI ou imports/sierra/), "
+                         "ni CSV TradingView (imports/tradingview/).")
+
+    n_sierra = len(fills)
+    fills = sorted(fills + tv_fills, key=lambda x: x["DateTime"])
     skipped = len(fills)
     fills = [f for f in fills if f["DateTime"][:10] >= JOURNAL_START]
     skipped -= len(fills)
     if skipped:
         print(f"Fills antérieurs au {JOURNAL_START} ignorés : {skipped} (reset du journal)")
     trades, intraday = reconstruct(fills)
-    print(f"Fills : {len(fills)} · Trades reconstruits : {len(trades)} · Points intraday : {len(intraday)}")
+    print(f"Fills : {len(fills)} (Sierra {n_sierra} + TV {len(tv_fills)}) · "
+          f"Trades reconstruits : {len(trades)} · Points intraday : {len(intraday)}")
     if not trades:
         print("Aucun trade flat→flat reconstruit : le dashboard n'est pas modifié.")
         return
@@ -316,7 +407,7 @@ def main():
     html = re.sub(r"(fills:\s*)\d+", rf"\g<1>{len(fills)}", html, count=1)
     last_date = equity[-1]["date"] + " 2026"
     html = re.sub(r'(periodEnd:\s*")[^"]*"', rf'\g<1>{last_date}"', html, count=1)
-    best_sub = f'{best["symbol"]} · {best["date"]} · réel Sierra'
+    best_sub = f'{best["symbol"]} · {best["date"]} · réel {best["src"]}'
     html = re.sub(r'bestTrade:\s*\{[^}]*\}',
                   f'bestTrade: {{ value: "{fmt_pl(best["pl"])}", sub: "{best_sub}" }}',
                   html, count=1)
