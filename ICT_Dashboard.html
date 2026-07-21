@@ -173,7 +173,7 @@ const DATA = {
     periodStart: "18 juillet 2026",
     periodEnd: "21 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 14,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 16,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -246,7 +246,7 @@ const DATA = {
   equity: [
     // <EQUITY>
     { date: "20 juillet", cum: 4294 },
-    { date: "21 juillet", cum: 6068 }
+    { date: "21 juillet", cum: 6464 }
     // </EQUITY>
   ],
 
@@ -260,7 +260,8 @@ const DATA = {
     { date: "20 juillet", t: "09:48:09", cum: 4294 },
     { date: "21 juillet", t: "07:49:21", cum: 3434 },
     { date: "21 juillet", t: "08:25:31", cum: 4464 },
-    { date: "21 juillet", t: "09:19:00", cum: 6068 }
+    { date: "21 juillet", t: "09:19:00", cum: 6068 },
+    { date: "21 juillet", t: "11:05:22", cum: 6464 }
     // </INTRADAY>
   ],
 
@@ -270,15 +271,22 @@ const DATA = {
     { date: "20 juillet", instr: "MNQU26", dir: "Long", entry: "28,800.25", exit: "28,870.25", rr: "—", pl: "+$1,944", plClass: "pos", plNum: 1943.5, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "14 contrat(s) max · 5 fills · 06:42:28→07:27:07 · P/L réel Sierra.", taggedBy: "override", contracts: 14, openTime: "06:42:28", closeTime: "07:27:07", kz: "London", sb: "SB London", violations: ["SIZING 14>7"] },
     { date: "20 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "28,893.25", exit: "28,964.00", rr: "—", pl: "+$2,350", plClass: "pos", plNum: 2350.0, result: "Win", setup: "FVG multi-TF", notes: "2 contrat(s) max · 4 fills · 09:15:41→09:48:09 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "09:15:41", closeTime: "09:48:09", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] },
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,121.75", exit: "29,100.25", rr: "—", pl: "−$860", plClass: "neg", plNum: -860.0, result: "Perte", setup: "FVG multi-TF", notes: "2 contrat(s) max · 2 fills · 07:38:25→07:49:21 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:38:25", closeTime: "07:49:21", kz: "London", violations: [] },
-    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,111.50", exit: "29,191.75", rr: "—", pl: "+$2,635", plClass: "pos", plNum: 2635.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "2 contrat(s) max · 3 fills · 07:56:45→09:19:00 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:56:45", closeTime: "09:19:00", kz: "London", violations: ["ENTRÉE APRÈS STOP QUOTIDIEN (-860$)"] }
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,111.50", exit: "29,191.75", rr: "—", pl: "+$2,635", plClass: "pos", plNum: 2635.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "2 contrat(s) max · 3 fills · 07:56:45→09:19:00 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:56:45", closeTime: "09:19:00", kz: "London", violations: ["ENTRÉE APRÈS STOP QUOTIDIEN (-860$)"] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Short", entry: "29,162.00", exit: "29,142.25", rr: "—", pl: "+$395", plClass: "pos", plNum: 395.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "Scalp basé sur le pré-marché : short après le double sweep du 1h BSL 29,195.25, joue le retracement anticipé vers le 15m Discount BISI. Couvert manuellement juste au-dessus du TP 29,140.", taggedBy: "declaration", contracts: 1, openTime: "11:02:04", closeTime: "11:05:22", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #3 DU JOUR (max 2)"] }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$2,635", sub: "NQ · 21 juillet · réel TradingView" },
 
   sessions: [
-    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$1,775", plSub: "T1 TV −$860 · T2 TV +$2,635 (Sierra en attente)",
-      html: `<h3>Setup surveillé · NY AM · Long</h3>
+    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$2,170", plSub: "T1 TV −$860 · T2 TV +$2,635 · T3 TV +$395 (Sierra en attente)",
+      html: `<h3>T3 · Win · Short 1 NQU26 (TradingView) @ 29,162 → 29,142.25 · scalp</h3>
+<p>Scalp basé sur la lecture pré-marché : après le double sweep du <strong>1h BSL 29,195.25</strong>, short @ 29,162 (7h02 ET) pour jouer le retracement anticipé vers le <strong>15m Discount BISI</strong> — la zone attendue pour le long NY. SL 29,170.50, TP 29,140 (toit de la BISI). Couvert manuellement @ 29,142.25 (7h05 ET), juste au-dessus du TP. <strong>+$395</strong> en 3 minutes.</p>
+<p><strong>⚠ Hors Kill Zone + 3e trade du jour</strong> — entrée à 7h02 ET (NY pré-open, entre London et NY AM) et au-delà de la limite de 2 trades/jour ; le stop quotidien était de toute façon déjà dépassé depuis T1. Lecture juste et exécution propre, mais le process du jour était déjà rompu.</p>
+<img src="plans/2026-07-21/12-t3-scalp-short-entree.png" alt="T3 · short 29,162 après double sweep du 1h BSL 29,195.25, Fib tracé sur le dernier swing, TP 29,140">
+<img src="plans/2026-07-21/13-t3-scalp-short-mgmt.png" alt="T3 · gestion, prix descend vers la zone 15m Discount BISI, +$340 flottant">
+<img src="plans/2026-07-21/14-t3-scalp-short-cloture.png" alt="T3 · clôture manuelle 29,142.25 juste au-dessus du TP 29,140, +$395">
+<h3>Setup surveillé · NY AM · Long</h3>
 <p>1h BSL 29,195.25 pris deux fois en 15 min (mèches, coché sur le graphique). Attente d'un retracement dans le <strong>15m Discount BISI ≈ 29,120–29,130</strong> avant une entrée long en session NY (8h30–11h ET). Prix actuel 29,177.50.</p>
 <img src="plans/2026-07-21/10-ny-bsl-sweep-watch.png" alt="15 min · 1h BSL 29,195.25 pris deux fois, attente retracement dans le 15m Discount BISI ≈29,120-29,130">
 <p><strong>Confluence</strong> — le <strong>Fib 0.75 du range weekly</strong> tombe pile dans cette même zone 15m Discount BISI (≈29,120) : niveau renforcé par la superposition des deux lectures (weekly + 15m).</p>

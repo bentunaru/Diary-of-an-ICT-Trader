@@ -1,0 +1,5 @@
+Symbol,Side,Type,Quantity,Limit price,Stop price,Fill price,Status,Commission,Placing time,Closing time,Order ID,Level ID,Leverage,Margin
+CME_MINI:NQU2026,Buy,Market,1,,,29142.25,Filled,,2026-07-21 13:05:22,2026-07-21 13:05:22,3312012363,,20:1,"29,142.25 USD"
+CME_MINI:NQU2026,Buy,Take Profit,1,29140,,,Cancelled,,2026-07-21 13:02:18,2026-07-21 13:05:22,3312002695,,,
+CME_MINI:NQU2026,Buy,Stop Loss,1,,29170.5,,Cancelled,,2026-07-21 13:02:13,2026-07-21 13:05:22,3312002488,,,
+CME_MINI:NQU2026,Sell,Market,1,,,29162,Filled,,2026-07-21 13:02:04,2026-07-21 13:02:04,3312001996,,20:1,"29,162.00 USD"
