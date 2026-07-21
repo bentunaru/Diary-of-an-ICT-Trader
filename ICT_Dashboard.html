@@ -171,9 +171,9 @@ button{cursor:pointer;appearance:none;background:none;border:none;color:inherit;
 const DATA = {
   meta: {
     periodStart: "18 juillet 2026",
-    periodEnd: "20 juillet 2026",
+    periodEnd: "21 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 9,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 14,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -245,7 +245,8 @@ const DATA = {
   /* P/L cumulé RÉEL — généré depuis TradeActivityLogExport par tools/update_dashboard.py */
   equity: [
     // <EQUITY>
-    { date: "20 juillet", cum: 4294 }
+    { date: "20 juillet", cum: 4294 },
+    { date: "21 juillet", cum: 6068 }
     // </EQUITY>
   ],
 
@@ -256,7 +257,10 @@ const DATA = {
     { date: "20 juillet", t: "07:22:59", cum: 600 },
     { date: "20 juillet", t: "07:27:07", cum: 1944 },
     { date: "20 juillet", t: "09:43:12", cum: 2728 },
-    { date: "20 juillet", t: "09:48:09", cum: 4294 }
+    { date: "20 juillet", t: "09:48:09", cum: 4294 },
+    { date: "21 juillet", t: "07:49:21", cum: 3434 },
+    { date: "21 juillet", t: "08:25:31", cum: 4464 },
+    { date: "21 juillet", t: "09:19:00", cum: 6068 }
     // </INTRADAY>
   ],
 
@@ -264,14 +268,16 @@ const DATA = {
   trades: [
     // <TRADES>
     { date: "20 juillet", instr: "MNQU26", dir: "Long", entry: "28,800.25", exit: "28,870.25", rr: "—", pl: "+$1,944", plClass: "pos", plNum: 1943.5, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "14 contrat(s) max · 5 fills · 06:42:28→07:27:07 · P/L réel Sierra.", taggedBy: "override", contracts: 14, openTime: "06:42:28", closeTime: "07:27:07", kz: "London", sb: "SB London", violations: ["SIZING 14>7"] },
-    { date: "20 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "28,893.25", exit: "28,964.00", rr: "—", pl: "+$2,350", plClass: "pos", plNum: 2350.0, result: "Win", setup: "FVG multi-TF", notes: "2 contrat(s) max · 4 fills · 09:15:41→09:48:09 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "09:15:41", closeTime: "09:48:09", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] }
+    { date: "20 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "28,893.25", exit: "28,964.00", rr: "—", pl: "+$2,350", plClass: "pos", plNum: 2350.0, result: "Win", setup: "FVG multi-TF", notes: "2 contrat(s) max · 4 fills · 09:15:41→09:48:09 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "09:15:41", closeTime: "09:48:09", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,121.75", exit: "29,100.25", rr: "—", pl: "−$860", plClass: "neg", plNum: -860.0, result: "Perte", setup: "FVG multi-TF", notes: "2 contrat(s) max · 2 fills · 07:38:25→07:49:21 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:38:25", closeTime: "07:49:21", kz: "London", violations: [] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,111.50", exit: "29,191.75", rr: "—", pl: "+$2,635", plClass: "pos", plNum: 2635.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "2 contrat(s) max · 3 fills · 07:56:45→09:19:00 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:56:45", closeTime: "09:19:00", kz: "London", violations: ["ENTRÉE APRÈS STOP QUOTIDIEN (-860$)"] }
     // </TRADES>
   ],
 
-  bestTrade: { value: "+$2,350", sub: "NQ · 20 juillet · réel TradingView" },
+  bestTrade: { value: "+$2,635", sub: "NQ · 21 juillet · réel TradingView" },
 
   sessions: [
-    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: null,
+    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$1,775", plSub: "T1 TV −$860 · T2 TV +$2,635 (Sierra en attente)",
       html: `<h3>Analyse pré-marché · NQU26 · mardi · Sim1</h3>
 <p>Prix actuel ≈ 29,135. Depuis le plancher ≈ 28,440 (17 juillet), le prix a repris haussier sans offrir de retracement exploitable — le mouvement était déjà en place à l'ouverture, donc pas d'entrée prise dessus. Biais du jour : <strong>bullish</strong>.</p>
 <img src="plans/2026-07-21/01-daily.png" alt="Daily · reprise haussière depuis le plancher ≈28,440 (17 juillet)">
@@ -281,7 +287,16 @@ const DATA = {
 <img src="plans/2026-07-21/05-daily-triangle-lecture.png" alt="Daily · triangle de lecture (Où / Quoi / Vers où)">
 <p><strong>Niveaux (1H TradingView, annotés à l'ouverture de Londres, 2h56 ET)</strong> — BSL 30,094.00 · 1h BSL 29,050.25 (déjà repris) · Fib 29,108.75 · <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> (cible) · 1h Discount Weak ≈ 28,800 · 1h Discount Breaker Block / OB ≈ 28,700–28,740 (zone d'invalidation) · SSL 28,512.00.</p>
 <img src="plans/2026-07-21/06-1h-tv-annotated.png" alt="1H TradingView annoté · BSL 30,094 / 1h BSL 29,050.25 / Fib 29,108.75 / Daily Premium SIBI ≈29,220-29,340 / 1h Discount Weak-Breaker-OB ≈28,700-28,800 / SSL 28,512">
-<p><strong>Plan</strong> — Pas d'entrée sur le mouvement du matin (déjà en place, sans retracement) : sécurité avant tout. Attente de l'ouverture de la <strong>London KZ (2h–5h ET)</strong> et d'une réaction sur le <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> avant d'envisager une entrée dans le sens du biais bullish. Invalidation du biais court terme sous le 1h Discount Breaker Block/OB (≈ 28,700–28,740).</p>` },
+<p><strong>Plan</strong> — Pas d'entrée sur le mouvement du matin (déjà en place, sans retracement) : sécurité avant tout. Attente de l'ouverture de la <strong>London KZ (2h–5h ET)</strong> et d'une réaction sur le <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> avant d'envisager une entrée dans le sens du biais bullish. Invalidation du biais court terme sous le 1h Discount Breaker Block/OB (≈ 28,700–28,740).</p>
+<h3>T1 · Perte · Long 2 NQU26 (TradingView) @ 29,121.75 → 29,100.25</h3>
+<p>Entrée en extension du mouvement matinal, à l'approche de la zone <strong>1h Premium SIBI</strong> — précisément le scénario identifié à risque dans le plan pré-marché ("mouvement déjà en place, sans retracement"). Petit range formé juste sous la SIBI avant l'échec ; stop touché à 29,100.25 (London KZ, 3h38–3h49 ET). <strong>−$860.</strong></p>
+<p><strong>⚠ Entrée hors process</strong> — le plan du matin excluait explicitement une entrée sans retracement sur ce mouvement ; T1 l'a pris quand même, sur la simple continuation.</p>
+<img src="plans/2026-07-21/07-t1-entree-premium-sibi.png" alt="T1 · Long 29,121.75 en extension, échec sous la zone 1h Premium SIBI, stop 29,100.25">
+<h3>T2 · Win · Long 2 NQU26 (TradingView) @ 29,111.50 → 29,163 / 29,191.75</h3>
+<p>Retest propre du <strong>Fib 29,108.75</strong> après un sweep sous le <strong>1h Discount BISI</strong> (≈ 29,090–29,100). Entrée 29,111.50 (3h56 ET). Sortie en 2 legs : 1 sécurisé au marché @ 29,163 (4h25 ET) puis 1 sur le TP @ 29,191.75 (5h19 ET, clôture proche de la cible Daily Premium SIBI). <strong>+$2,635.</strong></p>
+<p><strong>⚠ Entrée après stop quotidien dépassé</strong> — prise après T1 (−$860), qui avait déjà dépassé le stop perso (−$500). Le trade a fini gagnant, mais il a été pris hors process : le stop quotidien aurait dû arrêter la session après T1.</p>
+<img src="plans/2026-07-21/08-t2-retest-fib.png" alt="T2 · retest du Fib 29,108.75 après sweep sous le 1h Discount BISI, entrée 29,111.50">
+<img src="plans/2026-07-21/09-t2-cloture-tp.png" alt="T2 · clôture, TP touché à 29,191.75 proche de la cible Daily Premium SIBI">` },
     { date: "20 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$4,294", plSub: "T1 Sierra +$1,944 · T2 TV +$2,350",
       html: `<h3>Analyse pré-marché · NQU26 · lundi · Sim1</h3>
 <p>Après l'ATH ≈ 31,200 (mi-juin), le Daily a corrigé cinq séances de suite (15→17 juillet), de ≈ 30,050 à ≈ 28,440. Le prix (≈ 28,822 au réveil) est revenu dans le <strong>Weekly Discount BISI (≈ 28,600)</strong> — la zone qui a produit le rebond de vendredi (low 5 min ≈ 28,440 à 9h50 ET, purge partielle vers la SSL 1H puis rejet). Structure Weekly toujours haussière de fond.</p>
