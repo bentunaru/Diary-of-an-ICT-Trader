@@ -3,7 +3,8 @@
 
   "declarations": [
     { "date": "2026-07-21", "declared_at": "06:50:32", "setup": "Sweep BSL → FVG 5m", "direction": "Long", "note": "1h BSL 29,195.25 pris deux fois (mèches), attente retracement dans le 15m Discount BISI (~29,120-29,130) avant entrée long, session NY. Confluence : Fib 0.75 du range weekly tombe dans cette même zone — niveau renforcé.", "screenshot": "NQU2026_2026-07-21_12-50-32_71633.png", "source": "session" },
-    { "date": "2026-07-21", "declared_at": "07:05:14", "setup": "Sweep BSL → FVG 5m", "direction": "Short", "note": "Scalp basé sur le pré-marché : short après le double sweep du 1h BSL 29,195.25, joue le retracement anticipé vers le 15m Discount BISI. Couvert manuellement juste au-dessus du TP 29,140.", "screenshot": "NQU2026_2026-07-21_13-02-47_f6266.png", "source": "session" }
+    { "date": "2026-07-21", "declared_at": "07:05:14", "setup": "Sweep BSL → FVG 5m", "direction": "Short", "note": "Scalp basé sur le pré-marché : short après le double sweep du 1h BSL 29,195.25, joue le retracement anticipé vers le 15m Discount BISI. Couvert manuellement juste au-dessus du TP 29,140.", "screenshot": "NQU2026_2026-07-21_13-02-47_f6266.png", "source": "session" },
+    { "date": "2026-07-21", "declared_at": "07:41:22", "setup": "Sweep BSL → FVG 5m", "direction": "Long", "note": "Le long NY déclaré à 6h50 est pris : retracement venu taper le 15m Discount BISI / Fib 0.75 weekly (low 29,120 pile sur le 0.75), entrée 29,160.75 à la reprise, SL 29,139.75, TP 29,207.75 au-dessus du 1h BSL déjà purgé deux fois. R:R ≈ 2.2.", "screenshot": "NQU2026_2026-07-21_13-41-22_4d040.png", "source": "session" }
   ],
 
   "overrides": {
