@@ -7,6 +7,8 @@
     "2026-07-20|06:42:28": { "setup": "Sweep SSL → FVG 5m" },
     "2026-07-20|09:15:41": { "setup": "FVG multi-TF" },
     "2026-07-21|07:34:54": { "setup": "FVG multi-TF", "note": "SL fixe 25 pts au lieu du stop structurel — stoppé à quelques ticks du creux avant le vrai mouvement." },
-    "2026-07-21|07:56:27": { "setup": "FVG multi-TF", "note": "Ré-entrée même zone après le stop de T1 — bracket 6 TP1 + 1 runner." }
+    "2026-07-21|07:56:27": { "setup": "FVG multi-TF", "note": "Ré-entrée même zone après le stop de T1 — bracket 6 TP1 + 1 runner." },
+    "2026-07-21|07:38:25": { "setup": "FVG multi-TF", "note": "TradingView (Mac) — même zone que T1 Sierra, SL 29,101.5 également repris avant le vrai mouvement." },
+    "2026-07-21|07:56:45": { "setup": "FVG multi-TF", "note": "TradingView (Mac) — ré-entrée quasi simultanée à T2 Sierra, sortie en 2 legs (partiel manuel + TP runner)." }
   }
 }
