@@ -82,6 +82,11 @@ en vrac), Claude déroule :
    `.rich` : `h3/p/strong/img`, pas de callouts) et documenter les setups via
    `overrides{}` si Ben ne les a pas déclarés en direct (demander confirmation
    du setup si l'inférence depuis les screenshots n'est pas évidente).
+   **Ordre anté-chronologique dans chaque session** (décision Ben, 21 juillet
+   2026) : le bloc le plus récent (dernier trade, setup surveillé, mise à
+   jour) s'écrit EN HAUT du `html`, l'analyse pré-marché descend en bas —
+   le lecteur voit d'abord la dernière info sans scroller. (La numérotation
+   des fichiers dans `plans/` reste chronologique, elle.)
 5. **Valider avant commit** (parse JS + rendu navigateur, cf. workflow de
    validation habituel), puis branche → PR — merge après OK de Ben.
 6. Les violations détectées (sizing, hors-KZ, stop quotidien) se **signalent

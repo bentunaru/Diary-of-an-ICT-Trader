@@ -173,7 +173,7 @@ const DATA = {
     periodStart: "18 juillet 2026",
     periodEnd: "21 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 14,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 28,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -246,7 +246,7 @@ const DATA = {
   equity: [
     // <EQUITY>
     { date: "20 juillet", cum: 4294 },
-    { date: "21 juillet", cum: 6068 }
+    { date: "21 juillet", cum: 3078 }
     // </EQUITY>
   ],
 
@@ -260,7 +260,11 @@ const DATA = {
     { date: "20 juillet", t: "09:48:09", cum: 4294 },
     { date: "21 juillet", t: "07:49:21", cum: 3434 },
     { date: "21 juillet", t: "08:25:31", cum: 4464 },
-    { date: "21 juillet", t: "09:19:00", cum: 6068 }
+    { date: "21 juillet", t: "09:19:00", cum: 6068 },
+    { date: "21 juillet", t: "11:05:22", cum: 6464 },
+    { date: "21 juillet", t: "11:57:32", cum: 5524 },
+    { date: "21 juillet", t: "12:16:00", cum: 4038 },
+    { date: "21 juillet", t: "12:32:42", cum: 3078 }
     // </INTRADAY>
   ],
 
@@ -270,15 +274,55 @@ const DATA = {
     { date: "20 juillet", instr: "MNQU26", dir: "Long", entry: "28,800.25", exit: "28,870.25", rr: "—", pl: "+$1,944", plClass: "pos", plNum: 1943.5, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "14 contrat(s) max · 5 fills · 06:42:28→07:27:07 · P/L réel Sierra.", taggedBy: "override", contracts: 14, openTime: "06:42:28", closeTime: "07:27:07", kz: "London", sb: "SB London", violations: ["SIZING 14>7"] },
     { date: "20 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "28,893.25", exit: "28,964.00", rr: "—", pl: "+$2,350", plClass: "pos", plNum: 2350.0, result: "Win", setup: "FVG multi-TF", notes: "2 contrat(s) max · 4 fills · 09:15:41→09:48:09 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "09:15:41", closeTime: "09:48:09", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] },
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,121.75", exit: "29,100.25", rr: "—", pl: "−$860", plClass: "neg", plNum: -860.0, result: "Perte", setup: "FVG multi-TF", notes: "2 contrat(s) max · 2 fills · 07:38:25→07:49:21 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:38:25", closeTime: "07:49:21", kz: "London", violations: [] },
-    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,111.50", exit: "29,191.75", rr: "—", pl: "+$2,635", plClass: "pos", plNum: 2635.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "2 contrat(s) max · 3 fills · 07:56:45→09:19:00 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:56:45", closeTime: "09:19:00", kz: "London", violations: ["ENTRÉE APRÈS STOP QUOTIDIEN (-860$)"] }
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,111.50", exit: "29,191.75", rr: "—", pl: "+$2,635", plClass: "pos", plNum: 2635.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "2 contrat(s) max · 3 fills · 07:56:45→09:19:00 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:56:45", closeTime: "09:19:00", kz: "London", violations: ["ENTRÉE APRÈS STOP QUOTIDIEN (-860$)"] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Short", entry: "29,162.00", exit: "29,142.25", rr: "—", pl: "+$395", plClass: "pos", plNum: 395.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "Scalp basé sur le pré-marché : short après le double sweep du 1h BSL 29,195.25, joue le retracement anticipé vers le 15m Discount BISI. Couvert manuellement juste au-dessus du TP 29,140.", taggedBy: "declaration", contracts: 1, openTime: "11:02:04", closeTime: "11:05:22", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #3 DU JOUR (max 2)"] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,160.75", exit: "29,147.25", rr: "—", pl: "−$940", plClass: "neg", plNum: -940.0, result: "Perte", setup: "Sweep BSL → FVG 5m", notes: "Le long NY déclaré à 6h50 est pris : retracement venu taper le 15m Discount BISI / Fib 0.75 weekly (low 29,120 pile sur le 0.75), entrée 29,160.75 à la reprise, SL 29,139.75, TP 29,207.75 au-dessus du 1h BSL déjà purgé deux fois. R:R ≈ 2.2.", taggedBy: "declaration", contracts: 3, openTime: "11:40:11", closeTime: "11:57:32", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #4 DU JOUR (max 2)"] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,170.50", exit: "29,145.25", rr: "—", pl: "−$1,485", plClass: "neg", plNum: -1485.0, result: "Perte", setup: "Hors modèle", notes: "3 contrat(s) max · 4 fills · 12:15:19→12:16:00 · P/L réel TradingView.", taggedBy: "override", contracts: 3, openTime: "12:15:19", closeTime: "12:16:00", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #5 DU JOUR (max 2)"] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,143.00", exit: "29,131.25", rr: "—", pl: "−$960", plClass: "neg", plNum: -960.0, result: "Perte", setup: "Hors modèle", notes: "3 contrat(s) max · 4 fills · 12:16:08→12:32:42 · P/L réel TradingView.", taggedBy: "override", contracts: 3, openTime: "12:16:08", closeTime: "12:32:42", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #6 DU JOUR (max 2)"] }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$2,635", sub: "NQ · 21 juillet · réel TradingView" },
 
   sessions: [
-    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$1,775", plSub: "T1 TV −$860 · T2 TV +$2,635 (Sierra en attente)",
-      html: `<h3>Analyse pré-marché · NQU26 · mardi · Sim1</h3>
+    { date: "21 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "−$1,215", plSub: "T2 +$2,635 · T3 +$395 · T1/T4/T5/T6 −$4,245 · 6 trades TV",
+      html: `<h3>Clôture · −$1,215 · 6 trades (2W/4L) · la leçon du jour</h3>
+<p>Session arrêtée en milieu de matinée NY. La lecture a été bonne toute la journée : biais bullish validé, la confluence <strong>Fib 0.75 weekly / 15m Discount BISI (≈ 29,120)</strong> a tenu chacun de ses tests, et les deux trades conformes à une lecture propre (T2, T3) ont rapporté +$3,030. Tout le reste est une affaire de process : les 4 pertes (−$4,245) portent toutes au moins une violation — entrée sans retracement (T1), sizing ×3 et SL déplacé (T4), chase (T5), revenge (T6) — et le <strong>stop quotidien (−$500) était dépassé dès T1 à 3h49 ET</strong>. La vraie question de la journée n'est pas « pourquoi ces pertes » mais <strong>« pourquoi ne pas s'être arrêté à −$500 »</strong>.</p>
+<p><strong>Contexte assumé</strong> — journée de test des setups en paper (TradingView), volontairement au-delà du process normal (1 trade/jour). Le test a au moins livré son verdict : les setups du playbook gagnent, les trades hors playbook perdent. En réel, le process (1 trade/jour, stop quotidien, sizing 7 micros) n'est pas négociable.</p>
+<h3>T6 · Perte · Long 3 NQU26 (TradingView) @ 29,146.58 avg → 29,131.25</h3>
+<p><strong>Revenge trade</strong> — ré-entrée 3 lots au marché <strong>8 secondes</strong> après le SL de T5 (8h16:08 ET), en pleine chute, dans le 5m Discount SIBI. SL 29,132 touché @ 29,131.25 à 8h32. <strong>−$960.</strong></p>
+<img src="plans/2026-07-21/19-t6-reentree-3-lots-1m.png" alt="T6 · 1 min · ré-entrée immédiate 3 lots @ 29,147.25 avg après le SL de T5, SL 29,132">
+<h3>T5 · Perte · Long 3 NQU26 (TradingView) @ 29,170 avg → 29,145.25</h3>
+<p><strong>Chase</strong> — 3 lots au marché @ ~29,170 (8h15:19 ET) pendant la 3e montée vers le 1h BSL, sans retracement ni setup. Le prix a reflué immédiatement : SL 29,147 touché @ 29,145.25 en <strong>41 secondes</strong>. <strong>−$1,485</strong> — la plus grosse perte du journal.</p>
+<p><strong>⚠ Enchaînement T4→T5→T6</strong> — après le SL de T4 (lecture pourtant juste), deux trades « Hors modèle » en 1 minute : chase de la force sans retracement, puis revenge dans la chute. 3 minis NQ à chaque fois ($60/pt), 5e et 6e trades du jour (max 2), hors KZ, stop quotidien dépassé depuis le matin. La session passe de +$2,170 à −$1,215 en 17 minutes. La zone 29,120 (Fib 0.75 weekly) a pourtant tenu à chaque test — c'est l'exécution qui a lâché, pas la lecture.</p>
+<img src="plans/2026-07-21/18-t5-entree-3-lots-1m.png" alt="T5 · 1 min · 3 lots au marché @ 29,170 pendant la montée vers le 1h BSL, SL 29,147, stoppé en 41 secondes">
+<h3>T4 · Perte · Long 3 NQU26 (TradingView) @ 29,162.92 avg → 29,147.25</h3>
+<p>Le long NY du plan, exécuté sur le bon scénario : retracement venu taper la confluence — low 29,120 <strong>pile sur le Fib 0.75 du range weekly</strong>, dans le <strong>15m Discount BISI</strong> — puis reprise. Entrée 1 lot @ 29,160.75 (7h40 ET), SL initial 29,139.75, TP 29,207.75 au-dessus du 1h BSL purgé deux fois (R:R ≈ 2.2). Mais deux minutes plus tard, <strong>ajout de 2 lots @ 29,164</strong> (position ×3) et <strong>SL remonté à 29,146.25</strong> — trop près de la zone de reprise. Le pullback l'a touché @ 29,147.25 (7h57 ET) avant que le TP ne soit rejoué. <strong>−$940.</strong></p>
+<p><strong>⚠ Process</strong> — lecture juste (la zone a tenu, le plan était bon) mais exécution dégradée : pyramidage immédiat à 3 minis NQ ($60/pt, ~4× l'exposition du sizing standard 7 micros), SL déplacé dans le bruit, 4e trade du jour (max 2), hors Kill Zone (NY pré-open) et stop quotidien dépassé depuis T1. Le SL initial à 29,139.75 n'aurait probablement pas été touché.</p>
+<img src="plans/2026-07-21/15-t4-long-ny-5m.png" alt="T4 · 5 min · retracement dans le 15m Discount BISI / Fib 0.75 weekly puis reprise, long 29,160.75, SL initial 29,139.75, TP 29,207.75">
+<img src="plans/2026-07-21/16-t4-long-ny-1m.png" alt="T4 · 1 min · V-bottom sur la confluence, retour au-dessus du 5m Premium SIBI">
+<img src="plans/2026-07-21/17-t4-long-ny-15m.png" alt="T4 · 15 min · vue d'ensemble, bracket initial au-dessus du 1h BSL">
+<h3>T3 · Win · Short 1 NQU26 (TradingView) @ 29,162 → 29,142.25 · scalp</h3>
+<p>Scalp basé sur la lecture pré-marché : après le double sweep du <strong>1h BSL 29,195.25</strong>, short @ 29,162 (7h02 ET) pour jouer le retracement anticipé vers le <strong>15m Discount BISI</strong> — la zone attendue pour le long NY. SL 29,170.50, TP 29,140 (toit de la BISI). Couvert manuellement @ 29,142.25 (7h05 ET), juste au-dessus du TP. <strong>+$395</strong> en 3 minutes.</p>
+<p><strong>⚠ Hors Kill Zone + 3e trade du jour</strong> — entrée à 7h02 ET (NY pré-open, entre London et NY AM) et au-delà de la limite de 2 trades/jour ; le stop quotidien était de toute façon déjà dépassé depuis T1. Lecture juste et exécution propre, mais le process du jour était déjà rompu.</p>
+<img src="plans/2026-07-21/12-t3-scalp-short-entree.png" alt="T3 · short 29,162 après double sweep du 1h BSL 29,195.25, Fib tracé sur le dernier swing, TP 29,140">
+<img src="plans/2026-07-21/13-t3-scalp-short-mgmt.png" alt="T3 · gestion, prix descend vers la zone 15m Discount BISI, +$340 flottant">
+<img src="plans/2026-07-21/14-t3-scalp-short-cloture.png" alt="T3 · clôture manuelle 29,142.25 juste au-dessus du TP 29,140, +$395">
+<h3>Setup surveillé · NY AM · Long</h3>
+<p>1h BSL 29,195.25 pris deux fois en 15 min (mèches, coché sur le graphique). Attente d'un retracement dans le <strong>15m Discount BISI ≈ 29,120–29,130</strong> avant une entrée long en session NY (8h30–11h ET). Prix actuel 29,177.50.</p>
+<img src="plans/2026-07-21/10-ny-bsl-sweep-watch.png" alt="15 min · 1h BSL 29,195.25 pris deux fois, attente retracement dans le 15m Discount BISI ≈29,120-29,130">
+<p><strong>Confluence</strong> — le <strong>Fib 0.75 du range weekly</strong> tombe pile dans cette même zone 15m Discount BISI (≈29,120) : niveau renforcé par la superposition des deux lectures (weekly + 15m).</p>
+<img src="plans/2026-07-21/11-ny-bsl-sweep-weekly-fib.png" alt="15 min · Fib 0.75 du range weekly superposé au 15m Discount BISI ≈29,120, confluence renforçant le niveau">
+<h3>T2 · Win · Long 2 NQU26 (TradingView) @ 29,111.50 → 29,163 / 29,191.75</h3>
+<p>Retest propre du <strong>Fib 29,108.75</strong> après un sweep sous le <strong>1h Discount BISI</strong> (≈ 29,090–29,100). Entrée 29,111.50 (3h56 ET). Sortie en 2 legs : 1 sécurisé au marché @ 29,163 (4h25 ET) puis 1 sur le TP @ 29,191.75 (5h19 ET, clôture proche de la cible Daily Premium SIBI). <strong>+$2,635.</strong></p>
+<p><strong>⚠ Entrée après stop quotidien dépassé</strong> — prise après T1 (−$860), qui avait déjà dépassé le stop perso (−$500). Le trade a fini gagnant, mais il a été pris hors process : le stop quotidien aurait dû arrêter la session après T1.</p>
+<img src="plans/2026-07-21/08-t2-retest-fib.png" alt="T2 · retest du Fib 29,108.75 après sweep sous le 1h Discount BISI, entrée 29,111.50">
+<img src="plans/2026-07-21/09-t2-cloture-tp.png" alt="T2 · clôture, TP touché à 29,191.75 proche de la cible Daily Premium SIBI">
+<h3>T1 · Perte · Long 2 NQU26 (TradingView) @ 29,121.75 → 29,100.25</h3>
+<p>Entrée en extension du mouvement matinal, à l'approche de la zone <strong>1h Premium SIBI</strong> — précisément le scénario identifié à risque dans le plan pré-marché ("mouvement déjà en place, sans retracement"). Petit range formé juste sous la SIBI avant l'échec ; stop touché à 29,100.25 (London KZ, 3h38–3h49 ET). <strong>−$860.</strong></p>
+<p><strong>⚠ Entrée hors process</strong> — le plan du matin excluait explicitement une entrée sans retracement sur ce mouvement ; T1 l'a pris quand même, sur la simple continuation.</p>
+<img src="plans/2026-07-21/07-t1-entree-premium-sibi.png" alt="T1 · Long 29,121.75 en extension, échec sous la zone 1h Premium SIBI, stop 29,100.25">
+<h3>Analyse pré-marché · NQU26 · mardi · Sim1</h3>
 <p>Prix actuel ≈ 29,135. Depuis le plancher ≈ 28,440 (17 juillet), le prix a repris haussier sans offrir de retracement exploitable — le mouvement était déjà en place à l'ouverture, donc pas d'entrée prise dessus. Biais du jour : <strong>bullish</strong>.</p>
 <img src="plans/2026-07-21/01-daily.png" alt="Daily · reprise haussière depuis le plancher ≈28,440 (17 juillet)">
 <img src="plans/2026-07-21/02-60m.png" alt="60 min · structure de la remontée depuis le plancher">
@@ -287,18 +331,22 @@ const DATA = {
 <img src="plans/2026-07-21/05-daily-triangle-lecture.png" alt="Daily · triangle de lecture (Où / Quoi / Vers où)">
 <p><strong>Niveaux (1H TradingView, annotés à l'ouverture de Londres, 2h56 ET)</strong> — BSL 30,094.00 · 1h BSL 29,050.25 (déjà repris) · Fib 29,108.75 · <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> (cible) · 1h Discount Weak ≈ 28,800 · 1h Discount Breaker Block / OB ≈ 28,700–28,740 (zone d'invalidation) · SSL 28,512.00.</p>
 <img src="plans/2026-07-21/06-1h-tv-annotated.png" alt="1H TradingView annoté · BSL 30,094 / 1h BSL 29,050.25 / Fib 29,108.75 / Daily Premium SIBI ≈29,220-29,340 / 1h Discount Weak-Breaker-OB ≈28,700-28,800 / SSL 28,512">
-<p><strong>Plan</strong> — Pas d'entrée sur le mouvement du matin (déjà en place, sans retracement) : sécurité avant tout. Attente de l'ouverture de la <strong>London KZ (2h–5h ET)</strong> et d'une réaction sur le <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> avant d'envisager une entrée dans le sens du biais bullish. Invalidation du biais court terme sous le 1h Discount Breaker Block/OB (≈ 28,700–28,740).</p>
-<h3>T1 · Perte · Long 2 NQU26 (TradingView) @ 29,121.75 → 29,100.25</h3>
-<p>Entrée en extension du mouvement matinal, à l'approche de la zone <strong>1h Premium SIBI</strong> — précisément le scénario identifié à risque dans le plan pré-marché ("mouvement déjà en place, sans retracement"). Petit range formé juste sous la SIBI avant l'échec ; stop touché à 29,100.25 (London KZ, 3h38–3h49 ET). <strong>−$860.</strong></p>
-<p><strong>⚠ Entrée hors process</strong> — le plan du matin excluait explicitement une entrée sans retracement sur ce mouvement ; T1 l'a pris quand même, sur la simple continuation.</p>
-<img src="plans/2026-07-21/07-t1-entree-premium-sibi.png" alt="T1 · Long 29,121.75 en extension, échec sous la zone 1h Premium SIBI, stop 29,100.25">
-<h3>T2 · Win · Long 2 NQU26 (TradingView) @ 29,111.50 → 29,163 / 29,191.75</h3>
-<p>Retest propre du <strong>Fib 29,108.75</strong> après un sweep sous le <strong>1h Discount BISI</strong> (≈ 29,090–29,100). Entrée 29,111.50 (3h56 ET). Sortie en 2 legs : 1 sécurisé au marché @ 29,163 (4h25 ET) puis 1 sur le TP @ 29,191.75 (5h19 ET, clôture proche de la cible Daily Premium SIBI). <strong>+$2,635.</strong></p>
-<p><strong>⚠ Entrée après stop quotidien dépassé</strong> — prise après T1 (−$860), qui avait déjà dépassé le stop perso (−$500). Le trade a fini gagnant, mais il a été pris hors process : le stop quotidien aurait dû arrêter la session après T1.</p>
-<img src="plans/2026-07-21/08-t2-retest-fib.png" alt="T2 · retest du Fib 29,108.75 après sweep sous le 1h Discount BISI, entrée 29,111.50">
-<img src="plans/2026-07-21/09-t2-cloture-tp.png" alt="T2 · clôture, TP touché à 29,191.75 proche de la cible Daily Premium SIBI">` },
+<p><strong>Plan</strong> — Pas d'entrée sur le mouvement du matin (déjà en place, sans retracement) : sécurité avant tout. Attente de l'ouverture de la <strong>London KZ (2h–5h ET)</strong> et d'une réaction sur le <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> avant d'envisager une entrée dans le sens du biais bullish. Invalidation du biais court terme sous le 1h Discount Breaker Block/OB (≈ 28,700–28,740).</p>` },
     { date: "20 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$4,294", plSub: "T1 Sierra +$1,944 · T2 TV +$2,350",
-      html: `<h3>Analyse pré-marché · NQU26 · lundi · Sim1</h3>
+      html: `<h3>T2 · Win · Long 2 NQU26 (TradingView) @ 28,889.50 avg → 28,948.25 avg</h3>
+<p>Trade exécuté sur TradingView Paper Trading (Mac), intégré au journal comme trade réel via le nouveau pipeline <code>imports/tradingview/</code>. Plan écrit à la main sur iPad avant l'entrée : biais Bull, confluence <strong>FVG multi-TF</strong> validée étage par étage (1h ✓ · 15m ✓ · 5m ✓ · 1m ✓), entrée visée 28,869.50, SL 28,851, TP sur les relative equal highs à 28,953.50.</p>
+<p>Exécution : 1er contrat au marché @ 28,893.25 (5h15 ET), 2e en limite @ 28,885.75 (5h18 ET), SL commun 28,851. Sortie en 2 legs : 1 @ 28,932.50 (5h43 ET, sécurisation manuelle) puis 1 @ 28,964.00 sur le TP (5h48 ET). <strong>+$2,350.</strong></p>
+<p><strong>⚠ Hors Kill Zone</strong> — entrée à 5h15 ET, entre la London KZ (2h–5h) et NY AM (8h30–11h) : le pipeline l'a flaggée automatiquement. Le plan iPad était propre et le trade dans le sens du biais, mais la fenêtre d'exécution reste en dehors des heures à haute probabilité du playbook. À noter aussi : 2 minis NQ = $40/pt d'exposition, au-delà des 7 micros MNQ ($14/pt) du sizing standard — la limite de contrats ne le voit pas (2 &lt; 7), mais l'exposition réelle est presque 3× le plan.</p>
+<img src="plans/2026-07-20/12-t2-ipad-plan.png" alt="Plan manuscrit iPad · biais Bull, checklist FVG 1h/15m/5m/1m, entrée 28,869.50 / SL 28,851 / TP REHi 28,953.50">
+<img src="plans/2026-07-20/10-t2-tv-1m-entry-context.png" alt="1 min TradingView · contexte d'entrée, stack de Discount BISI 1h/15m/5m sous le prix">
+<img src="plans/2026-07-20/11-t2-tv-1m-close.png" alt="1 min TradingView · extension vers 29,000 après la sortie, TP REHi touché">
+<h3>T1 · Win · Long 14 MNQU26 @ 28,792 avg → 28,861 avg</h3>
+<p>Conforme au plan (scénario 1) : entrée sur la zone de discount 1H après purge, retour dans un FVG 5 min, London KZ (2h42 ET). Bracket initial 7 lots (6 @ 28,800.25 + 1 @ 28,795.25). Sortie en 2 legs : 6 @ 28,850.25 (3h23 ET) puis 8 @ 28,870.25 (3h27 ET, clôture). <strong>+$1,944.</strong></p>
+<p><strong>⚠ Sizing 14 &gt; 7</strong> — après le bracket initial, ajout de 7 lots supplémentaires au marché à 2h49 ET (28,785.00) alors que la position flottait déjà en perte (creux flottant ≈ −$128 sur les 7 premiers). Taille finale doublée à 14, hors du sizing standard (7 micros). Le trade a fini gagnant, mais le process n'était pas propre : ajouter au lieu de laisser le stop initial faire son travail.</p>
+<img src="plans/2026-07-20/06-t1-mgmt-1m.png" alt="1 min · ordres en place (TP legs 28,963.50/28,870.25, stop 28,795.25), creux flottant −$44 puis −$128">
+<img src="plans/2026-07-20/07-t1-mgmt-5m.png" alt="5 min · vue élargie de la gestion, purge sous 28,600 avant le rebond">
+<img src="plans/2026-07-20/08-t1-close-1m.png" alt="1 min · reprise vers 28,960 et clôture des 2 legs en profit">
+<h3>Analyse pré-marché · NQU26 · lundi · Sim1</h3>
 <p>Après l'ATH ≈ 31,200 (mi-juin), le Daily a corrigé cinq séances de suite (15→17 juillet), de ≈ 30,050 à ≈ 28,440. Le prix (≈ 28,822 au réveil) est revenu dans le <strong>Weekly Discount BISI (≈ 28,600)</strong> — la zone qui a produit le rebond de vendredi (low 5 min ≈ 28,440 à 9h50 ET, purge partielle vers la SSL 1H puis rejet). Structure Weekly toujours haussière de fond.</p>
 <p>Prix actuel ≈ 28,822 · BSL (1H) 30,094 · Cible 1 (Daily Premium SIBI) ≈ 29,250–29,300 · SSL (1H) 28,512.</p>
 <img src="plans/2026-07-20/01-weekly.png" alt="Weekly · tendance haussière de fond intacte malgré la correction récente">
@@ -306,20 +354,7 @@ const DATA = {
 <img src="plans/2026-07-20/03-60m.png" alt="60 min · range de travail, rejet sur le Weekly BISI">
 <img src="plans/2026-07-20/04-5m.png" alt="5 min · purge vers 28,440 (9h50 ET) puis rejet, consolidation 28,700–29,000">
 <img src="plans/2026-07-20/05-1h-tv-annotated.png" alt="1H TradingView · BSL 30,094 / SSL 28,512, Daily Premium SIBI, Weekly Discount BISI, 1H Discount Breaker Block">
-<p><strong>Plan</strong> — Scénario 1 (privilégié) : Long sur tenue du 1H Discount Breaker Block (≈ 28,750) / re-test du Weekly BISI en London ou NY AM KZ, cible Daily Premium SIBI ≈ 29,250–29,300 ; extension vers BSL 30,094 seulement si le SIBI cède. Scénario 2 : short de continuation sur cassure franche et clôture 1H sous la SSL 28,512 — mais tant que 28,512 n'est pas proprement purgée, ce pool reste un aimant pour un dernier sweep avant retournement. Pas d'entrée hors Kill Zone.</p>
-<h3>T1 · Win · Long 14 MNQU26 @ 28,792 avg → 28,861 avg</h3>
-<p>Conforme au plan (scénario 1) : entrée sur la zone de discount 1H après purge, retour dans un FVG 5 min, London KZ (2h42 ET). Bracket initial 7 lots (6 @ 28,800.25 + 1 @ 28,795.25). Sortie en 2 legs : 6 @ 28,850.25 (3h23 ET) puis 8 @ 28,870.25 (3h27 ET, clôture). <strong>+$1,944.</strong></p>
-<p><strong>⚠ Sizing 14 &gt; 7</strong> — après le bracket initial, ajout de 7 lots supplémentaires au marché à 2h49 ET (28,785.00) alors que la position flottait déjà en perte (creux flottant ≈ −$128 sur les 7 premiers). Taille finale doublée à 14, hors du sizing standard (7 micros). Le trade a fini gagnant, mais le process n'était pas propre : ajouter au lieu de laisser le stop initial faire son travail.</p>
-<img src="plans/2026-07-20/06-t1-mgmt-1m.png" alt="1 min · ordres en place (TP legs 28,963.50/28,870.25, stop 28,795.25), creux flottant −$44 puis −$128">
-<img src="plans/2026-07-20/07-t1-mgmt-5m.png" alt="5 min · vue élargie de la gestion, purge sous 28,600 avant le rebond">
-<img src="plans/2026-07-20/08-t1-close-1m.png" alt="1 min · reprise vers 28,960 et clôture des 2 legs en profit">
-<h3>T2 · Win · Long 2 NQU26 (TradingView) @ 28,889.50 avg → 28,948.25 avg</h3>
-<p>Trade exécuté sur TradingView Paper Trading (Mac), intégré au journal comme trade réel via le nouveau pipeline <code>imports/tradingview/</code>. Plan écrit à la main sur iPad avant l'entrée : biais Bull, confluence <strong>FVG multi-TF</strong> validée étage par étage (1h ✓ · 15m ✓ · 5m ✓ · 1m ✓), entrée visée 28,869.50, SL 28,851, TP sur les relative equal highs à 28,953.50.</p>
-<p>Exécution : 1er contrat au marché @ 28,893.25 (5h15 ET), 2e en limite @ 28,885.75 (5h18 ET), SL commun 28,851. Sortie en 2 legs : 1 @ 28,932.50 (5h43 ET, sécurisation manuelle) puis 1 @ 28,964.00 sur le TP (5h48 ET). <strong>+$2,350.</strong></p>
-<p><strong>⚠ Hors Kill Zone</strong> — entrée à 5h15 ET, entre la London KZ (2h–5h) et NY AM (8h30–11h) : le pipeline l'a flaggée automatiquement. Le plan iPad était propre et le trade dans le sens du biais, mais la fenêtre d'exécution reste en dehors des heures à haute probabilité du playbook. À noter aussi : 2 minis NQ = $40/pt d'exposition, au-delà des 7 micros MNQ ($14/pt) du sizing standard — la limite de contrats ne le voit pas (2 &lt; 7), mais l'exposition réelle est presque 3× le plan.</p>
-<img src="plans/2026-07-20/12-t2-ipad-plan.png" alt="Plan manuscrit iPad · biais Bull, checklist FVG 1h/15m/5m/1m, entrée 28,869.50 / SL 28,851 / TP REHi 28,953.50">
-<img src="plans/2026-07-20/10-t2-tv-1m-entry-context.png" alt="1 min TradingView · contexte d'entrée, stack de Discount BISI 1h/15m/5m sous le prix">
-<img src="plans/2026-07-20/11-t2-tv-1m-close.png" alt="1 min TradingView · extension vers 29,000 après la sortie, TP REHi touché">` },
+<p><strong>Plan</strong> — Scénario 1 (privilégié) : Long sur tenue du 1H Discount Breaker Block (≈ 28,750) / re-test du Weekly BISI en London ou NY AM KZ, cible Daily Premium SIBI ≈ 29,250–29,300 ; extension vers BSL 30,094 seulement si le SIBI cède. Scénario 2 : short de continuation sur cassure franche et clôture 1H sous la SSL 28,512 — mais tant que 28,512 n'est pas proprement purgée, ce pool reste un aimant pour un dernier sweep avant retournement. Pas d'entrée hors Kill Zone.</p>` },
   ],
   rules: [
     { label: "Principe fondamental", text: "Un trader ICT ne réagit pas au prix — il anticipe le prix." },
