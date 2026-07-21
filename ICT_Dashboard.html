@@ -117,7 +117,7 @@ const DATA = {
   bestTrade: { value: "+$2,350", sub: "NQ · 20 juillet · réel TradingView" },
 
   sessions: [
-    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: null,
+    { date: "21 juillet 2026", status: "live", statusLabel: "Trades terminés · import en attente", pl: "+$399", plSub: "Sierra seul (T1 −$360.50 · T2 +$759.50) · trade TV à importer",
       html: `<h3>Analyse pré-marché · NQU26 · mardi · Sim1</h3>
 <p>Prix actuel ≈ 29,135. Depuis le plancher ≈ 28,440 (17 juillet), le prix a repris haussier sans offrir de retracement exploitable — le mouvement était déjà en place à l'ouverture, donc pas d'entrée prise dessus. Biais du jour : <strong>bullish</strong>.</p>
 <img src="plans/2026-07-21/01-daily.png" alt="Daily · reprise haussière depuis le plancher ≈28,440 (17 juillet)">
@@ -127,7 +127,20 @@ const DATA = {
 <img src="plans/2026-07-21/05-daily-triangle-lecture.png" alt="Daily · triangle de lecture (Où / Quoi / Vers où)">
 <p><strong>Niveaux (1H TradingView, annotés à l'ouverture de Londres, 2h56 ET)</strong> — BSL 30,094.00 · 1h BSL 29,050.25 (déjà repris) · Fib 29,108.75 · <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> (cible) · 1h Discount Weak ≈ 28,800 · 1h Discount Breaker Block / OB ≈ 28,700–28,740 (zone d'invalidation) · SSL 28,512.00.</p>
 <img src="plans/2026-07-21/06-1h-tv-annotated.png" alt="1H TradingView annoté · BSL 30,094 / 1h BSL 29,050.25 / Fib 29,108.75 / Daily Premium SIBI ≈29,220-29,340 / 1h Discount Weak-Breaker-OB ≈28,700-28,800 / SSL 28,512">
-<p><strong>Plan</strong> — Pas d'entrée sur le mouvement du matin (déjà en place, sans retracement) : sécurité avant tout. Attente de l'ouverture de la <strong>London KZ (2h–5h ET)</strong> et d'une réaction sur le <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> avant d'envisager une entrée dans le sens du biais bullish. Invalidation du biais court terme sous le 1h Discount Breaker Block/OB (≈ 28,700–28,740).</p>` },
+<p><strong>Plan</strong> — Pas d'entrée sur le mouvement du matin (déjà en place, sans retracement) : sécurité avant tout. Attente de l'ouverture de la <strong>London KZ (2h–5h ET)</strong> et d'une réaction sur le <strong>Daily Premium SIBI ≈ 29,220–29,340</strong> avant d'envisager une entrée dans le sens du biais bullish. Invalidation du biais court terme sous le 1h Discount Breaker Block/OB (≈ 28,700–28,740).</p>
+<h3>T1 · SL Hit · Long 7 MNQU26 @ 29,118.75 → 29,093.00</h3>
+<p>Entrée 3h34 ET (London KZ), au retour dans la zone de confluence après la reprise du 1h BSL 29,050.25 : <strong>1h Discount BISI ≈ 29,090</strong> + fib 29,108.75 (FVG multi-TF). Bracket 7 micros : 6 TP1 @ 29,168.75, runner TP 29,193.75, <strong>SL fixe 29,093.75 (25 pts)</strong>. Stoppé à 3h49 ET @ 29,093.00. <strong>−$360.50.</strong></p>
+<p><strong>⚠ Erreur documentée — SL fixe au lieu de structurel.</strong> Le stop mécanique à 25 pts était posé au-dessus du bas de la structure (le creux du BISI 1h) : le prix est venu purger quelques ticks sous le stop avant de repartir dans le sens du trade. Règle du playbook : <em>stop structurel uniquement — sous l'OB/FVG/creux de structure, jamais le stop par défaut de la plateforme</em>. Un SL sous le creux du BISI (~29,085–29,090) aurait tenu, pour ~1–1.5 pt de risque supplémentaire par contrat.</p>
+<img src="plans/2026-07-21/07-t1-entry-1m.png" alt="1 min · T1 en position, 7 @ 29,118.75, bracket TP/SL posé">
+<img src="plans/2026-07-21/08-t1-context-60m.png" alt="60 min · contexte au moment de T1, triangle de lecture, prix 29,120">
+<img src="plans/2026-07-21/09-t1-orders-1m.png" alt="1 min · ordres du bracket : 6 TP1 29,168.75 · runner 29,193.75 · SL 29,093.75 (25 pts fixes)">
+<h3>T2 · Win · Long 7 MNQU26 @ 29,114.00 → 29,164.00 + runner 29,193.75</h3>
+<p>Ré-entrée 3h56 ET (London KZ), même zone de confluence — le setup restait valide, seule l'exécution du stop de T1 était fautive. Bracket identique : <strong>6 lots TP1 @ 29,164.00</strong> (4h25 ET, +50 pts = +$600) puis <strong>runner @ 29,193.75</strong> (5h19 ET, +79.75 pts = +$159.50). <strong>+$759.50.</strong> Process propre : sizing 7, bracket 6+1 conforme, London KZ.</p>
+<h3>T3 · TradingView (Mac) · Long 2 NQU26 @ ~29,121.75 — résultat à l'import</h3>
+<p>En parallèle sur TradingView Paper : Long 2 NQ vers 3h21 ET, SL 29,101.50, TP 29,194.00 (sous les relative equal highs). À 4h42 ET : 1 lot sécurisé, runner restant SL remonté à 29,103.50, TP 29,191.25. <strong>P/L final à confirmer à l'import des CSV</strong> (<code>imports/tradingview/</code>, côté Mac).</p>
+<img src="plans/2026-07-21/10-tv-entry-5m.png" alt="5 min TV · Long 2 NQ, SL 29,101.50, TP 29,194, zones 15m Premium SIBI / 1h Discount BISI">
+<img src="plans/2026-07-21/11-tv-mgmt-1m.png" alt="1 min TV · gestion : partiel pris, runner SL 29,103.50, TP 29,191.25">
+<p><strong>Bilan Sierra : +$399 net</strong> (T1 −$360.50 · T2 +$759.50) · 2 trades London KZ · leçon du jour : <strong>le stop se place sous la structure, pas à une distance fixe</strong> — le sizing s'adapte au stop, jamais l'inverse. Import pipeline (Sierra + CSV TV) à lancer côté Mac — pas de Python sur le PC.</p>` },
     { date: "20 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$4,294", plSub: "T1 Sierra +$1,944 · T2 TV +$2,350",
       html: `<h3>Analyse pré-marché · NQU26 · lundi · Sim1</h3>
 <p>Après l'ATH ≈ 31,200 (mi-juin), le Daily a corrigé cinq séances de suite (15→17 juillet), de ≈ 30,050 à ≈ 28,440. Le prix (≈ 28,822 au réveil) est revenu dans le <strong>Weekly Discount BISI (≈ 28,600)</strong> — la zone qui a produit le rebond de vendredi (low 5 min ≈ 28,440 à 9h50 ET, purge partielle vers la SSL 1H puis rejet). Structure Weekly toujours haussière de fond.</p>
