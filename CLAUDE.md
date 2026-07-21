@@ -49,49 +49,46 @@ The pipeline (`reconstruct` → `build_data` → `inject`):
 - **`imports/` est committé et fait foi** : ne jamais supprimer un fichier de `imports/sierra/` ou `imports/tradingview/` — c'est la seule copie durable des fills (les exports bruts sont gitignorés partout ailleurs). Un fichier corrompu se corrige, ne se supprime pas.
 - **Annotations survive regeneration**. `annotations.json` has two blocks: `declarations[]` (setup déclaré en session, voir "Workflow de session" ci-dessous — `date`, `declared_at` heure ET, `setup`, `direction` optionnelle, `note` optionnelle, `screenshot` optionnelle, `source`) and `overrides{}` (correction a posteriori, clé `"<date_iso UTC>|<openTime UTC>"`, prime sur tout). `reconcile_declarations()` (`tools/trade_validation.py`) rapproche chaque déclaration d'un fill : tolérance ±15 min en heure ET (avec gestion du changement de jour), même direction si déclarée. Aucun match → `setup: "Non documenté"`, `taggedBy: "auto"` — **jamais bloquant** pour la régénération.
 
-## « Session ouverte » — routine automatisée (Mac + PC)
+## « Session ouverte » — routine automatisée (Mac, boîte de dépôt locale)
 
-Le repo vit en double : un clone **PC Windows** (`OneDrive\Trading Journal`, où
-tourne Sierra Chart) et un clone **Mac** (`/Users/benjamin/Trading Journal`, où
-tourne TradingView). **La synchro entre les deux passe exclusivement par
-GitHub** (branche → PR → merge, cf. workflow git habituel) — jamais par OneDrive
-pour le repo lui-même. OneDrive sert uniquement de boîte de dépôt pour les
-fichiers bruts (exports, screenshots, notes iPad).
+**Tout se gère depuis le Mac** (`/Users/benjamin/Trading Journal`) — un seul
+clone, plus de synchro PC↔Mac via GitHub. Sierra Chart continue de tourner
+sur le PC (c'est là qu'est le compte Sim1) mais son export brut est transféré
+par Ben lui-même (peu importe le moyen) dans `inbox/` en local sur le Mac,
+au même titre que les exports TradingView et les screenshots. `inbox/` n'est
+pas versionné (sauf `.gitkeep`) : c'est une zone de travail en vrac, jamais
+une source de vérité — les copies durables vivent dans `imports/` et `plans/`.
 
-Quand Ben dit **« session ouverte »** (ou partage des exports/screenshots en
-vrac), Claude déroule :
+Quand Ben dit **« session ouverte »** (ou dépose des fichiers dans `inbox/`
+en vrac), Claude déroule :
 
-1. **`git pull` d'abord, toujours** — l'autre machine a pu merger des PRs.
-   Vérifier aussi `git log origin/main..HEAD` : un commit local non poussé de
-   l'autre session doit remonter par PR avant d'empiler du nouveau travail.
-2. **Scanner la boîte de dépôt OneDrive** (`Images/Captures d'écran/` — chemin
-   Mac : `/Users/benjamin/Library/CloudStorage/OneDrive-Personal/Images/Captures d'écran/`,
-   chemin PC : `C:\Users\<user>\OneDrive\Images\Captures d'écran\`) pour les
-   fichiers plus récents que le dernier commit de journal :
-   - `TradeActivityLogExport_*.txt` (Sierra — **le nom de fichier ment souvent**,
-     regarder les dates des fills dedans, pas le nom) ;
-   - `paper-trading-*-????-??-??T*.csv` (TradingView — copier au moins
-     l'order-history dans `imports/tradingview/`) ;
+1. **`git pull` d'abord** — vérifier qu'il n'y a pas de PR en attente côté
+   GitHub à récupérer avant d'empiler du nouveau travail.
+2. **Scanner `inbox/`** pour les fichiers non encore traités :
+   - `TradeActivityLogExport_*.txt` (Sierra — **le nom de fichier ment
+     souvent**, regarder les dates des fills dedans, pas le nom) ;
+   - `paper-trading-order-history-all-*.csv` (TradingView — priorité à
+     Sierra si TradingView est absent, ce n'est pas bloquant) ;
    - screenshots TradingView (`NQU2026_YYYY-MM-DD_*.png`), captures Sierra
      (`Screenshot YYYY-MM-DD *.png`), notes iPad (`IMG_*.PNG`).
-3. **Lancer le pipeline** (`python3 tools/update_dashboard.py <export>` ; sans
-   argument si les CSV TV suffisent). L'export Sierra est persisté
-   automatiquement dans `imports/sierra/`.
+3. **Lancer le pipeline** (`python3 tools/update_dashboard.py <export Sierra>` ;
+   sans argument si seuls les CSV TV sont présents). Le script copie et
+   persiste automatiquement l'export Sierra dans `imports/sierra/` et relit
+   tout `imports/tradingview/` — copier d'abord les CSV TV neufs depuis
+   `inbox/` vers `imports/tradingview/`.
 4. **Lire chaque screenshot/note** et classer dans `plans/YYYY-MM-DD/` avec la
    numérotation en place (`01-` pré-marché top-down … `NN-tX-…` par trade),
    rédiger/mettre à jour le narratif de session (`DATA.sessions[]`, style
    `.rich` : `h3/p/strong/img`, pas de callouts) et documenter les setups via
-   `overrides{}` si Ben ne les a pas déclarés en direct.
+   `overrides{}` si Ben ne les a pas déclarés en direct (demander confirmation
+   du setup si l'inférence depuis les screenshots n'est pas évidente).
 5. **Valider avant commit** (parse JS + rendu navigateur, cf. workflow de
    validation habituel), puis branche → PR — merge après OK de Ben.
 6. Les violations détectées (sizing, hors-KZ, stop quotidien) se **signalent
    dans le narratif**, jamais en les masquant : le résultat ne valide pas le
    process.
-
-Ne jamais modifier le clone de l'autre machine (fichiers ou git) — le lire pour
-diagnostiquer est OK, écrire non. Si un commit non poussé y traîne, le
-récupérer par `git fetch <chemin-du-clone> main` + cherry-pick dans une branche
-du clone courant.
+7. Une fois les fichiers de `inbox/` traités (copiés dans `imports/`/`plans/`),
+   ils peuvent être nettoyés de `inbox/` — les copies versionnées font foi.
 
 ## Workflow de session (déclarations en direct)
 
