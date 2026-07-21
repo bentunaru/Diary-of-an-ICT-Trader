@@ -173,7 +173,7 @@ const DATA = {
     periodStart: "18 juillet 2026",
     periodEnd: "21 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 16,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 20,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -246,7 +246,7 @@ const DATA = {
   equity: [
     // <EQUITY>
     { date: "20 juillet", cum: 4294 },
-    { date: "21 juillet", cum: 6464 }
+    { date: "21 juillet", cum: 5524 }
     // </EQUITY>
   ],
 
@@ -261,7 +261,8 @@ const DATA = {
     { date: "21 juillet", t: "07:49:21", cum: 3434 },
     { date: "21 juillet", t: "08:25:31", cum: 4464 },
     { date: "21 juillet", t: "09:19:00", cum: 6068 },
-    { date: "21 juillet", t: "11:05:22", cum: 6464 }
+    { date: "21 juillet", t: "11:05:22", cum: 6464 },
+    { date: "21 juillet", t: "11:57:32", cum: 5524 }
     // </INTRADAY>
   ],
 
@@ -272,19 +273,21 @@ const DATA = {
     { date: "20 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "28,893.25", exit: "28,964.00", rr: "—", pl: "+$2,350", plClass: "pos", plNum: 2350.0, result: "Win", setup: "FVG multi-TF", notes: "2 contrat(s) max · 4 fills · 09:15:41→09:48:09 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "09:15:41", closeTime: "09:48:09", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] },
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,121.75", exit: "29,100.25", rr: "—", pl: "−$860", plClass: "neg", plNum: -860.0, result: "Perte", setup: "FVG multi-TF", notes: "2 contrat(s) max · 2 fills · 07:38:25→07:49:21 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:38:25", closeTime: "07:49:21", kz: "London", violations: [] },
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,111.50", exit: "29,191.75", rr: "—", pl: "+$2,635", plClass: "pos", plNum: 2635.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "2 contrat(s) max · 3 fills · 07:56:45→09:19:00 · P/L réel TradingView.", taggedBy: "override", contracts: 2, openTime: "07:56:45", closeTime: "09:19:00", kz: "London", violations: ["ENTRÉE APRÈS STOP QUOTIDIEN (-860$)"] },
-    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Short", entry: "29,162.00", exit: "29,142.25", rr: "—", pl: "+$395", plClass: "pos", plNum: 395.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "Scalp basé sur le pré-marché : short après le double sweep du 1h BSL 29,195.25, joue le retracement anticipé vers le 15m Discount BISI. Couvert manuellement juste au-dessus du TP 29,140.", taggedBy: "declaration", contracts: 1, openTime: "11:02:04", closeTime: "11:05:22", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #3 DU JOUR (max 2)"] }
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Short", entry: "29,162.00", exit: "29,142.25", rr: "—", pl: "+$395", plClass: "pos", plNum: 395.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "Scalp basé sur le pré-marché : short après le double sweep du 1h BSL 29,195.25, joue le retracement anticipé vers le 15m Discount BISI. Couvert manuellement juste au-dessus du TP 29,140.", taggedBy: "declaration", contracts: 1, openTime: "11:02:04", closeTime: "11:05:22", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #3 DU JOUR (max 2)"] },
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,160.75", exit: "29,147.25", rr: "—", pl: "−$940", plClass: "neg", plNum: -940.0, result: "Perte", setup: "Sweep BSL → FVG 5m", notes: "Le long NY déclaré à 6h50 est pris : retracement venu taper le 15m Discount BISI / Fib 0.75 weekly (low 29,120 pile sur le 0.75), entrée 29,160.75 à la reprise, SL 29,139.75, TP 29,207.75 au-dessus du 1h BSL déjà purgé deux fois. R:R ≈ 2.2.", taggedBy: "declaration", contracts: 3, openTime: "11:40:11", closeTime: "11:57:32", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #4 DU JOUR (max 2)"] }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$2,635", sub: "NQ · 21 juillet · réel TradingView" },
 
   sessions: [
-    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$2,170", plSub: "T1 TV −$860 · T2 TV +$2,635 · T3 TV +$395 (Sierra en attente)",
-      html: `<h3>T4 · En cours · Long 1 NQU26 (TradingView) @ 29,160.75 · le long NY du plan</h3>
-<p>Le setup déclaré à 6h50 s'est exécuté : le retracement est venu taper la zone de confluence — low 29,120 <strong>pile sur le Fib 0.75 du range weekly</strong>, dans le <strong>15m Discount BISI</strong> — puis reprise haussière. Entrée 29,160.75 au retour dans le 5m Premium SIBI (≈ 7h37 ET), <strong>SL 29,139.75</strong> (−$420) sous la zone de reprise, <strong>TP 29,207.75</strong> (+$940) au-dessus du 1h BSL 29,195.25 déjà purgé deux fois. R:R ≈ 2.2. Position ouverte.</p>
-<img src="plans/2026-07-21/15-t4-long-ny-5m.png" alt="T4 · 5 min · retracement dans le 15m Discount BISI / Fib 0.75 weekly puis reprise, long 29,160.75, SL 29,139.75, TP 29,207.75">
+    { date: "21 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$1,230", plSub: "T1 −$860 · T2 +$2,635 · T3 +$395 · T4 −$940 (Sierra en attente)",
+      html: `<h3>T4 · Perte · Long 3 NQU26 (TradingView) @ 29,162.92 avg → 29,147.25</h3>
+<p>Le long NY du plan, exécuté sur le bon scénario : retracement venu taper la confluence — low 29,120 <strong>pile sur le Fib 0.75 du range weekly</strong>, dans le <strong>15m Discount BISI</strong> — puis reprise. Entrée 1 lot @ 29,160.75 (7h40 ET), SL initial 29,139.75, TP 29,207.75 au-dessus du 1h BSL purgé deux fois (R:R ≈ 2.2). Mais deux minutes plus tard, <strong>ajout de 2 lots @ 29,164</strong> (position ×3) et <strong>SL remonté à 29,146.25</strong> — trop près de la zone de reprise. Le pullback l'a touché @ 29,147.25 (7h57 ET) avant que le TP ne soit rejoué. <strong>−$940.</strong></p>
+<p><strong>⚠ Process</strong> — lecture juste (la zone a tenu, le plan était bon) mais exécution dégradée : pyramidage immédiat à 3 minis NQ ($60/pt, ~4× l'exposition du sizing standard 7 micros), SL déplacé dans le bruit, 4e trade du jour (max 2), hors Kill Zone (NY pré-open) et stop quotidien dépassé depuis T1. Le SL initial à 29,139.75 n'aurait probablement pas été touché.</p>
+<img src="plans/2026-07-21/15-t4-long-ny-5m.png" alt="T4 · 5 min · retracement dans le 15m Discount BISI / Fib 0.75 weekly puis reprise, long 29,160.75, SL initial 29,139.75, TP 29,207.75">
 <img src="plans/2026-07-21/16-t4-long-ny-1m.png" alt="T4 · 1 min · V-bottom sur la confluence, retour au-dessus du 5m Premium SIBI">
-<img src="plans/2026-07-21/17-t4-long-ny-15m.png" alt="T4 · 15 min · vue d'ensemble, bracket en place au-dessus du 1h BSL">
+<img src="plans/2026-07-21/17-t4-long-ny-15m.png" alt="T4 · 15 min · vue d'ensemble, bracket initial au-dessus du 1h BSL">
 <h3>T3 · Win · Short 1 NQU26 (TradingView) @ 29,162 → 29,142.25 · scalp</h3>
 <p>Scalp basé sur la lecture pré-marché : après le double sweep du <strong>1h BSL 29,195.25</strong>, short @ 29,162 (7h02 ET) pour jouer le retracement anticipé vers le <strong>15m Discount BISI</strong> — la zone attendue pour le long NY. SL 29,170.50, TP 29,140 (toit de la BISI). Couvert manuellement @ 29,142.25 (7h05 ET), juste au-dessus du TP. <strong>+$395</strong> en 3 minutes.</p>
 <p><strong>⚠ Hors Kill Zone + 3e trade du jour</strong> — entrée à 7h02 ET (NY pré-open, entre London et NY AM) et au-delà de la limite de 2 trades/jour ; le stop quotidien était de toute façon déjà dépassé depuis T1. Lecture juste et exécution propre, mais le process du jour était déjà rompu.</p>
