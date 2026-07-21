@@ -29,6 +29,11 @@ TradeStatisticsForCharts*.txt
 # PDFs générés (reproductibles depuis le dashboard)
 *.pdf
 
+# Boîte de dépôt locale (Ben y dépose exports Sierra/TradingView + screenshots en vrac,
+# Claude trie vers imports/ et plans/YYYY-MM-DD/) — jamais versionnée telle quelle.
+/inbox/*
+!/inbox/.gitkeep
+
 # Fichiers temporaires
 *.tmp
 *.bak

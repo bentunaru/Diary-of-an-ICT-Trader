@@ -5,6 +5,8 @@
 
   "overrides": {
     "2026-07-20|06:42:28": { "setup": "Sweep SSL → FVG 5m" },
-    "2026-07-20|09:15:41": { "setup": "FVG multi-TF" }
+    "2026-07-20|09:15:41": { "setup": "FVG multi-TF" },
+    "2026-07-21|07:38:25": { "setup": "FVG multi-TF" },
+    "2026-07-21|07:56:45": { "setup": "Sweep BSL → FVG 5m" }
   }
 }
