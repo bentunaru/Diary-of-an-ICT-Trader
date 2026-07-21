@@ -1,7 +1,9 @@
 {
   "_comment": "Déclarations de setup faites par Ben en session (skill ict-trading-journal), consignées par Claude — Ben n'édite jamais ce fichier à la main. Rapprochées automatiquement des fills par reconcile_declarations() (tools/trade_validation.py, appelée depuis update_dashboard.py) : tolérance ±15 min autour de l'openTime du fill (converti UTC→ET via OPENTIME_SHIFT_MIN, avec gestion du changement de jour), même direction si la déclaration en porte une. 'overrides' (saisie a posteriori) prime sur tout, clé '<date_iso UTC>|<openTime UTC>' (ex. '2026-07-20|13:26:00', mêmes valeurs que le champ 'id' du trade mais séparées par '|'). Aucun match → setup 'Non documenté', tagged_by 'auto' — non bloquant pour la régénération. kz/sb/violations restent calculés indépendamment de ce fichier. Journal remis à zéro le 18 juillet 2026 (tag journal-v1-pre-reset, archive/2026-07-pre-reset) — aucune déclaration antérieure à reprendre.",
 
-  "declarations": [],
+  "declarations": [
+    { "date": "2026-07-21", "declared_at": "06:50:32", "setup": "Sweep BSL → FVG 5m", "direction": "Long", "note": "1h BSL 29,195.25 pris deux fois (mèches), attente retracement dans le 15m Discount BISI (~29,120-29,130) avant entrée long, session NY.", "screenshot": "NQU2026_2026-07-21_12-50-32_71633.png", "source": "session" }
+  ],
 
   "overrides": {
     "2026-07-20|06:42:28": { "setup": "Sweep SSL → FVG 5m" },
