@@ -324,9 +324,26 @@ def main():
         os.makedirs(SIERRA_IMPORTS, exist_ok=True)
         dest = os.path.join(SIERRA_IMPORTS, os.path.basename(export))
         if os.path.abspath(export) != os.path.abspath(dest):
-            with open(export, encoding="utf-8") as src, open(dest, "w", encoding="utf-8") as out:
-                out.write(src.read())
-            print(f"Export persisté : {dest}")
+            with open(export, encoding="utf-8") as src:
+                content = src.read()
+            if os.path.exists(dest):
+                with open(dest, encoding="utf-8") as f:
+                    existing = f.read()
+                if existing == content:
+                    content = None  # déjà persisté à l'identique, rien à faire
+                else:
+                    # Même nom de fichier (Sierra ne nomme que par date) mais contenu
+                    # différent : plusieurs exports le même jour. On ne réécrase JAMAIS
+                    # un import persisté — on lui trouve un nom unique.
+                    base, ext = os.path.splitext(dest)
+                    i = 2
+                    while os.path.exists(f"{base}_{i}{ext}"):
+                        i += 1
+                    dest = f"{base}_{i}{ext}"
+            if content is not None:
+                with open(dest, "w", encoding="utf-8") as out:
+                    out.write(content)
+                print(f"Export persisté : {dest}")
 
     seen, fills = set(), []
     for path in sorted(glob.glob(os.path.join(SIERRA_IMPORTS, "*.txt"))):
