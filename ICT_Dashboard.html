@@ -285,6 +285,17 @@ const DATA = {
   bestTrade: { value: "+$2,635", sub: "NQ · 21 juillet · réel TradingView" },
 
   sessions: [
+    { date: "22 juillet 2026", status: "live", statusLabel: "Session en cours", pl: null, plSub: "Position ouverte · Sierra Sim1",
+      html: `<h3>Position ouverte · Long 1 NQU26 (mini) · test d'algo</h3>
+<p>Test d'un nouvel algorithme, en direct sur Sierra (Sim1). Même modèle qu'à l'habitude — <strong>sweep du PDL puis displacement au travers du 15m CISD</strong> — mais exécuté sur le <strong>NQ mini</strong> plutôt que le MNQ micro : hors cadre du sizing standard (7 micros), assumé pour ce test. Entrée long ≈ 29,082.75 sur la reprise après le sweep du PDL (~29,040–29,065, zone visible sur le 5 min). SL remonté à 29,083.75 (quasi breakeven), cible 29,264.75 (Sell Limit, proche du PW-VAL ≈ 29,270). Position flottante ≈ +70 pts au moment des captures.</p>
+<img src="plans/2026-07-22/07-position-mgmt-a.png" alt="Position · Sierra Sim1, long ouvert entrée 29,082.75, stop 29,083.75, cible 29,264.75, +72.5 pts flottant">
+<img src="plans/2026-07-22/08-position-mgmt-b.png" alt="Position · même bracket quelques instants plus tard, +68.5 pts flottant">
+<img src="plans/2026-07-22/05-1m-sweep-context.png" alt="1 min · sweep du PDL ≈29,065 puis displacement au travers du 15m CISD ≈29,120-29,130">
+<img src="plans/2026-07-22/06-1m-context-wide.png" alt="1 min · vue élargie, range 21-22 juillet, sweep bas puis reprise">
+<img src="plans/2026-07-22/04-5m-sweep-displacement.png" alt="5 min · range 28,940-29,050 balayé deux fois (20 et 22 juillet) puis cassure du 15m CISD">
+<img src="plans/2026-07-22/03-15m.png" alt="15 min · structure depuis le 19 juillet, 15m CISD et wVWAP">
+<img src="plans/2026-07-22/02-60m.png" alt="60 min · vue hebdomadaire, PW-VAL/VAH/Hi/Lo, WK-Op">
+<img src="plans/2026-07-22/01-ict-mp-overview.png" alt="Vue Sierra ICT-MP multi-semaines, profils de volume et niveaux PW/WK">` },
     { date: "21 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "−$1,215", plSub: "T2 +$2,635 · T3 +$395 · T1/T4/T5/T6 −$4,245 · 6 trades TV",
       html: `<h3>Clôture · −$1,215 · 6 trades (2W/4L) · la leçon du jour</h3>
 <p>Session arrêtée en milieu de matinée NY. La lecture a été bonne toute la journée : biais bullish validé, la confluence <strong>Fib 0.75 weekly / 15m Discount BISI (≈ 29,120)</strong> a tenu chacun de ses tests, et les deux trades conformes à une lecture propre (T2, T3) ont rapporté +$3,030. Tout le reste est une affaire de process : les 4 pertes (−$4,245) portent toutes au moins une violation — entrée sans retracement (T1), sizing ×3 et SL déplacé (T4), chase (T5), revenge (T6) — et le <strong>stop quotidien (−$500) était dépassé dès T1 à 3h49 ET</strong>. La vraie question de la journée n'est pas « pourquoi ces pertes » mais <strong>« pourquoi ne pas s'être arrêté à −$500 »</strong>.</p>
