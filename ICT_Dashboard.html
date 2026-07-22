@@ -171,9 +171,9 @@ button{cursor:pointer;appearance:none;background:none;border:none;color:inherit;
 const DATA = {
   meta: {
     periodStart: "18 juillet 2026",
-    periodEnd: "21 juillet 2026",
+    periodEnd: "22 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 28,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 36,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -246,7 +246,8 @@ const DATA = {
   equity: [
     // <EQUITY>
     { date: "20 juillet", cum: 4294 },
-    { date: "21 juillet", cum: 3078 }
+    { date: "21 juillet", cum: 3078 },
+    { date: "22 juillet", cum: 14258 }
     // </EQUITY>
   ],
 
@@ -264,7 +265,11 @@ const DATA = {
     { date: "21 juillet", t: "11:05:22", cum: 6464 },
     { date: "21 juillet", t: "11:57:32", cum: 5524 },
     { date: "21 juillet", t: "12:16:00", cum: 4038 },
-    { date: "21 juillet", t: "12:32:42", cum: 3078 }
+    { date: "21 juillet", t: "12:32:42", cum: 3078 },
+    { date: "22 juillet", t: "09:03:41", cum: 7078 },
+    { date: "22 juillet", t: "11:40:28", cum: 7104 },
+    { date: "22 juillet", t: "13:56:52", cum: 13104 },
+    { date: "22 juillet", t: "14:02:10", cum: 14258 }
     // </INTRADAY>
   ],
 
@@ -278,13 +283,39 @@ const DATA = {
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Short", entry: "29,162.00", exit: "29,142.25", rr: "—", pl: "+$395", plClass: "pos", plNum: 395.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "Scalp basé sur le pré-marché : short après le double sweep du 1h BSL 29,195.25, joue le retracement anticipé vers le 15m Discount BISI. Couvert manuellement juste au-dessus du TP 29,140.", taggedBy: "declaration", contracts: 1, openTime: "11:02:04", closeTime: "11:05:22", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #3 DU JOUR (max 2)"] },
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,160.75", exit: "29,147.25", rr: "—", pl: "−$940", plClass: "neg", plNum: -940.0, result: "Perte", setup: "Sweep BSL → FVG 5m", notes: "Le long NY déclaré à 6h50 est pris : retracement venu taper le 15m Discount BISI / Fib 0.75 weekly (low 29,120 pile sur le 0.75), entrée 29,160.75 à la reprise, SL 29,139.75, TP 29,207.75 au-dessus du 1h BSL déjà purgé deux fois. R:R ≈ 2.2.", taggedBy: "declaration", contracts: 3, openTime: "11:40:11", closeTime: "11:57:32", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #4 DU JOUR (max 2)"] },
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,170.50", exit: "29,145.25", rr: "—", pl: "−$1,485", plClass: "neg", plNum: -1485.0, result: "Perte", setup: "Hors modèle", notes: "3 contrat(s) max · 4 fills · 12:15:19→12:16:00 · P/L réel TradingView.", taggedBy: "override", contracts: 3, openTime: "12:15:19", closeTime: "12:16:00", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #5 DU JOUR (max 2)"] },
-    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,143.00", exit: "29,131.25", rr: "—", pl: "−$960", plClass: "neg", plNum: -960.0, result: "Perte", setup: "Hors modèle", notes: "3 contrat(s) max · 4 fills · 12:16:08→12:32:42 · P/L réel TradingView.", taggedBy: "override", contracts: 3, openTime: "12:16:08", closeTime: "12:32:42", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #6 DU JOUR (max 2)"] }
+    { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,143.00", exit: "29,131.25", rr: "—", pl: "−$960", plClass: "neg", plNum: -960.0, result: "Perte", setup: "Hors modèle", notes: "3 contrat(s) max · 4 fills · 12:16:08→12:32:42 · P/L réel TradingView.", taggedBy: "override", contracts: 3, openTime: "12:16:08", closeTime: "12:32:42", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #6 DU JOUR (max 2)"] },
+    { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,082.75", exit: "29,084.00", rr: "—", pl: "+$4,025", plClass: "pos", plNum: 4025.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "5 contrat(s) max · 4 fills · 08:10:46→11:40:28 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "08:10:46", closeTime: "11:40:28", kz: "London", violations: [] },
+    { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,203.00", exit: "29,260.75", rr: "—", pl: "+$7,155", plClass: "pos", plNum: 7155.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "7 contrat(s) max · 4 fills · 13:52:10→14:02:10 · P/L réel Sierra.", taggedBy: "override", contracts: 7, openTime: "13:52:10", closeTime: "14:02:10", kz: "NY AM", violations: [] }
     // </TRADES>
   ],
 
-  bestTrade: { value: "+$2,635", sub: "NQ · 21 juillet · réel TradingView" },
+  bestTrade: { value: "+$7,155", sub: "NQ · 22 juillet · réel Sierra" },
 
   sessions: [
+    { date: "22 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$11,180", plSub: "T1 +$4,025 · T2 +$7,155 · 12 NQU26 (mini) cumulés · test d'algo",
+      html: `<h3>Clôture · +$11,180 · 2 trades (2W/0L) · le modèle valide en direct</h3>
+<p>Meilleure journée du journal. Le même modèle — <strong>sweep du PDL puis displacement à travers le 15m CISD</strong> — s'est reproduit deux fois et a payé les deux fois, testé en direct avec le nouvel algorithme sur le NQ mini. Gestion propre sur les deux trades : TP partiel banké, runner protégé par trailing stop ou sécurisé manuellement plutôt que laissé à un aller-retour. Aucune violation de process détectée par le pipeline (KZ respectées, pas d'accumulation de trades).</p>
+<p><strong>Seul point à garder à l'œil</strong> — le sizing en NQ mini (5 puis 7 lots, $100 puis $140/pt) représente 7 à 10× l'exposition du sizing standard (7 MNQ, $14/pt) ; le pipeline ne le voit pas parce qu'il ne compte que le nombre de contrats, pas l'instrument. Assumé pour ce test, mais à formaliser si l'algo passe en production : quel sizing réel sur mini vs micro ?</p>
+<h3>T2 · Win · Long 7 NQU26 (mini) @ 29,203.00 → 29,253.00 / 29,260.75</h3>
+<p>Même modèle, 2e occurrence du jour : nouveau <strong>sweep du PDL</strong> (~28,950–29,000, visible sur la vue d'ensemble 1 min) puis displacement, entrée 7 lots @ 29,203.00 (9h52 ET, NY AM KZ) en continuation. Bracket : TP 6 lots @ 29,253.00, TP du 7e lot repoussé à 29,278.00 pour le laisser courir, stop trailé à 29,212.25 une fois le mouvement confirmé.</p>
+<p>Sortie : les 6 premiers lots touchent le TP @ 29,253.00 (+$6,000, 10h56 ET). Le 7e lot (runner) est fermé manuellement au marché @ 29,260.75 (10h02 ET) plutôt que d'attendre le TP à 29,278 — sécurisation à +57.75 pts. <strong>+$7,155</strong>, nouveau record du journal (devant les +$4,025 de T1 ce matin).</p>
+<p><strong>Note</strong> — 7 NQ mini = $140/pt d'exposition, ≈10× le sizing standard (7 MNQ = $14/pt). Le pipeline ne le voit toujours pas (7 = la limite en nombre de contrats, pas en exposition). Même remarque que T1 : assumé pour ce test d'algo. Autre point à vérifier avec toi : ce trade tourne sous le config <code>SwissPropFirm</code> alors que T1 était sous <code>TopStep</code> — changement de compte volontaire ou bascule accidentelle dans Sierra ?</p>
+<img src="plans/2026-07-22/09-t2-position-60m.png" alt="T2 · 60 min · position 7 lots ouverte @29,203.00, TP 1@29,278/6@29,253, stop 6/7@29,178, +229 pts affichés">
+<img src="plans/2026-07-22/10-t2-runner-1m-a.png" alt="T2 · 1 min · après le TP des 6 lots, runner 1 lot @29,203.00 stop trailé 29,212.25, +56.75 pts">
+<img src="plans/2026-07-22/11-t2-runner-1m-b.png" alt="T2 · 1 min · runner toujours ouvert, +61.75 pts, stop 29,212.25">
+<img src="plans/2026-07-22/12-t2-cloture-1m-overview.png" alt="T2 · 1 min · vue d'ensemble de la journée, sweep du PDL puis displacement final vers 29,280">
+<h3>T1 · Win · Long 5 NQU26 (mini) @ 29,082.75 → 29,132.75 / 29,084.00</h3>
+<p>Test d'un nouvel algorithme, en direct sur Sierra (Sim1). Même modèle qu'à l'habitude — <strong>sweep du PDL puis displacement au travers du 15m CISD</strong> — mais exécuté sur le <strong>NQ mini</strong> plutôt que le MNQ micro : hors cadre du sizing standard (7 micros), assumé pour ce test. Entrée 5 lots @ 29,082.75 (4h10 ET) sur la reprise après le sweep du PDL (~29,040–29,065). Bracket : TP 4 lots @ 29,132.75, SL initial ~29,057.75, TP du 5e lot repoussé manuellement à 29,264.75 (proche PW-VAL ≈ 29,270) pour le laisser courir.</p>
+<p>Gestion : à 4h37 ET le TP du runner est étendu vers 29,264.75. À 5h03 ET, un trailing stop automatique remonte le SL à 29,083.75 (quasi breakeven) une fois 29,133 atteint. Les 4 premiers lots touchent le TP @ 29,132.75 (+$4,000). Le 5e lot (le runner) est finalement stoppé au trail @ 29,084.00 à 7h40 ET (+$25) — petite prime au-dessus du breakeven plutôt qu'un aller-retour à zéro. <strong>+$4,025</strong> au total, plus grosse réalisation du journal.</p>
+<p><strong>Note</strong> — 5 NQ mini = $100/pt d'exposition, contre $14/pt pour le sizing standard (7 MNQ) : le pipeline ne le voit pas (5 &lt; 7 contrats), mais l'exposition réelle est ≈ 7× le plan habituel. Assumé pour ce test d'algo, pas une dérive de process.</p>
+<img src="plans/2026-07-22/07-position-mgmt-a.png" alt="Position · Sierra Sim1, long ouvert entrée 29,082.75, stop 29,083.75, cible 29,264.75, +72.5 pts flottant">
+<img src="plans/2026-07-22/08-position-mgmt-b.png" alt="Position · même bracket quelques instants plus tard, +68.5 pts flottant">
+<img src="plans/2026-07-22/05-1m-sweep-context.png" alt="1 min · sweep du PDL ≈29,065 puis displacement au travers du 15m CISD ≈29,120-29,130">
+<img src="plans/2026-07-22/06-1m-context-wide.png" alt="1 min · vue élargie, range 21-22 juillet, sweep bas puis reprise">
+<img src="plans/2026-07-22/04-5m-sweep-displacement.png" alt="5 min · range 28,940-29,050 balayé deux fois (20 et 22 juillet) puis cassure du 15m CISD">
+<img src="plans/2026-07-22/03-15m.png" alt="15 min · structure depuis le 19 juillet, 15m CISD et wVWAP">
+<img src="plans/2026-07-22/02-60m.png" alt="60 min · vue hebdomadaire, PW-VAL/VAH/Hi/Lo, WK-Op">
+<img src="plans/2026-07-22/01-ict-mp-overview.png" alt="Vue Sierra ICT-MP multi-semaines, profils de volume et niveaux PW/WK">` },
     { date: "21 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "−$1,215", plSub: "T2 +$2,635 · T3 +$395 · T1/T4/T5/T6 −$4,245 · 6 trades TV",
       html: `<h3>Clôture · −$1,215 · 6 trades (2W/4L) · la leçon du jour</h3>
 <p>Session arrêtée en milieu de matinée NY. La lecture a été bonne toute la journée : biais bullish validé, la confluence <strong>Fib 0.75 weekly / 15m Discount BISI (≈ 29,120)</strong> a tenu chacun de ses tests, et les deux trades conformes à une lecture propre (T2, T3) ont rapporté +$3,030. Tout le reste est une affaire de process : les 4 pertes (−$4,245) portent toutes au moins une violation — entrée sans retracement (T1), sizing ×3 et SL déplacé (T4), chase (T5), revenge (T6) — et le <strong>stop quotidien (−$500) était dépassé dès T1 à 3h49 ET</strong>. La vraie question de la journée n'est pas « pourquoi ces pertes » mais <strong>« pourquoi ne pas s'être arrêté à −$500 »</strong>.</p>
