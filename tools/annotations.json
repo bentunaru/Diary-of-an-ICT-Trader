@@ -15,6 +15,7 @@
     "2026-07-21|07:56:45": { "setup": "Sweep BSL → FVG 5m" },
     "2026-07-21|12:15:19": { "setup": "Hors modèle", "note": "Chase : 3 lots au marché vers 29,170 pendant la 3e montée vers le 1h BSL, sans retracement ni confluence. Stoppé en 41 secondes." },
     "2026-07-21|12:16:08": { "setup": "Hors modèle", "note": "Revenge : ré-entrée 3 lots 8 secondes après le SL de T5, dans la chute. SL 29,132 touché 16 minutes plus tard." },
-    "2026-07-22|08:10:46": { "setup": "Sweep SSL → FVG 5m", "note": "Test d'un nouvel algorithme, en direct sur Sierra. Sweep du PDL puis displacement à travers le 15m CISD. Trade sur le NQ mini (pas le MNQ micro) — hors cadre de sizing standard, assumé pour le test." }
+    "2026-07-22|08:10:46": { "setup": "Sweep SSL → FVG 5m", "note": "Test d'un nouvel algorithme, en direct sur Sierra. Sweep du PDL puis displacement à travers le 15m CISD. Trade sur le NQ mini (pas le MNQ micro) — hors cadre de sizing standard, assumé pour le test." },
+    "2026-07-22|13:52:10": { "setup": "Sweep SSL → FVG 5m", "note": "Même modèle, 2e occurrence du jour : nouveau sweep du PDL (~28,950-29,000) puis displacement. Entrée 7 lots NQ mini en continuation. Sortie 6 lots au TP, 1 lot fermé manuellement au marché." }
   }
 }
