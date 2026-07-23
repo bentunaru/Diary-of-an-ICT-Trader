@@ -171,9 +171,9 @@ button{cursor:pointer;appearance:none;background:none;border:none;color:inherit;
 const DATA = {
   meta: {
     periodStart: "18 juillet 2026",
-    periodEnd: "22 juillet 2026",
+    periodEnd: "23 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 36,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 40,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -247,7 +247,8 @@ const DATA = {
     // <EQUITY>
     { date: "20 juillet", cum: 4294 },
     { date: "21 juillet", cum: 3078 },
-    { date: "22 juillet", cum: 14258 }
+    { date: "22 juillet", cum: 14258 },
+    { date: "23 juillet", cum: 22538 }
     // </EQUITY>
   ],
 
@@ -269,7 +270,9 @@ const DATA = {
     { date: "22 juillet", t: "09:03:41", cum: 7078 },
     { date: "22 juillet", t: "11:40:28", cum: 7104 },
     { date: "22 juillet", t: "13:56:52", cum: 13104 },
-    { date: "22 juillet", t: "14:02:10", cum: 14258 }
+    { date: "22 juillet", t: "14:02:10", cum: 14258 },
+    { date: "23 juillet", t: "07:09:24", cum: 20538 },
+    { date: "23 juillet", t: "07:10:59", cum: 22538 }
     // </INTRADAY>
   ],
 
@@ -285,13 +288,29 @@ const DATA = {
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,170.50", exit: "29,145.25", rr: "—", pl: "−$1,485", plClass: "neg", plNum: -1485.0, result: "Perte", setup: "Hors modèle", notes: "3 contrat(s) max · 4 fills · 12:15:19→12:16:00 · P/L réel TradingView.", taggedBy: "override", contracts: 3, openTime: "12:15:19", closeTime: "12:16:00", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #5 DU JOUR (max 2)"] },
     { date: "21 juillet", instr: "NQU26 (TV)", dir: "Long", entry: "29,143.00", exit: "29,131.25", rr: "—", pl: "−$960", plClass: "neg", plNum: -960.0, result: "Perte", setup: "Hors modèle", notes: "3 contrat(s) max · 4 fills · 12:16:08→12:32:42 · P/L réel TradingView.", taggedBy: "override", contracts: 3, openTime: "12:16:08", closeTime: "12:32:42", kz: "NY pré-open", violations: ["HORS KZ (NY pré-open)", "TRADE #6 DU JOUR (max 2)"] },
     { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,082.75", exit: "29,084.00", rr: "—", pl: "+$4,025", plClass: "pos", plNum: 4025.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "5 contrat(s) max · 4 fills · 08:10:46→11:40:28 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "08:10:46", closeTime: "11:40:28", kz: "London", violations: [] },
-    { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,203.00", exit: "29,260.75", rr: "—", pl: "+$7,155", plClass: "pos", plNum: 7155.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "7 contrat(s) max · 4 fills · 13:52:10→14:02:10 · P/L réel Sierra.", taggedBy: "override", contracts: 7, openTime: "13:52:10", closeTime: "14:02:10", kz: "NY AM", violations: [] }
+    { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,203.00", exit: "29,260.75", rr: "—", pl: "+$7,155", plClass: "pos", plNum: 7155.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "7 contrat(s) max · 4 fills · 13:52:10→14:02:10 · P/L réel Sierra.", taggedBy: "override", contracts: 7, openTime: "13:52:10", closeTime: "14:02:10", kz: "NY AM", violations: [] },
+    { date: "23 juillet", instr: "NQU26", dir: "Short", entry: "29,100.50", exit: "29,000.50", rr: "—", pl: "+$8,280", plClass: "pos", plNum: 8280.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 06:21:04→07:10:59 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "06:21:04", closeTime: "07:10:59", kz: "London", sb: "SB London", violations: [] }
     // </TRADES>
   ],
 
-  bestTrade: { value: "+$7,155", sub: "NQ · 22 juillet · réel Sierra" },
+  bestTrade: { value: "+$8,280", sub: "NQ · 23 juillet · réel Sierra" },
 
   sessions: [
+    { date: "23 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$8,280", plSub: "T1 Sierra +$8,280 · MMXM · les deux REL touchées",
+      html: `<h3>T1 · Win · Short 5 NQU26 @ 29,100.50 → 29,022.00 / 29,000.50</h3>
+<p>Modèle <strong>2022 Mentorship ICT (MMXM)</strong> : short pris sur l'accumulation, après le sweep de la zone haute (≈29,180, mèche visible sur le 1 min). Cibles les <strong>relative equal lows (REL)</strong> repérées sous le range — 29,022 pour 4 lots et 29,000.50 pour le 5e, laissé courir. Entrée 5 lots @ 29,100.50 (2h21 ET, <strong>London Killzone</strong>).</p>
+<p>Gestion : stop initial 29,125.50 (au-dessus de l'accumulation), trailé à 29,099.50 (breakeven) une fois le displacement confirmé. Les deux cibles REL sont touchées : 4 lots @ 29,022.00 (3h09 ET, +$6,280) puis le 5e @ 29,000.50 (3h11 ET, +$2,000). <strong>+$8,280</strong> — 2e meilleure réalisation du journal, sans aucune violation détectée (sizing, KZ, process).</p>
+<img src="plans/2026-07-23/11-t1-1m-cloture.png" alt="T1 · 1 min · clôture, prix étendu jusqu'à 28,980, les deux REL largement dépassées">
+<img src="plans/2026-07-23/10-t1-1m-mgmt-d.png" alt="T1 · 1 min · gestion, +321 pts flottant, approche de la 1ère cible REL 29,022">
+<img src="plans/2026-07-23/09-t1-1m-mgmt-c.png" alt="T1 · 1 min · gestion, retracement partiel avant la poursuite baissière">
+<img src="plans/2026-07-23/08-t1-1m-mgmt-b-trail.png" alt="T1 · 1 min · stop trailé à 29,099.50 (breakeven) après confirmation du displacement">
+<img src="plans/2026-07-23/07-t1-1m-mgmt-a.png" alt="T1 · 1 min · gestion en cours, range d'accumulation visible avec les niveaux REL sous le prix">
+<img src="plans/2026-07-23/06-t1-1m-accumulation-range.png" alt="T1 · 1 min · range d'accumulation et sweep de la zone haute ≈29,180 avant l'entrée">
+<img src="plans/2026-07-23/05-t1-5m.png" alt="T1 · 5 min · contexte de la semaine, entrée et cibles REL 29,022/29,000.50">
+<img src="plans/2026-07-23/04-t1-15m.png" alt="T1 · 15 min · structure de la semaine, range d'accumulation en toile de fond">
+<img src="plans/2026-07-23/03-t1-60m.png" alt="T1 · 60 min · vue mensuelle, position et cibles REL">
+<img src="plans/2026-07-23/02-t1-1m-entry.png" alt="T1 · 1 min · entrée, short 5 lots @29,100.50">
+<img src="plans/2026-07-23/01-daily-ict-foundation.png" alt="Daily · rappel ICT Foundation (Economic Calendar, Market Structure, Day of Week, Time of Day, DOL Obvious) et structure haussière de fond">` },
     { date: "22 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$11,180", plSub: "T1 +$4,025 · T2 +$7,155 · 12 NQU26 (mini) cumulés · test d'algo",
       html: `<h3>Clôture · +$11,180 · 2 trades (2W/0L) · le modèle valide en direct</h3>
 <p>Meilleure journée du journal. Le même modèle — <strong>sweep du PDL puis displacement à travers le 15m CISD</strong> — s'est reproduit deux fois et a payé les deux fois, testé en direct avec le nouvel algorithme sur le NQ mini. Gestion propre sur les deux trades : TP partiel banké, runner protégé par trailing stop ou sécurisé manuellement plutôt que laissé à un aller-retour. Aucune violation de process détectée par le pipeline (KZ respectées, pas d'accumulation de trades).</p>
