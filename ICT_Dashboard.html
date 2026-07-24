@@ -173,7 +173,7 @@ const DATA = {
     periodStart: "18 juillet 2026",
     periodEnd: "24 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 44,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 48,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -249,7 +249,7 @@ const DATA = {
     { date: "21 juillet", cum: 3078 },
     { date: "22 juillet", cum: 14258 },
     { date: "23 juillet", cum: 22538 },
-    { date: "24 juillet", cum: 26548 }
+    { date: "24 juillet", cum: 30564 }
     // </EQUITY>
   ],
 
@@ -275,7 +275,9 @@ const DATA = {
     { date: "23 juillet", t: "07:09:24", cum: 20538 },
     { date: "23 juillet", t: "07:10:59", cum: 22538 },
     { date: "24 juillet", t: "06:25:37", cum: 26538 },
-    { date: "24 juillet", t: "06:43:06", cum: 26548 }
+    { date: "24 juillet", t: "06:43:06", cum: 26548 },
+    { date: "24 juillet", t: "08:11:12", cum: 30548 },
+    { date: "24 juillet", t: "08:29:41", cum: 30564 }
     // </INTRADAY>
   ],
 
@@ -293,15 +295,21 @@ const DATA = {
     { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,082.75", exit: "29,084.00", rr: "—", pl: "+$4,025", plClass: "pos", plNum: 4025.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "5 contrat(s) max · 4 fills · 08:10:46→11:40:28 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "08:10:46", closeTime: "11:40:28", kz: "London", violations: [] },
     { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,203.00", exit: "29,260.75", rr: "—", pl: "+$7,155", plClass: "pos", plNum: 7155.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "7 contrat(s) max · 4 fills · 13:52:10→14:02:10 · P/L réel Sierra.", taggedBy: "override", contracts: 7, openTime: "13:52:10", closeTime: "14:02:10", kz: "NY AM", violations: [] },
     { date: "23 juillet", instr: "NQU26", dir: "Short", entry: "29,100.50", exit: "29,000.50", rr: "—", pl: "+$8,280", plClass: "pos", plNum: 8280.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 06:21:04→07:10:59 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "06:21:04", closeTime: "07:10:59", kz: "London", sb: "SB London", violations: [] },
-    { date: "24 juillet", instr: "NQU26", dir: "Long", entry: "28,517.75", exit: "28,518.25", rr: "—", pl: "+$4,010", plClass: "pos", plNum: 4010.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 06:12:59→06:43:06 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "06:12:59", closeTime: "06:43:06", kz: "London", sb: "SB London", violations: [] }
+    { date: "24 juillet", instr: "NQU26", dir: "Long", entry: "28,517.75", exit: "28,518.25", rr: "—", pl: "+$4,010", plClass: "pos", plNum: 4010.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 06:12:59→06:43:06 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "06:12:59", closeTime: "06:43:06", kz: "London", sb: "SB London", violations: [] },
+    { date: "24 juillet", instr: "NQU26", dir: "Short", entry: "28,617.25", exit: "28,616.50", rr: "—", pl: "+$4,015", plClass: "pos", plNum: 4015.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 07:46:22→08:29:41 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "07:46:22", closeTime: "08:29:41", kz: "London", violations: [] }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$8,280", sub: "NQ · 23 juillet · réel Sierra" },
 
   sessions: [
-    { date: "24 juillet 2026", status: "live", statusLabel: "Session en cours", pl: "+$4,010", plSub: "T1 Sierra +$4,010 · MMXM · TP1 atteint, runner stoppé à breakeven",
-      html: `<h3>Revirement · cap sur le NWOG</h3>
+    { date: "24 juillet 2026", status: "closed", statusLabel: "Session de Londres clôturée", pl: "+$8,025", plSub: "T1 +$4,010 · T2 +$4,015 · 2 MMXM, même modèle dans les deux sens",
+      html: `<h3>Clôture · session de Londres · +$8,025 · 2/2 MMXM</h3>
+<p>Le revirement anticipé vers le NWOG s'est confirmé, puis le marché est retombé : short repris (T2) après le rejet dans la zone haute. Même modèle (MMXM) joué deux fois dans la journée, dans les deux sens, avec la même gestion — TP1 sur 4 lots, runner protégé plutôt que rendu au marché. Prochaine question : y a-t-il un setup short à l'ouverture de New York cet après-midi ? Réponse à suivre en session NY.</p>
+<h3>T2 · Win · Short 5 NQU26 @ 28,617.25 → 28,567.25 / 28,616.50</h3>
+<p>Short repris après le revirement vers le NWOG, dans la <strong>Killzone de Londres</strong> (3h46 ET). Entrée 5 lots @ 28,617.25. <strong>TP1 (4 lots) @ 28,567.25 atteint</strong> (4h11 ET, +$4,000). Runner (1 lot) stoppé @ 28,616.50 (4h29 ET) — gain verrouillé plutôt que breakeven pur (+$15). <strong>+$4,015</strong> au total, sans violation de process.</p>
+<img src="plans/2026-07-24/16-t2-short-runner.png" alt="T2 · 1 min · short 1 lot restant @28,617.25, stop verrouillant un gain à 28,616.25, +51 pts flottant">
+<h3>Revirement · cap sur le NWOG</h3>
 <p>Lecture révisée : le prix devrait finalement aller <strong>directement chercher le NWOG</strong> (New Week Opening Gap) — anticipé, en train de se confirmer. Point notable : le prix est revenu exactement dans le <strong>FVG BISI</strong> tracé en amont, celui-là même qui avait servi de zone d'entrée pour T1 — la zone a réagi une seconde fois. Et surtout, <strong>le vrai mouvement est venu à la macro d'ouverture de Londres</strong> (fenêtre :50–:10) : la reprise haussière brutale démarre pile dans cette fenêtre horaire. Les macros ICT confirmées en direct, encore une fois.</p>
 <img src="plans/2026-07-24/15-reversal-vers-nwog-b.png" alt="1 min · retour dans le FVG BISI (28,560-28,610) puis reprise haussière brutale à la macro d'ouverture de Londres, cap vers le NDOG">
 <img src="plans/2026-07-24/14-reversal-vers-nwog-a.png" alt="1 min · vue élargie, sweep du bas puis reprise vers le NDOG 28,700-28,745">

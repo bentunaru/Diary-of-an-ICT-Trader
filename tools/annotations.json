@@ -19,6 +19,7 @@
     "2026-07-22|08:10:46": { "setup": "Sweep SSL → FVG 5m", "note": "Test d'un nouvel algorithme, en direct sur Sierra. Sweep du PDL puis displacement à travers le 15m CISD. Trade sur le NQ mini (pas le MNQ micro) — hors cadre de sizing standard, assumé pour le test." },
     "2026-07-22|13:52:10": { "setup": "Sweep SSL → FVG 5m", "note": "Même modèle, 2e occurrence du jour : nouveau sweep du PDL (~28,950-29,000) puis displacement. Entrée 7 lots NQ mini en continuation. Sortie 6 lots au TP, 1 lot fermé manuellement au marché." },
     "2026-07-23|06:21:04": { "setup": "MMXM", "note": "Modèle 2022 Mentorship ICT : short pris sur l'accumulation (sweep de la zone haute ≈29,180), cibles les relative equal lows (REL) 29,022 et 29,000.50, toutes deux touchées. London Killzone." },
-    "2026-07-24|06:12:59": { "setup": "MMXM", "note": "Entrée précise au sweep, validation en Killzone de Londres, exécution en 15 secondes. TP1 (4 lots) @28,567.75 atteint (+$4,000). Runner (1 lot) visait le NDOG @28,699.75, finalement stoppé à breakeven @28,518.25 (+$10)." }
+    "2026-07-24|06:12:59": { "setup": "MMXM", "note": "Entrée précise au sweep, validation en Killzone de Londres, exécution en 15 secondes. TP1 (4 lots) @28,567.75 atteint (+$4,000). Runner (1 lot) visait le NDOG @28,699.75, finalement stoppé à breakeven @28,518.25 (+$10)." },
+    "2026-07-24|07:46:22": { "setup": "MMXM", "note": "Short repris après le revirement vers le NWOG, London Killzone. TP1 (4 lots) @28,566.75 atteint (+$4,040). Runner (1 lot) stoppé @28,616.50, gain verrouillé (+$15)." }
   }
 }
