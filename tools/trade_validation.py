@@ -170,7 +170,7 @@ def reconcile_declarations(trades, annotations, shift_min=None):
         override_key = f"{t['date_iso']}|{t['open_time']}"
         ov = overrides.get(override_key)
         if ov and ov.get("setup"):
-            tags[t["id"]] = {"setup": ov["setup"], "taggedBy": "override", "note": None}
+            tags[t["id"]] = {"setup": ov["setup"], "taggedBy": "override", "note": ov.get("note")}
             continue
 
         et_date, et_min = _to_et_date_minutes(t["date_iso"], t["open_time"], shift_min)
