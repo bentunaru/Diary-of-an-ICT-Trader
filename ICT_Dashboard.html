@@ -171,9 +171,9 @@ button{cursor:pointer;appearance:none;background:none;border:none;color:inherit;
 const DATA = {
   meta: {
     periodStart: "18 juillet 2026",
-    periodEnd: "24 juillet 2026",
+    periodEnd: "27 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 48,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 60,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -249,7 +249,8 @@ const DATA = {
     { date: "21 juillet", cum: 3078 },
     { date: "22 juillet", cum: 14258 },
     { date: "23 juillet", cum: 22538 },
-    { date: "24 juillet", cum: 30564 }
+    { date: "24 juillet", cum: 30564 },
+    { date: "27 juillet", cum: 35058 }
     // </EQUITY>
   ],
 
@@ -277,7 +278,13 @@ const DATA = {
     { date: "24 juillet", t: "06:25:37", cum: 26538 },
     { date: "24 juillet", t: "06:43:06", cum: 26548 },
     { date: "24 juillet", t: "08:11:12", cum: 30548 },
-    { date: "24 juillet", t: "08:29:41", cum: 30564 }
+    { date: "24 juillet", t: "08:29:41", cum: 30564 },
+    { date: "27 juillet", t: "08:25:47", cum: 30684 },
+    { date: "27 juillet", t: "08:25:47", cum: 30714 },
+    { date: "27 juillet", t: "09:47:20", cum: 28174 },
+    { date: "27 juillet", t: "09:47:20", cum: 27538 },
+    { date: "27 juillet", t: "11:22:15", cum: 33538 },
+    { date: "27 juillet", t: "11:29:56", cum: 35058 }
     // </INTRADAY>
   ],
 
@@ -296,13 +303,42 @@ const DATA = {
     { date: "22 juillet", instr: "NQU26", dir: "Long", entry: "29,203.00", exit: "29,260.75", rr: "—", pl: "+$7,155", plClass: "pos", plNum: 7155.0, result: "Win", setup: "Sweep SSL → FVG 5m", notes: "7 contrat(s) max · 4 fills · 13:52:10→14:02:10 · P/L réel Sierra.", taggedBy: "override", contracts: 7, openTime: "13:52:10", closeTime: "14:02:10", kz: "NY AM", violations: [] },
     { date: "23 juillet", instr: "NQU26", dir: "Short", entry: "29,100.50", exit: "29,000.50", rr: "—", pl: "+$8,280", plClass: "pos", plNum: 8280.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 06:21:04→07:10:59 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "06:21:04", closeTime: "07:10:59", kz: "London", sb: "SB London", violations: [] },
     { date: "24 juillet", instr: "NQU26", dir: "Long", entry: "28,517.75", exit: "28,518.25", rr: "—", pl: "+$4,010", plClass: "pos", plNum: 4010.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 06:12:59→06:43:06 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "06:12:59", closeTime: "06:43:06", kz: "London", sb: "SB London", violations: [] },
-    { date: "24 juillet", instr: "NQU26", dir: "Short", entry: "28,617.25", exit: "28,616.50", rr: "—", pl: "+$4,015", plClass: "pos", plNum: 4015.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 07:46:22→08:29:41 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "07:46:22", closeTime: "08:29:41", kz: "London", violations: [] }
+    { date: "24 juillet", instr: "NQU26", dir: "Short", entry: "28,617.25", exit: "28,616.50", rr: "—", pl: "+$4,015", plClass: "pos", plNum: 4015.0, result: "Win", setup: "MMXM", notes: "5 contrat(s) max · 4 fills · 07:46:22→08:29:41 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "07:46:22", closeTime: "08:29:41", kz: "London", violations: [] },
+    { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,708.50", exit: "28,707.00", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "5 contrat(s) max · 4 fills · 06:22:06→08:25:47 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "06:22:06", closeTime: "08:25:47", kz: "London", sb: "SB London", violations: [] },
+    { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,721.75", exit: "28,753.50", rr: "—", pl: "−$3,175", plClass: "neg", plNum: -3175.0, result: "Perte", setup: "Sweep BSL → FVG 5m", notes: "5 contrat(s) max · 4 fills · 09:00:38→09:47:20 · P/L réel Sierra.", taggedBy: "override", contracts: 5, openTime: "09:00:38", closeTime: "09:47:20", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] },
+    { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,747.75", exit: "28,671.75", rr: "—", pl: "+$7,520", plClass: "pos", plNum: 7520.0, result: "Win", setup: "MMXM", notes: "7 contrat(s) max · 4 fills · 10:00:04→11:29:56 · P/L réel Sierra.", taggedBy: "override", contracts: 7, openTime: "10:00:04", closeTime: "11:29:56", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)", "TRADE #3 DU JOUR (max 2)", "ESCALADE POST-PERTE 5→7", "ENTRÉE APRÈS STOP QUOTIDIEN (-3025$)"] }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$8,280", sub: "NQ · 23 juillet · réel Sierra" },
 
   sessions: [
+    { date: "27 juillet 2026", status: "open", statusLabel: "Session en cours", pl: "+$4,494", plSub: "T1 +$150 · T2 −$3,175 · T3 +$7,520 · 3 trades, process dégradé malgré le net positif",
+      html: `<h3>T3 · Win · Short 7 NQU26 @ 28,747.75 → 28,697.75 / 28,671.75</h3>
+<p>Troisième position de la matinée, ouverte sur le compte <strong>SwissPropFirm</strong> — bascule de compte en cours de séance, le Topstep/Sim1 ayant déjà encaissé le stop quotidien avec T2. Short 7 lots @ 28,747.75 (6h00 ET, Hors KZ). TP1 (6 lots) @ 28,697.75 atteint (7h22 ET, +$6,000), stop trailé automatiquement à 28,746.75 une fois la zone TP1 approchée (7h21 ET). Runner (1 lot), visait 28,672.75 : sorti @ 28,671.75 (7h29 ET, +$1,520). <strong>+$7,520</strong> au total — la meilleure passe du jour.</p>
+<p><strong>⚠ Process dégradé</strong> — 3e trade de la journée (règle : 2 max), sizing porté à 7 lots après la perte de T2 (escalade post-perte 5→7), et entrée après que le stop quotidien perso (−$500) avait déjà été dépassé plusieurs fois par T2 seul (−$3,175). Le gain ne valide pas le process : la règle « no revenge trading » n'a pas été respectée, même si ce trade a été pris sur un compte distinct de T1/T2.</p>
+<img src="plans/2026-07-27/11-t3-60m-mgmt.png" alt="60 min · gestion T3, +176.75 pts flottant, stop initial 28,772.75, TP 28,697.75/28,672.75">
+<img src="plans/2026-07-27/12-t3-60m-cloture.png" alt="60 min · clôture T3, prix 28,674.25 après les deux sorties">
+<h3>T2 · Perte · Short 5 NQU26 @ 28,721.75 → 28,753.50</h3>
+<p>Deuxième position, prise juste après la fermeture de la Killzone de Londres (5h00 ET) — <strong>Hors Kill Zone</strong>. Short 5 lots @ 28,721.75, TP 4 lots @ 28,671.75 + 1 lot @ 28,621.75 (déplacé à 28,500.00 en cours de trade). Stop élargi manuellement de 28,746.75 à 28,753.50 (5h23 ET). Stoppé intégralement (5 lots) @ 28,753.50 (5h47 ET). <strong>−$3,175</strong> — la perte la plus lourde du journal depuis le reset.</p>
+<img src="plans/2026-07-27/09-t2-1m-entry.png" alt="1 min · T2 en cours, flottant -10 pts, TP 28,671.75/28,500.00, stop 28,746.75">
+<img src="plans/2026-07-27/10-t2-1m-stopped.png" alt="1 min · T2 clôturé, prix 28,752, plus aucun ordre en attente">
+<h3>T1 · Win (quasi scratch) · Short 5 NQU26 @ 28,708.50 → 28,707.00</h3>
+<p>Première position de la journée, Killzone de Londres (2h22 ET). Short 5 lots @ 28,708.50, TP visé 4 lots @ 28,658.50 + 1 lot @ 28,608.50. Le prix a bien atteint la zone du TP1 (4h00 ET) — le trailing automatique a resserré le stop à 28,707.50 en conséquence — mais l'ordre limite n'a jamais été rempli, probablement à cause du spread. Le prix est reparti à la hausse et a stoppé les deux jambes @ 28,707.00 (4h25 ET). <strong>+$150</strong> au lieu du TP visé (+$1,000 sur les 4 lots) — quasiment neutre.</p>
+<img src="plans/2026-07-27/08-t1-1m-stop-be.png" alt="1 min · T1, stop auto-trailé à 28,707.50 après passage du prix sur la zone TP 28,658.50">
+<h3>Roadmap semaine · NQU26 · lundi · Sim1</h3>
+<p>Prix actuel ≈ 28,640. Le Weekly reste haussier de fond mais vient de corriger depuis l'ATH ≈ 31,000 ; sur le Daily, un <strong>FVG</strong> laissé par la dernière jambe baissière n'a pas encore été retesté. Biais de la semaine : <strong>continuation baissière</strong>, avec un retest probable de ce FVG daily et un potentiel d'extension jusqu'au <strong>50 % du range weekly</strong> (zone des niveaux Fib tracés ≈ 27,200–25,200) si le retest daily cède.</p>
+<img src="plans/2026-07-27/01-weekly.png" alt="Weekly · structure haussière de fond, correction depuis l'ATH ≈31,000, prix 28,639, niveaux Fib tracés en dessous">
+<img src="plans/2026-07-27/02-daily-fvg.png" alt="Daily · FVG non retesté depuis la dernière jambe baissière, niveaux Fib 27,200/25,200/23,200 en dessous, prix 28,635.50">
+<h3>Shift 1H, visible aussi en 4H</h3>
+<p>Un <strong>shift</strong> s'est formé sur le 1H (zone ≈ 28,700–29,200, la même sur le 4H) — c'est la zone la plus probable pour un retracement avant la poursuite baissière. Beaucoup de <strong>liquidité au-dessus</strong> (relative equal highs ≈ 29,300–29,380 sur le 15m/1H) : un sweep de cette liquidité avant de repartir dans le sens du biais reste un scénario à surveiller, pas une invalidation en soi.</p>
+<img src="plans/2026-07-27/03-4h-shift.png" alt="4H · niveaux Fib 29,200/27,200/25,200, prix 28,642.50">
+<img src="plans/2026-07-27/04-1h-shift-liquidity.png" alt="1H · shift matérialisé par la zone grisée ≈28,700-29,200, prix 28,642">
+<img src="plans/2026-07-27/05-15m.png" alt="15 min · zone de shift ≈28,730-29,190 avec relative equal highs au-dessus, prix 28,645.25">
+<img src="plans/2026-07-27/06-5m.png" alt="5 min · même zone de shift ≈28,740-28,980, prix 28,638.25">
+<p><strong>Calendrier économique</strong> — semaine chargée : <strong>FOMC mercredi 29 juillet</strong> (Fed Funds Rate 14h00 ET, statement + press conference 14h30 ET, taux inchangé attendu à 3,75 %), puis jeudi 30 juillet (Advance GDP q/q, Core PCE, Unemployment Claims à 8h30 ET) et vendredi 31 juillet (Employment Cost Index, Revised UoM Consumer Sentiment). Le FOMC de mercredi est le point de vigilance principal de la semaine — pas d'entrée sur news, limit order uniquement si confluence.</p>
+<img src="plans/2026-07-27/07-economic-calendar.png" alt="Calendrier économique de la semaine du 26 juillet au 1er août : FOMC mercredi, GDP/PCE/Claims jeudi, ECI/UoM vendredi">
+<p><strong>Plan</strong> — Pas d'entrée précipitée : attendre une réaction dans une Kill Zone (retest du shift 1H/4H, ou sweep de la liquidité au-dessus) avant d'envisager un short dans le sens du biais. Invalidation du biais court terme si le prix reprend franchement au-dessus de la zone de shift (≈29,200) et clôture au-dessus.</p>` },
     { date: "24 juillet 2026", status: "closed", statusLabel: "Session de Londres clôturée", pl: "+$8,025", plSub: "T1 +$4,010 · T2 +$4,015 · 2 MMXM, même modèle dans les deux sens",
       html: `<h3>Delivery · le MMXM va chercher le NDOG</h3>
 <p>Le mouvement anticipé s'est livré proprement : le prix est remonté taper la porte du <strong>NDOG</strong> (≈28,700–28,745), sans grosse hésitation depuis le creux ≈28,477. Lecture MMXM confirmée de bout en bout sur la journée — sweep bas, retour dans le FVG BISI, puis expansion jusqu'à la cible.</p>
