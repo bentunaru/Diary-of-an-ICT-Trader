@@ -23,6 +23,7 @@
     "2026-07-24|07:46:22": { "setup": "MMXM", "note": "Short repris après le revirement vers le NWOG, London Killzone. TP1 (4 lots) @28,566.75 atteint (+$4,040). Runner (1 lot) stoppé @28,616.50, gain verrouillé (+$15)." },
     "2026-07-27|06:22:06": { "setup": "Sweep BSL → FVG 5m", "note": "TP1 (4 lots) visé @28,658.50 jamais rempli (spread suspecté) malgré le trailing auto qui a resserré le stop à 28,707.50. Stoppé aux deux jambes @28,707.00 — quasi scratch, +$150 au lieu du TP visé." },
     "2026-07-27|09:00:38": { "setup": "Sweep BSL → FVG 5m", "note": "Pris hors Kill Zone (juste après la clôture de Londres). Stop élargi manuellement puis touché intégralement @28,753.50. −$3,175." },
-    "2026-07-27|10:00:04": { "setup": "MMXM", "note": "3e trade du jour, sizing porté à 7 après la perte de T2, sur un compte différent (SwissPropFirm). TP1 (6 lots) puis runner touchés. +$7,520." }
+    "2026-07-27|10:00:04": { "setup": "MMXM", "note": "3e trade du jour, sizing porté à 7 après la perte de T2, sur un compte différent (SwissPropFirm). TP1 (6 lots) puis runner touchés. +$7,520." },
+    "2026-07-28|08:20:52": { "setup": "MMXM", "note": "Retracement typique du MMXM après la forte purge : prise de liquidité avant le mouvement explosif haussier. TP2 visé sur la zone d'accumulation (28,038.50). London Killzone. TP1 (6 lots) @28,013.50 atteint, runner (1 lot) @28,038.75. +$7,505, sans violation." }
   }
 }

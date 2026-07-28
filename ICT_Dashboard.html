@@ -171,9 +171,9 @@ button{cursor:pointer;appearance:none;background:none;border:none;color:inherit;
 const DATA = {
   meta: {
     periodStart: "18 juillet 2026",
-    periodEnd: "27 juillet 2026",
+    periodEnd: "28 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 60,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 64,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -250,7 +250,8 @@ const DATA = {
     { date: "22 juillet", cum: 14258 },
     { date: "23 juillet", cum: 22538 },
     { date: "24 juillet", cum: 30564 },
-    { date: "27 juillet", cum: 35058 }
+    { date: "27 juillet", cum: 35058 },
+    { date: "28 juillet", cum: 42564 }
     // </EQUITY>
   ],
 
@@ -284,7 +285,9 @@ const DATA = {
     { date: "27 juillet", t: "09:47:20", cum: 28174 },
     { date: "27 juillet", t: "09:47:20", cum: 27538 },
     { date: "27 juillet", t: "11:22:15", cum: 33538 },
-    { date: "27 juillet", t: "11:29:56", cum: 35058 }
+    { date: "27 juillet", t: "11:29:56", cum: 35058 },
+    { date: "28 juillet", t: "08:38:40", cum: 41058 },
+    { date: "28 juillet", t: "08:41:49", cum: 42564 }
     // </INTRADAY>
   ],
 
@@ -306,14 +309,28 @@ const DATA = {
     { date: "24 juillet", instr: "NQU26", dir: "Short", entry: "28,617.25", exit: "28,616.50", rr: "—", pl: "+$4,015", plClass: "pos", plNum: 4015.0, result: "Win", setup: "MMXM", notes: "Short repris après le revirement vers le NWOG, London Killzone. TP1 (4 lots) @28,566.75 atteint (+$4,040). Runner (1 lot) stoppé @28,616.50, gain verrouillé (+$15).", taggedBy: "override", contracts: 5, openTime: "07:46:22", closeTime: "08:29:41", kz: "London", violations: [] },
     { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,708.50", exit: "28,707.00", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "TP1 (4 lots) visé @28,658.50 jamais rempli (spread suspecté) malgré le trailing auto qui a resserré le stop à 28,707.50. Stoppé aux deux jambes @28,707.00 — quasi scratch, +$150 au lieu du TP visé.", taggedBy: "override", contracts: 5, openTime: "06:22:06", closeTime: "08:25:47", kz: "London", sb: "SB London", violations: [] },
     { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,721.75", exit: "28,753.50", rr: "—", pl: "−$3,175", plClass: "neg", plNum: -3175.0, result: "Perte", setup: "Sweep BSL → FVG 5m", notes: "Pris hors Kill Zone (juste après la clôture de Londres). Stop élargi manuellement puis touché intégralement @28,753.50. −$3,175.", taggedBy: "override", contracts: 5, openTime: "09:00:38", closeTime: "09:47:20", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] },
-    { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,747.75", exit: "28,671.75", rr: "—", pl: "+$7,520", plClass: "pos", plNum: 7520.0, result: "Win", setup: "MMXM", notes: "3e trade du jour, sizing porté à 7 après la perte de T2, sur un compte différent (SwissPropFirm). TP1 (6 lots) puis runner touchés. +$7,520.", taggedBy: "override", contracts: 7, openTime: "10:00:04", closeTime: "11:29:56", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)", "TRADE #3 DU JOUR (max 2)", "ESCALADE POST-PERTE 5→7", "ENTRÉE APRÈS STOP QUOTIDIEN (-3025$)"] }
+    { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,747.75", exit: "28,671.75", rr: "—", pl: "+$7,520", plClass: "pos", plNum: 7520.0, result: "Win", setup: "MMXM", notes: "3e trade du jour, sizing porté à 7 après la perte de T2, sur un compte différent (SwissPropFirm). TP1 (6 lots) puis runner touchés. +$7,520.", taggedBy: "override", contracts: 7, openTime: "10:00:04", closeTime: "11:29:56", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)", "TRADE #3 DU JOUR (max 2)", "ESCALADE POST-PERTE 5→7", "ENTRÉE APRÈS STOP QUOTIDIEN (-3025$)"] },
+    { date: "28 juillet", instr: "NQU26", dir: "Long", entry: "27,963.50", exit: "28,038.75", rr: "—", pl: "+$7,505", plClass: "pos", plNum: 7505.0, result: "Win", setup: "MMXM", notes: "Retracement typique du MMXM après la forte purge : prise de liquidité avant le mouvement explosif haussier. TP2 visé sur la zone d'accumulation (28,038.50). London Killzone. TP1 (6 lots) @28,013.50 atteint, runner (1 lot) @28,038.75. +$7,505, sans violation.", taggedBy: "override", contracts: 7, openTime: "08:20:52", closeTime: "08:41:49", kz: "London", violations: [] }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$8,280", sub: "NQ · 23 juillet · réel Sierra" },
 
   sessions: [
-    { date: "27 juillet 2026", status: "open", statusLabel: "Session en cours", pl: "+$4,494", plSub: "T1 +$150 · T2 −$3,175 · T3 +$7,520 · 3 trades, process dégradé malgré le net positif",
+    { date: "28 juillet 2026", status: "open", statusLabel: "Session en cours", pl: "+$7,505", plSub: "T1 +$7,505 · MMXM, London Killzone",
+      html: `<h3>T1 · Win · Long 7 NQU26 @ 27,963.50 → 28,013.50 / 28,038.75</h3>
+<p>Modèle <strong>MMXM</strong> (buy model) sur le 1 min : retracement typique après la forte purge nocturne (le prix a chuté depuis ≈28,700 jusqu'à ≈27,840) — prise de liquidité avant un mouvement explosif haussier, dans le sens du modèle. Entrée 7 lots @ 27,963.50 (4h20 ET, London Killzone). TP2 visé sur la zone d'accumulation (28,038.50), là où le prix avait consolidé avant la purge.</p>
+<img src="plans/2026-07-28/01-t1-1m-entry-context.png" alt="1 min · entrée long 7 lots @27,963.50, TP 28,013.50 (6)/28,038.50 (1), stop 27,938.50">
+<img src="plans/2026-07-28/02-t1-60m-context.png" alt="60 min · contexte de la purge nocturne, structure baissière depuis le 27 juillet">
+<img src="plans/2026-07-28/03-t1-15m-context.png" alt="15 min · ampleur de la purge, du sommet ≈28,700 au creux ≈27,840">
+<img src="plans/2026-07-28/04-t1-5m-context.png" alt="5 min · contexte d'entrée, retracement depuis le creux de la purge">
+<p>Gestion : stop auto-trailé à 27,964.50 (breakeven+) une fois la zone TP1 approchée (4h38 ET). <strong>TP1 (6 lots) @ 28,013.50 atteint</strong> (4h38 ET, +$6,000). Runner (1 lot) poursuivi vers la zone d'accumulation : sorti @ 28,038.75 (4h41 ET, +$1,505 — léger slippage favorable sur le fill). <strong>+$7,505</strong> au total, sans violation de process — un seul trade, dans la Killzone de Londres.</p>
+<img src="plans/2026-07-28/05-t1-5m-mgmt.png" alt="5 min · gestion, +120.75 pts flottant, prix remonte vers le TP1">
+<img src="plans/2026-07-28/06-t1-1m-mgmt.png" alt="1 min · gestion, +213.50 pts flottant, approche du TP1 28,013.50">
+<img src="plans/2026-07-28/07-t1-1m-tp1-runner.png" alt="1 min · TP1 atteint, runner 1 lot restant, stop remonté à 27,964.50">
+<img src="plans/2026-07-28/08-t1-1m-cloture.png" alt="1 min · clôture, prix 28,040.50 après la sortie du runner">
+<p>La purge nocturne confirme la lecture baissière de la roadmap de la semaine (retest du shift, continuation vers le 50 % du range weekly) — ce trade est un scalp de contre-tendance sur le retracement, pas un changement de biais.</p>` },
+    { date: "27 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$4,494", plSub: "T1 +$150 · T2 −$3,175 · T3 +$7,520 · 3 trades, process dégradé malgré le net positif",
       html: `<h3>T3 · Win · Short 7 NQU26 @ 28,747.75 → 28,697.75 / 28,671.75</h3>
 <p>Troisième position de la matinée, ouverte sur le compte <strong>SwissPropFirm</strong> — bascule de compte en cours de séance, le Topstep/Sim1 ayant déjà encaissé le stop quotidien avec T2. Short 7 lots @ 28,747.75 (6h00 ET, Hors KZ). TP1 (6 lots) @ 28,697.75 atteint (7h22 ET, +$6,000), stop trailé automatiquement à 28,746.75 une fois la zone TP1 approchée (7h21 ET). Runner (1 lot), visait 28,672.75 : sorti @ 28,671.75 (7h29 ET, +$1,520). <strong>+$7,520</strong> au total — la meilleure passe du jour.</p>
 <p><strong>⚠ Process dégradé</strong> — 3e trade de la journée (règle : 2 max), sizing porté à 7 lots après la perte de T2 (escalade post-perte 5→7), et entrée après que le stop quotidien perso (−$500) avait déjà été dépassé plusieurs fois par T2 seul (−$3,175). Le gain ne valide pas le process : la règle « no revenge trading » n'a pas été respectée, même si ce trade a été pris sur un compte distinct de T1/T2.</p>
