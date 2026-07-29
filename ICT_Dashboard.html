@@ -171,9 +171,9 @@ button{cursor:pointer;appearance:none;background:none;border:none;color:inherit;
 const DATA = {
   meta: {
     periodStart: "18 juillet 2026",
-    periodEnd: "28 juillet 2026",
+    periodEnd: "29 juillet 2026",
     account: "Topstep — Combine 50K",
-    fills: 64,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
+    fills: 68,                          // journal remis à zéro le 18 juillet — repeuplé par tools/update_dashboard.py
     riskMaxDay: { value: 0, label: "Max risk engaged", sub: "—" },
     maxDrawdownLimit: -2000,          // MLL trailing Topstep 50K (jauge prop firm) — éditable à la main
     // Comptes prop firm — ajouter un compte ou une firme = une ligne ici.
@@ -251,7 +251,8 @@ const DATA = {
     { date: "23 juillet", cum: 22538 },
     { date: "24 juillet", cum: 30564 },
     { date: "27 juillet", cum: 35058 },
-    { date: "28 juillet", cum: 42564 }
+    { date: "28 juillet", cum: 42564 },
+    { date: "29 juillet", cum: 50064 }
     // </EQUITY>
   ],
 
@@ -287,7 +288,9 @@ const DATA = {
     { date: "27 juillet", t: "11:22:15", cum: 33538 },
     { date: "27 juillet", t: "11:29:56", cum: 35058 },
     { date: "28 juillet", t: "08:38:40", cum: 41058 },
-    { date: "28 juillet", t: "08:41:49", cum: 42564 }
+    { date: "28 juillet", t: "08:41:49", cum: 42564 },
+    { date: "29 juillet", t: "06:32:56", cum: 48564 },
+    { date: "29 juillet", t: "06:36:40", cum: 50064 }
     // </INTRADAY>
   ],
 
@@ -310,14 +313,29 @@ const DATA = {
     { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,708.50", exit: "28,707.00", rr: "—", pl: "+$150", plClass: "pos", plNum: 150.0, result: "Win", setup: "Sweep BSL → FVG 5m", notes: "TP1 (4 lots) visé @28,658.50 jamais rempli (spread suspecté) malgré le trailing auto qui a resserré le stop à 28,707.50. Stoppé aux deux jambes @28,707.00 — quasi scratch, +$150 au lieu du TP visé.", taggedBy: "override", contracts: 5, openTime: "06:22:06", closeTime: "08:25:47", kz: "London", sb: "SB London", violations: [] },
     { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,721.75", exit: "28,753.50", rr: "—", pl: "−$3,175", plClass: "neg", plNum: -3175.0, result: "Perte", setup: "Sweep BSL → FVG 5m", notes: "Pris hors Kill Zone (juste après la clôture de Londres). Stop élargi manuellement puis touché intégralement @28,753.50. −$3,175.", taggedBy: "override", contracts: 5, openTime: "09:00:38", closeTime: "09:47:20", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)"] },
     { date: "27 juillet", instr: "NQU26", dir: "Short", entry: "28,747.75", exit: "28,671.75", rr: "—", pl: "+$7,520", plClass: "pos", plNum: 7520.0, result: "Win", setup: "MMXM", notes: "3e trade du jour, sizing porté à 7 après la perte de T2, sur un compte différent (SwissPropFirm). TP1 (6 lots) puis runner touchés. +$7,520.", taggedBy: "override", contracts: 7, openTime: "10:00:04", closeTime: "11:29:56", kz: "Hors KZ", violations: ["HORS KZ (Hors KZ)", "TRADE #3 DU JOUR (max 2)", "ESCALADE POST-PERTE 5→7", "ENTRÉE APRÈS STOP QUOTIDIEN (-3025$)"] },
-    { date: "28 juillet", instr: "NQU26", dir: "Long", entry: "27,963.50", exit: "28,038.75", rr: "—", pl: "+$7,505", plClass: "pos", plNum: 7505.0, result: "Win", setup: "MMXM", notes: "Retracement typique du MMXM après la forte purge : prise de liquidité avant le mouvement explosif haussier. TP2 visé sur la zone d'accumulation (28,038.50). London Killzone. TP1 (6 lots) @28,013.50 atteint, runner (1 lot) @28,038.75. +$7,505, sans violation.", taggedBy: "override", contracts: 7, openTime: "08:20:52", closeTime: "08:41:49", kz: "London", violations: [] }
+    { date: "28 juillet", instr: "NQU26", dir: "Long", entry: "27,963.50", exit: "28,038.75", rr: "—", pl: "+$7,505", plClass: "pos", plNum: 7505.0, result: "Win", setup: "MMXM", notes: "Retracement typique du MMXM après la forte purge : prise de liquidité avant le mouvement explosif haussier. TP2 visé sur la zone d'accumulation (28,038.50). London Killzone. TP1 (6 lots) @28,013.50 atteint, runner (1 lot) @28,038.75. +$7,505, sans violation.", taggedBy: "override", contracts: 7, openTime: "08:20:52", closeTime: "08:41:49", kz: "London", violations: [] },
+    { date: "29 juillet", instr: "NQU26", dir: "Long", entry: "27,811.00", exit: "27,886.00", rr: "—", pl: "+$7,500", plClass: "pos", plNum: 7500.0, result: "Win", setup: "MMXM", notes: "Encore un MMXM, même structure que la veille : long repris sur le retracement post-purge en London Killzone, entrée précise au sweep (7 lots). TP1 (6 lots) @27,861.00 atteint, runner (1 lot) @27,886.00. +$7,500, sans violation.", taggedBy: "override", contracts: 7, openTime: "06:27:37", closeTime: "06:36:40", kz: "London", sb: "SB London", violations: [] }
     // </TRADES>
   ],
 
   bestTrade: { value: "+$8,280", sub: "NQ · 23 juillet · réel Sierra" },
 
   sessions: [
-    { date: "28 juillet 2026", status: "open", statusLabel: "Session en cours", pl: "+$7,505", plSub: "T1 +$7,505 · MMXM, London Killzone",
+    { date: "29 juillet 2026", status: "open", statusLabel: "Session en cours", pl: "+$7,500", plSub: "T1 +$7,500 · MMXM, London Killzone",
+      html: `<h3>T1 · Win · Long 7 NQU26 @ 27,811.00 → 27,861.00 / 27,886.00</h3>
+<p><strong>Encore un MMXM</strong> — structure quasi identique à la veille (28 juillet) : purge nocturne marquée depuis ≈28,700 jusqu'à ≈27,600 (visible sur le 4H et le 15m), puis retracement haussier joué dans le sens du modèle, en <strong>London Killzone</strong> (2h27 ET). Entrée 7 lots @ 27,811.00, dès l'ouverture de la fenêtre. Bracket : TP1 6 lots @ 27,861.00, runner 1 lot @ 27,886.00, stop initial 27,786.00.</p>
+<img src="plans/2026-07-29/01-weekly.png" alt="Weekly · rappel ICT Foundation, structure haussière de fond intacte, prix 27,739.00">
+<img src="plans/2026-07-29/02-daily.png" alt="Daily · rappel ICT Foundation, correction depuis l'ATH ≈31,200, prix 27,772.50">
+<img src="plans/2026-07-29/03-4h.png" alt="4H · purge nocturne bien visible depuis ≈28,700 jusqu'à ≈27,600, prix 27,766.75">
+<img src="plans/2026-07-29/04-60m.png" alt="60 min · même purge, structure baissière depuis fin juin, prix 27,770.75">
+<img src="plans/2026-07-29/05-15m.png" alt="15 min · détail de la purge du 28 au 29 juillet, creux ≈27,600 puis reprise, prix 27,770.00">
+<p>Gestion : stop élargi manuellement à 27,752.75 (2h28 ET) juste après l'entrée, puis auto-trailé à 27,812.00 (breakeven+1, 2h32 ET) à l'approche de la zone TP1. <strong>TP1 (6 lots) @ 27,861.00 atteint</strong> (2h32 ET, +$6,000). Runner (1 lot) poursuivi jusqu'à la cible : sorti @ 27,886.00 (2h36 ET, +$1,500). <strong>+$7,500</strong> au total, sans violation de process — un seul trade, dans la Killzone de Londres, sizing au plafond (7) mais pas au-delà.</p>
+<img src="plans/2026-07-29/06-t1-1m-entry-context.png" alt="1 min · entrée, flottant -17.50 pts, TP 27,861.00 (6)/27,886.00 (1), stop 27,786.00">
+<img src="plans/2026-07-29/07-t1-1m-tp1-hit.png" alt="1 min · TP1 atteint, runner 1 lot restant, +51.75 pts flottant">
+<img src="plans/2026-07-29/08-t1-1m-runner-approach.png" alt="1 min · runner en approche de la cible 27,886.00, +65.75 pts flottant">
+<img src="plans/2026-07-29/09-t1-1m-cloture.png" alt="1 min · clôture, runner sorti, prix 27,882.50">
+<p>Même lecture que la veille : ce trade est un scalp de contre-tendance sur le retracement post-purge, pas un changement de biais de fond (Weekly toujours haussier).</p>` },
+    { date: "28 juillet 2026", status: "closed", statusLabel: "Session clôturée", pl: "+$7,505", plSub: "T1 +$7,505 · MMXM, London Killzone",
       html: `<h3>T1 · Win · Long 7 NQU26 @ 27,963.50 → 28,013.50 / 28,038.75</h3>
 <p>Modèle <strong>MMXM</strong> (buy model) sur le 1 min : retracement typique après la forte purge nocturne (le prix a chuté depuis ≈28,700 jusqu'à ≈27,840) — prise de liquidité avant un mouvement explosif haussier, dans le sens du modèle. Entrée 7 lots @ 27,963.50 (4h20 ET, London Killzone). TP2 visé sur la zone d'accumulation (28,038.50), là où le prix avait consolidé avant la purge.</p>
 <img src="plans/2026-07-28/01-t1-1m-entry-context.png" alt="1 min · entrée long 7 lots @27,963.50, TP 28,013.50 (6)/28,038.50 (1), stop 27,938.50">
